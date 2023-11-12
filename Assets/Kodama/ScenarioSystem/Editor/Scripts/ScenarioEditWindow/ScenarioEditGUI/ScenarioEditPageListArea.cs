@@ -7,7 +7,6 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditPageListArea {
         private ReorderableList _pageList;
-        private Vector2 _scrollPos;
 
         internal void DrawLayout(ScenarioEditGUIStatus status, Scenario scenario, SerializedObject serializedObject) {
             if(_pageList == null) {
@@ -38,9 +37,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 };
             }
 
-            _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
-                _pageList.DoLayoutList();
-            EditorGUILayout.EndScrollView();
+            _pageList.DoLayoutList();
         }
     }
 }

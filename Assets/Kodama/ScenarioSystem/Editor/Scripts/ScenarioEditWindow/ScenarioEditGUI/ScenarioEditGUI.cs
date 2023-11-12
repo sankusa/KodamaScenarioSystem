@@ -8,6 +8,7 @@ namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditGUI {
         private ScenarioEditHeaderArea _headerArea;
         private ScenarioEditPageListArea _pageListArea;
+        private ScenarioEditVariableArea _variableArea;
         private ScenarioEditPageHeaderArea _pageHeaderArea;
         private ScenarioEditPageDetailArea _pageDetailArea;
         private ScenarioEditCommandGroupArea _commandGroupArea;
@@ -15,6 +16,7 @@ namespace Kodama.ScenarioSystem.Editor {
         private ScenarioEditGUIStatus _status;
 
         private SplitView _pageListSplitView;
+        private SplitView _leftAreaSplitView;
         private SplitView _detailAreaSplitView;
         private SplitView _inspectorSplitView;
         private SplitView _commandAreaSplitView;
@@ -22,14 +24,16 @@ namespace Kodama.ScenarioSystem.Editor {
         internal ScenarioEditGUI() {
             _headerArea = new ScenarioEditHeaderArea();
             _pageListArea = new ScenarioEditPageListArea();
+            _variableArea = new ScenarioEditVariableArea();
             _pageHeaderArea = new ScenarioEditPageHeaderArea();
             _pageDetailArea = new ScenarioEditPageDetailArea();
             _commandGroupArea = new ScenarioEditCommandGroupArea();
             _commandListArea = new ScenarioEditCommandListArea();
-            _pageListSplitView = new SplitView(SplitView.Direction.Horizontal, 0.2f, sessionStateKey: $"xxxxx{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_pageListSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
-            _detailAreaSplitView = new SplitView(SplitView.Direction.Horizontal, 0.6f, sessionStateKey: $"xxxxx{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_detailAreaSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
-            _inspectorSplitView = new SplitView(SplitView.Direction.Vertical, 0.5f, sessionStateKey: $"xxxxx{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_inspectorSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
-            _commandAreaSplitView = new SplitView(SplitView.Direction.Horizontal, 0.5f, sessionStateKey: $"xxxxx{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_commandAreaSplitView)}", handleColor: new Color(0.15f, 0.15f, 0.15f));
+            _pageListSplitView = new SplitView(SplitView.Direction.Horizontal, 0.2f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_pageListSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
+            _leftAreaSplitView = new SplitView(SplitView.Direction.Vertical, 0.5f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_leftAreaSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
+            _detailAreaSplitView = new SplitView(SplitView.Direction.Horizontal, 0.6f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_detailAreaSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
+            _inspectorSplitView = new SplitView(SplitView.Direction.Vertical, 0.5f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_inspectorSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
+            _commandAreaSplitView = new SplitView(SplitView.Direction.Horizontal, 0.5f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_commandAreaSplitView)}", handleColor: new Color(0.15f, 0.15f, 0.15f));
             _status = new ScenarioEditGUIStatus();
         }
 
@@ -38,19 +42,23 @@ namespace Kodama.ScenarioSystem.Editor {
             SerializedProperty pagesProp = serializedObject.FindProperty("_pages");
 
             //using var _ = new BackgroundColorScope(new Color(0.8f, 0.8f, 0.8f));
-
-            // ヘッダ
-            _headerArea.DrawLayout(scenario);
             
             serializedObject.Update();
             EditorGUI.BeginChangeCheck();
 
+            // ヘッダ
+            _headerArea.DrawLayout(scenario, serializedObject);
+            
             _pageListSplitView.Begin();
 
             // ぺージ一覧(画面左)
-            using(new EditorGUILayout.VerticalScope(boxStyle)) {
+            //using(new EditorGUILayout.VerticalScope(boxStyle)) {
+                _leftAreaSplitView.Begin();
                 _pageListArea.DrawLayout(_status, scenario, serializedObject);
-            }
+                _leftAreaSplitView.Split();
+                _variableArea.DrawLayout(_status, scenario, serializedObject);
+                _leftAreaSplitView.End();
+            //}
 
             _pageListSplitView.Split();
 
@@ -124,7 +132,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 serializedObject.ApplyModifiedProperties();
             }
 
-            if(_pageListSplitView.Resizing || _commandAreaSplitView.Resizing ||  _inspectorSplitView.Resizing || _detailAreaSplitView.Resizing) {
+            if(_pageListSplitView.Resizing || _leftAreaSplitView.Resizing || _commandAreaSplitView.Resizing ||  _inspectorSplitView.Resizing || _detailAreaSplitView.Resizing) {
                 EditorWindow.GetWindow<ScenarioEditWindow>().Repaint();
             }
         }

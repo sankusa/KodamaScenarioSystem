@@ -7,8 +7,15 @@ namespace Kodama.ScenarioSystem {
     [Serializable]
     public class Variable<T> : VariableBase {
         [SerializeField] private string _name;
-        public string Name => _name;
+        public override string Name => _name;
         [SerializeField] private T _value;
-        public T Value => _value;
+        public T Value {
+            get => _value;
+            set => _value = value;
+        }
+
+        internal override VariableBase Copy() {
+            return new Variable<T>(){_name = this.Name, _value = this.Value};
+        }
     }
 }

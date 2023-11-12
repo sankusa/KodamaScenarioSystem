@@ -5,8 +5,5 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public abstract class VariableBase {
-        public abstract string Name {get;}
-        internal abstract VariableBase Copy();
-    }
+    public class BoolVariable : Variable<bool> {}
 }

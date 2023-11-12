@@ -2,15 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using System.Threading;
+using System.Threading.Tasks;
+using System;
+
+
 #if KODAMA_UNITASK_SUPPORT
 using Cysharp.Threading.Tasks;
-using System.Threading;
 #endif
 
 namespace Kodama.ScenarioSystem {
     public class ScenarioEngine : MonoBehaviour, IScenarioEngine, IScenarioEngineForInternal {
         [SerializeField] private List<Scenario> _scenarios;
-        [SerializeField] private bool _playOnAwake;
+        private ScenarioCache _scenarioCache;
+
+        [SerializeField] private bool _playFirstScenarioOnAwake;
         /// <summary>
         /// コンポーネントの参照登録
         /// </summary>
@@ -19,116 +26,172 @@ namespace Kodama.ScenarioSystem {
         private Scenario _currentScenario;
         private int _currentPageIndex;
         private int _currentComamandIndex;
+        private List<VariableBase> _variables;
 
-        private bool _isPlaying;
-        public bool IsPlaying => _isPlaying;
+        /// <summary>
+        /// 再生中か
+        /// </summary>
+        public bool IsPlaying {get; private set;}
 
-        private bool _isPaused;
+        public bool IsPaused {get; private set;}
+        /// <summary>
+        /// ポーズ
+        /// </summary>
+        public void Pause() => IsPaused = true;
+        /// <summary>
+        /// 再開
+        /// </summary>
+        public void Resume() => IsPaused = false;
+
+        /// <summary>
+        /// プリロード待機中
+        /// </summary>
+        /// <value></value>
+        public bool WaitingPreload {get; private set;}
+
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         void Awake() {
-            if(_currentScenario == null && _scenarios.Count > 0) {
-                _currentScenario = _scenarios[0];
+            _scenarioCache = new ScenarioCache(PreloadAsync, Release);
+            // 初期アタッチ済みシナリオをキャッシュに追加
+            foreach(Scenario scenario in _scenarios) {
+                _scenarioCache.AddAndPreload(scenario, false);
             }
-            if(_playOnAwake) {
-                Play();
+            // 自動再生
+            if(_playFirstScenarioOnAwake && _scenarios.Count > 0) {
+                PlayScenario(_scenarioCache.Cache[0].Scenario.name);
             }
         }
 
-        /// <summary>
-        /// 同期実行
-        /// </summary>
-#if KODAMA_UNITASK_SUPPORT
-        public void Play(CancellationToken cancellationToken = default) {
-            PlayAsync().Forget();
+        void OnDestroy() {
+            _cts.Cancel();
+            _scenarioCache.RemoveAndReleaseAll();
         }
+
+        /// <summary>
+        /// シナリオの追加
+        /// </summary>
+        /// <param name="scenario">シナリオ</param>
+        /// <param name="removeOnExitScenario">シナリオ終了時に自動でRemoveするか</param>
+        /// <param name="onRemove">Removeコールバック</param>
+        public void AddScenario(Scenario scenario, bool removeOnExitScenario = true, Action onRemove = null) {
+            _scenarioCache.AddAndPreload(scenario, removeOnExitScenario, onRemove);
+        }
+
+        /// <summary>
+        /// シナリオを外す
+        /// </summary>
+        /// <param name="scenario"></param>
+        public void RemoveScenario(Scenario scenario) {
+            _scenarioCache.RemoveAndRelease(scenario);
+        }
+
+        /// <summary>
+        /// シナリオ移動
+        /// </summary>
+        /// <param name="scenario"></param>
+        private void ChangeCurrentScenario(Scenario scenario) {
+            // ExitScenario
+            ScenarioCacheData cacheData = _scenarioCache.Cache.FirstOrDefault(x => x.Scenario == _currentScenario);
+            if(cacheData != null && cacheData.RemoveOnExitScenario) _scenarioCache.RemoveAndRelease(_currentScenario);
+
+            // EnterScenario
+            _currentScenario = scenario;
+            _currentPageIndex = 0;
+            _currentComamandIndex = 0;
+            _variables = scenario?.Variables.Select(x => x.Copy()).ToList();
+        }
+
+        /// <summary>
+        /// シナリオ同期実行
+        /// </summary>
+        public void PlayScenario(string scenarioName, CancellationToken cancellationToken = default) {
+            var _ = PlayScenarioAsync(scenarioName, cancellationToken);
+        }
+
+        /// <summary>
+        /// シナリオ非同期実行
+        /// </summary>
+        /// <param name="label"></param>
+#if KODAMA_UNITASK_SUPPORT
+        public async UniTask PlayScenarioAsync(string scenarioName, CancellationToken cancellationToken = default) {
 #else
-        public void Play() {
-            StartCoroutine(Run());
-        }
+        public async Task PlayScenarioAsync(string scenarioName, CancellationToken cancellationToken = default) {
 #endif
+            // 排他制御
+            if(IsPlaying) return;
 
-        /// <summary>
-        /// ラベルから同期実行
-        /// </summary>
-        /// <param name="label"></param>
-        public void Play(string label) {
-            JumpToLabel(label);
-            Play();
-        }
-
-        /// <summary>
-        /// UniTaskを利用しない場合の実行関数
-        /// </summary>
-        private IEnumerator Run() {
-            _isPlaying = true;
-            _isPaused = false;
-
-            while(_isPlaying) {
-                if(_currentScenario == null) break;
-                if(_currentPageIndex >= _currentScenario.Pages.Count) break;
-                if(_currentComamandIndex >= _currentScenario.Pages[_currentPageIndex].Commands.Count) break;
-                
-                CommandBase command = _currentScenario.Pages[_currentPageIndex].Commands[_currentComamandIndex];
-
-                command.Execute(this);
-
-                yield return new WaitUntil(() => _isPaused == false);
-
-                _currentComamandIndex++;
+            ScenarioCacheData cacheData = _scenarioCache.FindScenarioCacheDataByName(scenarioName);
+            if(cacheData == null) {
+                Debug.Log($"ScenarioEngine doesn't have scenario\"{scenarioName}\"");
+                return;
             }
-
-            _isPlaying = false;
+            ChangeCurrentScenario(cacheData.Scenario);
+            await PlayAsyncInternal(cancellationToken);
         }
 
 #if KODAMA_UNITASK_SUPPORT
-        /// <summary>
-        /// ラベルから非同期実行
-        /// </summary>
-        /// <param name="label"></param>
-        public async UniTask PlayAsync(string label, CancellationToken cancellationToken = default) {
-            JumpToLabel(label);
-            await PlayAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// 非同期実行
-        /// </summary>
-        public async UniTask PlayAsync(CancellationToken cancellationToken = default) {
+        private async UniTask PlayAsyncInternal(CancellationToken cancellationToken = default) {
+#else
+        private async Task PlayAsyncInternal(CancellationToken cancellationToken = default) {
+#endif
             CancellationToken linkedToken = CancellationTokenSource
-                .CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy())
+                .CreateLinkedTokenSource(cancellationToken, _cts.Token)
                 .Token;
 
-            _isPlaying = true;
-            _isPaused = false;
-
-            while(_isPlaying) {
-                if(_currentScenario == null) break;
-                if(_currentPageIndex >= _currentScenario.Pages.Count) break;
-                if(_currentComamandIndex >= _currentScenario.Pages[_currentPageIndex].Commands.Count) break;
-                
-                CommandBase command = _currentScenario.Pages[_currentPageIndex].Commands[_currentComamandIndex];
-
-                if (command is AsyncCommandBase asyncCommand) {
-                    if (asyncCommand.Wait) {
-                        await asyncCommand.ExecuteAsync(this, linkedToken);
-                    }
-                    else {
-                        asyncCommand.ExecuteAsync(this, linkedToken).Forget();
-                    }
+            // プリロード中なら待機
+            ScenarioCacheData cacheData = _scenarioCache.Cache.FirstOrDefault(x => x.Scenario == _currentScenario);
+            if(cacheData.PreloadState == PreloadState.Loading) {
+                WaitingPreload = true;
+#if KODAMA_UNITASK_SUPPORT
+                await UniTask.WaitUntil(() => cacheData.PreloadState == PreloadState.Completed, cancellationToken: linkedToken);
+#else
+                while(cacheData.PreloadState == PreloadState.Completed) {
+                    await Task.Delay(20, linkedToken);
                 }
-                else {
-                    command.Execute(this);
-                }
-
-                // ポーズ中なら中断
-                await UniTask.WaitUntil(() => _isPaused == false, cancellationToken: linkedToken);
-
-                _currentComamandIndex++;
+#endif
+                WaitingPreload = false;
             }
 
-            _isPlaying = false;
-        }
+            IsPlaying = true;
+            IsPaused = false;
+
+            while(true) {
+                while(IsPlaying) {
+                    if(_currentScenario == null) break;
+                    if(_currentPageIndex >= _currentScenario.Pages.Count) break;
+                    if(_currentComamandIndex >= _currentScenario.Pages[_currentPageIndex].Commands.Count) break;
+                    
+                    CommandBase command = _currentScenario.Pages[_currentPageIndex].Commands[_currentComamandIndex];
+
+                    if (command is AsyncCommandBase asyncCommand) {
+                        if (asyncCommand.Wait) {
+                            await asyncCommand.ExecuteAsync(this, linkedToken);
+                        }
+                        else {
+                            var _ = asyncCommand.ExecuteAsync(this, linkedToken);
+                        }
+                    }
+                    else {
+                        command.Execute(this);
+                    }
+
+                    // ポーズ
+#if KODAMA_UNITASK_SUPPORT
+                    await UniTask.WaitUntil(() => IsPaused == false, cancellationToken: linkedToken);
+#else
+                    while(IsPaused) {
+                        await Task.Delay(20, linkedToken);
+                    }
 #endif
+                    _currentComamandIndex++;
+                }
+                ChangeCurrentScenario(null);
+                break;
+            }
+
+            IsPlaying = false;
+        }
 
         /// <summary>
         /// ラベルへジャンプ
@@ -153,30 +216,78 @@ namespace Kodama.ScenarioSystem {
                     }
                 }
             }
-            // 保持しているシナリオを全件調べる
-            for(int i = 0; i < _scenarios.Count; i++) {
-                for(int j = 0; j < _scenarios[i].Pages.Count; j++) {
-                    for(int k = 0; k < _scenarios[i].Pages[j].Commands.Count; k++) {
-                        LabelCommand labelCommand = _scenarios[i].Pages[j].Commands[k] as LabelCommand;
-                        if(labelCommand != null && labelCommand.Label == targetLabel) {
-                            _currentScenario = _scenarios[i];
-                            _currentPageIndex = j;
-                            _currentComamandIndex = k;
-                            return;
-                        }
-                    }
-                }
-            }
             Debug.LogWarning($"{nameof(JumpToLabel)} : target label not found.");
         }
 
         /// <summary>
-        /// ラベルへジャンプ(内部公開用)
+        /// ラベルへジャンプ(アセンブリ内公開用)
         /// </summary>
         void IScenarioEngineForInternal.JumpToLabel(string targetLabel) {
             JumpToLabel(targetLabel);
         }
 
+#region Variable
+        /// <summary>
+        /// 指定した型、名前の変数の値を取得
+        /// </summary>
+        public T GetVariableValue<T>(string variableName) {
+            var castedVariables = _variables.OfType<Variable<T>>();
+            if(castedVariables.Count() == 0) {
+                Debug.LogError($"{typeof(T).Name} variable not found.");
+            }
+            var variable = castedVariables.Where(x => x.Name == variableName).FirstOrDefault();
+            if(variable == null) {
+                Debug.LogError($"variable (name = {variableName}) not found.");
+            }
+            return variable.Value;
+        }
+
+        /// <summary>
+        /// 指定した型、名前の変数の値を設定
+        /// </summary>
+        public void SetVariableValue<T>(string variableName, T value) {
+            var castedVariables = _variables.OfType<Variable<T>>();
+            if(castedVariables.Count() == 0) {
+                Debug.LogError($"{typeof(T).Name} variable not found.");
+            }
+            var variable = castedVariables.Where(x => x.Name == variableName).FirstOrDefault();
+            if(variable == null) {
+                Debug.LogError($"variable (name = {variableName}) not found.");
+            }
+            variable.Value = value;
+        }
+#endregion
+
+#region Preload/Release
+        /// <summary>
+        /// リソースプリロード
+        /// </summary>
+#if KODAMA_UNITASK_SUPPORT
+        internal async UniTask PreloadAsync(Scenario scenario, CancellationToken cancellationToken) {
+#else
+        internal async Task PreloadAsync(Scenario scenario, CancellationToken cancellationToken) {
+#endif
+            foreach(CommandBase command in scenario.Pages.SelectMany(x => x.Commands)) {
+                cancellationToken.ThrowIfCancellationRequested();
+                if(command is IPreloadable preloadable) {
+                    await preloadable.PreloadAsync(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// リソース解放
+        /// </summary>
+        internal void Release(Scenario scenario) {
+            foreach(CommandBase command in scenario.Pages.SelectMany(x => x.Commands)) {
+                if(command is IPreloadable preloadable) {
+                    preloadable.Release(this);
+                }
+            }
+        }
+#endregion
+
+#region ServiceLocator
         /// <summary>
         /// 参照解決
         /// </summary>
@@ -190,5 +301,6 @@ namespace Kodama.ScenarioSystem {
         public IEnumerable<T> ResolveAll<T>() {
             return _componentBindings.OfType<T>();
         }
+#endregion
     }
 }

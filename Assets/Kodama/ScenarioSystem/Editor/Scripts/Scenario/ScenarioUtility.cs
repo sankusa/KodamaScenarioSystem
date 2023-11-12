@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
             if(!string.IsNullOrEmpty(path)) {
                 Scenario scenario = ScriptableObject.CreateInstance<Scenario>();
-                AssetDatabase.CreateAsset(scenario, path);
+                AssetDatabase.CreateAsset(scenario, path.Replace(Application.dataPath, "Assets"));
             }
         }
     }

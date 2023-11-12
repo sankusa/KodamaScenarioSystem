@@ -30,5 +30,12 @@ namespace Kodama.ScenarioSystem.Editor {
             }
         }
 
+        private static GUIStyle _borderedButton;
+        public static GUIStyle BorderedButton {
+            get {
+                _borderedButton ??= new GUIStyle("AppToolbarButtonLeft");
+                return _borderedButton;
+            }
+        }
     }
 }
