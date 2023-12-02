@@ -8,10 +8,10 @@ namespace Kodama.ScenarioSystem {
     /// シナリオアセットの表示用情報
     /// </summary>
     internal class ScenarioInfo {
-        internal Scenario Scenario {get;}
-        internal string Path {get;} 
+        public Scenario Scenario {get;}
+        public string Path {get;} 
         
-        internal ScenarioInfo(string path) {
+        public ScenarioInfo(string path) {
             Scenario = AssetDatabase.LoadAssetAtPath<Scenario>(path);
             Path = path;
         }

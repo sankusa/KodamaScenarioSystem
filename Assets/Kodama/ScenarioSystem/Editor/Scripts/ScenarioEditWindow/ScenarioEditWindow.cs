@@ -18,14 +18,14 @@ namespace Kodama.ScenarioSystem.Editor {
         private ScenarioEditWindowStatus _windowStatus;
         
         [MenuItem(nameof(Kodama) + "/" + nameof(ScenarioSystem) + "/" + nameof(ScenarioEditWindow))]
-        internal static void Open() {
+        public static void Open() {
             ScenarioEditWindow window = GetWindow<ScenarioEditWindow>("Scenario Edit");
             _instance = window;
             window.Initialize();
             window._currentScenario = null;
         }
 
-        internal static void OpenEditGUI(Scenario scenario) {
+        public static void OpenEditGUI(Scenario scenario) {
             ScenarioEditWindow window = GetWindow<ScenarioEditWindow>("Scenario Edit");
             _instance = window;
             window.Initialize();

@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioInfoTreeView : TreeView {
-        internal bool HasAny => rootItem.hasChildren;
+        public bool HasAny => rootItem.hasChildren;
         
-        internal ScenarioInfoTreeView(TreeViewState treeViewState, MultiColumnHeader header) : base(treeViewState, header) {
+        public ScenarioInfoTreeView(TreeViewState treeViewState, MultiColumnHeader header) : base(treeViewState, header) {
             rowHeight = 20;
             showAlternatingRowBackgrounds = true;
             showBorder = true;

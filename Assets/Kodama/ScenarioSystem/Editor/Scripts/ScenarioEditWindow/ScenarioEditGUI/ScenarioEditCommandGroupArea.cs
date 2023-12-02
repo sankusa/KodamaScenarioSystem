@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditCommandGroupArea {
         private Vector2 _scrollPos;
-        internal void DrawLayout(ScenarioEditGUIStatus guiStatus) {
+        public void DrawLayout(ScenarioEditGUIStatus guiStatus) {
             var buttonStyle = new GUIStyle(GUI.skin.button);
             //buttonStyle.stretchWidth = false;
             //buttonStyle.width;

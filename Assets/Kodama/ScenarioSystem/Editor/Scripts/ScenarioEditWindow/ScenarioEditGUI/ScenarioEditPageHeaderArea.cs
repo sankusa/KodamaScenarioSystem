@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditPageHeaderArea {
-        internal void DrawLayout(SerializedProperty pageProp, int index, int pageCount) {
+        public void DrawLayout(SerializedProperty pageProp, int index, int pageCount) {
             using(new EditorGUILayout.HorizontalScope()) {
                 EditorGUILayout.LabelField($"ページ {index + 1}/{pageCount}", GUILayout.Width(80));
                 EditorGUILayout.LabelField($"ページ名 : ", GUILayout.Width(54));

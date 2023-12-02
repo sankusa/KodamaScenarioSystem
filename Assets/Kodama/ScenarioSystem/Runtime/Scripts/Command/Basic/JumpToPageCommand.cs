@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public class JumpToLabelCommand : CommandBase {
-        [SerializeField] private string _targetLabel;
-        public string TargetLabel => _targetLabel;
+    public class JumpToPageCommand : CommandBase {
+        [SerializeField] private string _pageName;
+        [SerializeField] private bool _returnOnExit;
 
         public override void Execute(ICommandService service) {
-            service.Player.JumpToLabel(_targetLabel);
+            service.Player.JumpToPage(_pageName, _returnOnExit);
         }
     }
 }

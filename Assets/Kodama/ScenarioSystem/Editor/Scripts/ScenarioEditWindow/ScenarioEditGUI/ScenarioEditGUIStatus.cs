@@ -11,7 +11,7 @@ namespace Kodama.ScenarioSystem.Editor {
         /// </summary>
         private int _currentPageIndex;
         private static readonly string _currentPageIndexSessionStateKey = $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_currentPageIndex)}";
-        internal int CurrentPageIndex {
+        public int CurrentPageIndex {
             get => _currentPageIndex;
             set {
                 _currentPageIndex = value;
@@ -26,7 +26,7 @@ namespace Kodama.ScenarioSystem.Editor {
         /// </summary>
         private int _currentCommandIndex;
         private static readonly string _currentCommandIndexSessionStateKey = $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_currentCommandIndex)}";
-        internal int CurrentCommandIndex {
+        public int CurrentCommandIndex {
             get => _currentCommandIndex;
             set {
                 _currentCommandIndex = value;
@@ -39,7 +39,7 @@ namespace Kodama.ScenarioSystem.Editor {
         /// </summary>
         private string _currentCommandGroupId;
         private static readonly string _currentCommandGroupIdSessionStateKey = $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_currentCommandGroupId)}";
-        internal string CurrentCommandGroupId {
+        public string CurrentCommandGroupId {
             get => _currentCommandGroupId;
             set {
                 _currentCommandGroupId = value;

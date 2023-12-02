@@ -8,7 +8,7 @@ namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditPageListArea {
         private ReorderableList _pageList;
 
-        internal void DrawLayout(ScenarioEditGUIStatus status, Scenario scenario, SerializedObject serializedObject) {
+        public void DrawLayout(ScenarioEditGUIStatus status, Scenario scenario, SerializedObject serializedObject) {
             if(_pageList == null) {
                 _pageList = new ReorderableList(serializedObject, serializedObject.FindProperty("_pages"));
 

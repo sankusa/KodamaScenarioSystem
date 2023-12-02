@@ -1,9 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
     public class GUIStyles {
+        private static GUIStyle _summaryLabel;
+        public static GUIStyle SummaryLabel {
+            get {
+                if(_summaryLabel == null) {
+                    _summaryLabel = new GUIStyle(EditorStyles.label) {
+                        richText = true,
+                        wordWrap = true
+                    };
+                }
+                return _summaryLabel;
+            }
+        }
+
         private static GUIStyle _leanGroupBox;
         public static GUIStyle LeanGroupBox {
             get {

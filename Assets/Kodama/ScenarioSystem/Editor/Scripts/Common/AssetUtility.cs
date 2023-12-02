@@ -9,7 +9,7 @@ namespace Kodama.ScenarioSystem.Editor {
         /// <summary>
         /// プロジェクト内の対象型のアセットを全てロード
         /// </summary>
-        internal static List<T> LoadAllAssets<T>() where T : Object {
+        public static List<T> LoadAllAssets<T>() where T : Object {
             List<T> list = new List<T>(); 
             
             string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);
@@ -22,7 +22,7 @@ namespace Kodama.ScenarioSystem.Editor {
             return list;
         }
 
-        internal static IEnumerable<string> GetAllAssetPaths<T>() where T : Object {
+        public static IEnumerable<string> GetAllAssetPaths<T>() where T : Object {
             return AssetDatabase.FindAssets($"t:{typeof(T).Name}")
                 .Select(AssetDatabase.GUIDToAssetPath);
         }

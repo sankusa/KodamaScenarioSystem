@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
     [CreateAssetMenu(fileName = "New " + nameof(CommandSettingTable), menuName = nameof(Kodama) + "/" + nameof(ScenarioSystem) + "/" + nameof(CommandSettingTable))]
     internal class CommandSettingTable : ScriptableObject {
         private static List<CommandSettingTable> tables;
-        internal static IEnumerable<CommandSetting> AllSettings => tables.SelectMany(x => x.Settings);
+        public static IEnumerable<CommandSetting> AllSettings => tables.SelectMany(x => x.Settings);
 
         [InitializeOnLoadMethod]
         private static void Initialize() {
@@ -27,6 +27,6 @@ namespace Kodama.ScenarioSystem {
         }
 
         [SerializeField] private List<CommandSetting> _settings = new List<CommandSetting>();
-        internal IReadOnlyList<CommandSetting> Settings => _settings;
+        public IReadOnlyList<CommandSetting> Settings => _settings;
     }
 }

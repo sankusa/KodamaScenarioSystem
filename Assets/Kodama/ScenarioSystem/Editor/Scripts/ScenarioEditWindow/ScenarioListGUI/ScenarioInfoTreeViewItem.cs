@@ -8,9 +8,9 @@ namespace Kodama.ScenarioSystem {
     /// シナリオ情報TreeView要素
     /// </summary>
     internal class ScenarioInfoTreeViewItem : TreeViewItem {
-        internal ScenarioInfo Element {get;}
+        public ScenarioInfo Element {get;}
 
-        internal ScenarioInfoTreeViewItem(int id, string path) : base(id) {
+        public ScenarioInfoTreeViewItem(int id, string path) : base(id) {
             Element = new ScenarioInfo(path);
         }
     }

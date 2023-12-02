@@ -21,7 +21,7 @@ namespace Kodama.ScenarioSystem.Editor {
         private SplitView _inspectorSplitView;
         private SplitView _commandAreaSplitView;
 
-        internal ScenarioEditGUI() {
+        public ScenarioEditGUI() {
             _headerArea = new ScenarioEditHeaderArea();
             _pageListArea = new ScenarioEditPageListArea();
             _variableArea = new ScenarioEditVariableArea();
@@ -37,7 +37,7 @@ namespace Kodama.ScenarioSystem.Editor {
             _status = new ScenarioEditGUIStatus();
         }
 
-        internal void DrawLayout(ScenarioEditWindowStatus windowStatus, Scenario scenario, SerializedObject serializedObject) {
+        public void DrawLayout(ScenarioEditWindowStatus windowStatus, Scenario scenario, SerializedObject serializedObject) {
             var boxStyle = GUIStyles.LeanGroupBox;
             SerializedProperty pagesProp = serializedObject.FindProperty("_pages");
 
@@ -130,6 +130,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
             if(EditorGUI.EndChangeCheck()) {
                 serializedObject.ApplyModifiedProperties();
+                _pageDetailArea.OnCommandParameterChanged();
             }
 
             if(_pageListSplitView.Resizing || _leftAreaSplitView.Resizing || _commandAreaSplitView.Resizing ||  _inspectorSplitView.Resizing || _detailAreaSplitView.Resizing) {

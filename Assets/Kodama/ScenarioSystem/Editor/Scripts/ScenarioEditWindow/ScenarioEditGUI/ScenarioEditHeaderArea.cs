@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditHeaderArea {
 
-        internal void DrawLayout(Scenario scenario, SerializedObject serializedObject) {
+        public void DrawLayout(Scenario scenario, SerializedObject serializedObject) {
             using(new EditorGUILayout.HorizontalScope()) {
                 if(GUILayout.Button("< Back", GUIStyles.BorderedButton, GUILayout.Width(80), GUILayout.Height(24))) {
                     ScenarioEditWindow.Open();

@@ -12,7 +12,7 @@ namespace Kodama.ScenarioSystem.Editor {
         // 検索文字列のSesstionState用キー
         private static readonly string _searchStringSessionStateKey = $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(ScenarioListGUI)}_SearchString";
 
-        internal ScenarioListGUI() {
+        public ScenarioListGUI() {
             // TreeView構築
             TreeViewState treeViewState = new TreeViewState();
 
@@ -42,7 +42,7 @@ namespace Kodama.ScenarioSystem.Editor {
             _searchField = new SearchField();
         }
 
-        internal void DrawLayout(Rect windowRect) {
+        public void DrawLayout(Rect windowRect) {
             var buttonStyle = new GUIStyle("AppToolbarButtonLeft");
 
             float headerButtonWidth = 80;

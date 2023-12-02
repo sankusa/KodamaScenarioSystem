@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditCommandListArea {
         private Vector2 _scrollPos;
 
-        internal void DrawLayout(ScenarioEditGUIStatus guiStatus, Scenario scenario, ScenarioPage page) {
+        public void DrawLayout(ScenarioEditGUIStatus guiStatus, Scenario scenario, ScenarioPage page) {
             IEnumerable<CommandSetting> settings = CommandSettingTable.AllSettings.Where(x => x.GroupId == guiStatus.CurrentCommandGroupId);
             CommandGroupSetting groupSetting = CommandGroupSettingTable.AllSettings.FirstOrDefault(x => x.GroupId == guiStatus.CurrentCommandGroupId);
 

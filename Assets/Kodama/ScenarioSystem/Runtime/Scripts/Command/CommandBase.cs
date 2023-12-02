@@ -12,14 +12,14 @@ namespace Kodama.ScenarioSystem {
         /// <summary>
         /// コマンド実行
         /// </summary>
-        /// <param name="engine">シナリオエンジン</param>
-        public virtual void Execute(IScenarioEngine engine) {}
+        /// <param name="service">利用可能な機能群</param>
+        public virtual void Execute(ICommandService service) {}
 
         /// <summary>
         /// エディタ表示用のサマリ作成
         /// </summary>
         public virtual string GetSummary() {
-            return "";
+            return $"<i><color=cyan>{GetType().Name}</color></i>";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Kodama.ScenarioSystem.Editor {
     [CreateAssetMenu(fileName = "New " + nameof(CommandGroupSettingTable), menuName = nameof(Kodama) + "/" + nameof(ScenarioSystem) + "/" + nameof(CommandGroupSettingTable))]
     internal class CommandGroupSettingTable : ScriptableObject {
         private static List<CommandGroupSettingTable> tables;
-        internal static IEnumerable<CommandGroupSetting> AllSettings => tables.SelectMany(x => x.Settings);
+        public static IEnumerable<CommandGroupSetting> AllSettings => tables.SelectMany(x => x.Settings);
 
         [InitializeOnLoadMethod]
         private static void Initialize() {
@@ -25,6 +25,6 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         [SerializeField] private List<CommandGroupSetting> _settings;
-        internal IReadOnlyList<CommandGroupSetting> Settings => _settings;
+        public IReadOnlyList<CommandGroupSetting> Settings => _settings;
     }
 }

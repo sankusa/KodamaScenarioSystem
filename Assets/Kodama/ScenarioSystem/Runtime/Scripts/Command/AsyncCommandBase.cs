@@ -1,19 +1,12 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-#if KODAMA_UNITASK_SUPPORT
 using Cysharp.Threading.Tasks;
-#endif
 
 namespace Kodama.ScenarioSystem {
-    /// <summary>
-    /// 非同期コマンド基底クラス
-    /// </summary>
-    [Serializable]
-    public abstract class AsyncCommandBase : CommandBase {
+    public class AsyncCommandBase : CommandBase {
         /// <summary>
         /// 待機するか
         /// </summary>
@@ -22,23 +15,16 @@ namespace Kodama.ScenarioSystem {
         /// <summary>
         /// 非同期コマンドの場合は処理内容は空。代わりにExcecuteAsyncを呼び出す。
         /// </summary>
-        public sealed override void Execute(IScenarioEngine engine) {}
+        public sealed override void Execute(ICommandService service) {}
 
         /// <summary>
         /// 非同期コマンド実行
         /// </summary>
-        /// <param name="engine">シナリオエンジン</param>
+        /// <param name="service">利用可能な機能群</param>
         /// <param name="cancellationToken">キャンセルトークン</param>
         /// <returns></returns>
-#if KODAMA_UNITASK_SUPPORT
-        public virtual async UniTask ExecuteAsync(IScenarioEngine engine, CancellationToken cancellationToken) {
+        public virtual async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             await UniTask.CompletedTask;
         }
-#else
-
-        public virtual async Task ExecuteAsync(IScenarioEngine engine, CancellationToken cancellationToken) {
-            await Task.CompletedTask;
-        }
-#endif
     }
 }
