@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Serialization;
 using PlasticPipe.PlasticProtocol.Messages;
 using UnityEditor;
+using UnityEditor.Experimental;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -15,6 +17,10 @@ namespace Kodama.ScenarioSystem.Editor {
 
         private bool _commandParameterChanged = false;
 
+        private Stack<string> _indentBlockTypeStack = new Stack<string>();
+
+        private const int _indentWidth = 32;
+
         // コマンドのパラメータが変更され、サマリの行数に変更があっても
         // 要素の増減や入れ替えがあるまでReorderableListのElementHeightが更新されないので
         // その場合は外部からフラグを立ててもらい、ReorderableList自体を作り直す
@@ -22,13 +28,19 @@ namespace Kodama.ScenarioSystem.Editor {
             _commandParameterChanged = true;
         }
 
-        public void DrawLayout(ScenarioEditGUIStatus guiStatus, SerializedProperty pageProp, ScenarioPage page) {
-            if(_commandList == null || _pathOld != pageProp.propertyPath || _commandParameterChanged) {
+        public void DrawLayout(ScenarioEditGUIStatus guiStatus, Scenario scenario, SerializedProperty pageProp, ScenarioPage page) {
+            bool pageChanged = _pathOld != pageProp.propertyPath;
+            if(_commandList == null || pageChanged || _commandParameterChanged) {
                 _commandList = new ReorderableList(pageProp.serializedObject, pageProp.FindPropertyRelative("_commands"));
 
                 _commandList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Commands");
 
                 _commandList.drawElementCallback = (rect, index, isActive, isFocused) => {
+                    // 初期化
+                    if(index == 0) {
+                        _indentBlockTypeStack.Clear();
+                    }
+
                     CommandBase command = page.Commands[index];
                     //if(_commandList.count != page.Commands.Count) return;
                     CommandSetting commandSetting = CommandSettingTable.AllSettings
@@ -42,34 +54,71 @@ namespace Kodama.ScenarioSystem.Editor {
                         });
                     if(commandSetting == null) return;
                     CommandGroupSetting commandGroupSetting = CommandGroupSettingTable.AllSettings.FirstOrDefault(x => x.GroupId == commandSetting.GroupId);
+
+                    // ブロック終了コマンドならインデント-1
+                    if(command is IBlockEnd blockEnd) {
+                        if(_indentBlockTypeStack.Count > 0 && blockEnd.BlockType == _indentBlockTypeStack.Peek()) {
+                            _indentBlockTypeStack.Pop();
+                        }
+                    }
+
+                    // インデント
+                    int indentLevel = _indentBlockTypeStack.Count;
+                    Rect indentRect = new Rect(rect.x, rect.y, _indentWidth * indentLevel + 1, rect.height + 1);
+
+                    Rect contentRect = RectUtil.Margin(rect, _indentWidth * indentLevel, bottomMargin: -1);
+
+                    Rect summaryBoxRect = RectUtil.Margin(contentRect, 8, 54, 3, 3);
+
+                    Rect iconRect = RectUtil.Margin(new Rect(summaryBoxRect.x + 3, summaryBoxRect.y, 24, 24), 3, 3, 3, 3);
                     
-                    Rect iconRect = new Rect(rect.x, rect.y, 28, 28);
-                    Rect labelRect = new Rect(rect.x + 32, rect.y, rect.width - 32, 16);
-                    Rect summaryBoxRect = new Rect(rect.x + 32, rect.y + 3, rect.width - 32, rect.height - 6);
-                    Rect summaryRect = new Rect(rect.x + 32 + 4, rect.y + 3, rect.width - 32, rect.height - 6);
+                    Rect summaryRect = RectUtil.Margin(summaryBoxRect, commandSetting.Icon != null ? 30 : 8, 3, 3, 3);
+
+                    Rect copyButtonRect = new Rect(contentRect.xMax - 51, contentRect.y + 3, 32 - 8, contentRect.height + 1 - 7);
+                    Rect removeButtonRect = new Rect(contentRect.xMax - 32 + 4, contentRect.y + 3, 32 - 8, contentRect.height + 1 - 7);
 
                     Color backgroundColor = commandGroupSetting.GroupColor;
                     backgroundColor.a = 0.5f;
 
-                    using (new BackgroundColorScope(backgroundColor)) {
-                        GUI.Box(new Rect(rect){height = rect.height + 1}, "", GUIStyles.LeanGroupBox);
+                    if(indentLevel > 0) {
+                        using (new BackgroundColorScope(new Color(0.9f, 0.9f, 0.9f))) {
+                            GUI.Box(indentRect, "", GUIStyles.LeanGroupBox);
+                        }
                     }
-                    using (new ContentColorScope(commandGroupSetting != null ? commandGroupSetting.GroupColor : Color.white)) {
-                        EditorGUI.LabelField(iconRect, new GUIContent(commandSetting.Icon, null));
+                    using (new BackgroundColorScope(backgroundColor)) {
+                        GUI.Box(contentRect, "", GUIStyles.LeanGroupBox);
                     }
                     // EditorGUI.LabelField(labelRect, commandSetting.DisplayName);
                     using (new BackgroundColorScope(new Color(0.7f, 0.7f, 0.7f))) {
                         GUI.Box(summaryBoxRect, "", GUIStyles.LeanGroupBox);
                     }
-                    var x = new GUIStyle(EditorStyles.label);
-                    x.richText = true;
+                    using (new ContentColorScope(commandGroupSetting != null ? commandGroupSetting.GroupColor : Color.white)) {
+                        EditorGUI.LabelField(iconRect, new GUIContent(commandSetting.Icon, null));
+                    }
                     EditorGUI.LabelField(summaryRect, command.GetSummary(), GUIStyles.SummaryLabel);
 
+                    using (new ContentColorScope(new Color(1, 1, 1, 0.5f))) {
+                    if(GUI.Button(copyButtonRect, CommonEditorResources.Instance.CommandCopyIcon, GUIStyles.BorderedButton)) {
+                        Undo.RecordObject(scenario, "Copy Command");
+                        page.Commands.Insert(index + 1, page.Commands[index].Copy());
+                        EditorUtility.SetDirty(scenario);
+                        guiStatus.CurrentCommandIndex = index + 1;
+                    }
+                    //GUIContent i = EditorGUIUtility.TrIconContent("Toolbar Minus", "Remove selection from list");
+                    if(GUI.Button(removeButtonRect, CommonEditorResources.Instance.CommandDeleteIcon, GUIStyles.BorderedButton)) {
+                        pageProp.FindPropertyRelative("_commands").DeleteArrayElementAtIndex(index);
+                    }
+                    }
+
                     if(_commandList.index == index) {
-                        backgroundColor.a = 0.5f;
                         using (new BackgroundColorScope(backgroundColor)) {
-                            GUI.Box(rect, "", GUIStyles.LeanGroupBox);
+                            GUI.Box(contentRect, "", GUIStyles.LeanGroupBox);
                         }
+                    }
+
+                    // ブロック開始コマンドならインデント+1
+                    if(command is IBlockStart blockStart) {
+                        _indentBlockTypeStack.Push(blockStart.BlockType);
                     }
                 };
 

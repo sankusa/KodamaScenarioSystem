@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     /// <summary>
-    /// 全コマンドの基底クラス
+    /// コマンド基底クラス
     /// </summary>
     [Serializable]
     public abstract class CommandBase {
@@ -19,7 +19,11 @@ namespace Kodama.ScenarioSystem {
         /// エディタ表示用のサマリ作成
         /// </summary>
         public virtual string GetSummary() {
-            return $"<i><color=cyan>{GetType().Name}</color></i>";
+            return $"コマンド";
+        }
+
+        public CommandBase Copy() {
+            return JsonUtility.FromJson(JsonUtility.ToJson(this), GetType()) as CommandBase;
         }
     }
 }

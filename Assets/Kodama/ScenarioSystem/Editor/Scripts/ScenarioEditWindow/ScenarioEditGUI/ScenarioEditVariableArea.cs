@@ -12,6 +12,7 @@ namespace Kodama.ScenarioSystem.Editor {
     public class ScenarioEditVariableArea {
         private ReorderableList _variableList;
         private Vector2 _scrollPos;
+        private VariableDrawer _variableDrawer = new VariableDrawer();
 
         internal void DrawLayout(ScenarioEditGUIStatus status, Scenario scenario, SerializedObject serializedObject) {
             if(_variableList == null) {
@@ -21,11 +22,11 @@ namespace Kodama.ScenarioSystem.Editor {
                 _variableList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, $"{scenario.Variables.Count} Variables");
 
                 _variableList.drawElementCallback = (rect, index, isActive, isFocused) => {
-                    EditorGUI.PropertyField(rect, variablesProp.GetArrayElementAtIndex(index));
+                    _variableDrawer.OnGUI(rect, variablesProp.GetArrayElementAtIndex(index), scenario.Variables[index]);
                 };
 
                 _variableList.elementHeightCallback = index => {
-                    return EditorGUI.GetPropertyHeight(variablesProp.GetArrayElementAtIndex(index));
+                    return _variableDrawer.GetPropertyHeight(variablesProp.GetArrayElementAtIndex(index), scenario.Variables[index]);
                 };
 
                 _variableList.onSelectCallback = list => {
@@ -42,9 +43,6 @@ namespace Kodama.ScenarioSystem.Editor {
                         typeName = TypeNameUtil.ConvertToPrimitiveTypeName(typeName);
                         menu.AddItem(new GUIContent(typeName), false, () => scenario.Variables.Add((VariableBase)Activator.CreateInstance(t)));
                     }
-                    // foreach(VariableSetting setting in VariableSettingTable.AllSettings) {
-                    //     menu.AddItem(new GUIContent(setting.DisplayName), false, () => scenario.Variables.Add((VariableBase)Activator.CreateInstance(setting.NonGenericVariableScript.GetClass())));
-                    // }
                     menu.DropDown(buttonRect);
                 };
 

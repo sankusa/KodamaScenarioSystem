@@ -7,7 +7,7 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private string _scenarioName;
         [SerializeField] private bool _returnOnExit;
         public override void Execute(ICommandService service) {
-            service.Player.JumpToScenario(_scenarioName, _returnOnExit);
+            service.PlayProcess.JumpToScenario(_scenarioName, _returnOnExit);
         }
     }
 }

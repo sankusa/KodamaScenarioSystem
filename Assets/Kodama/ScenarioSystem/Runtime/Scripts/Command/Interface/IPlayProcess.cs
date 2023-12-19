@@ -3,15 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    public interface IScenarioPlayerForCommand  {
+    public interface IPlayProcess  {
         bool IsPaused {get;}
+        /// <summary>
+        /// 一時停止
+        /// </summary>
         void Pause();
+        /// <summary>
+        /// 再開
+        /// </summary>
         void Resume();
+
+        /// <summary>
+        /// インデックスへジャンプ
+        /// </summary>
+        void JumpToIndex(int index);
 
         /// <summary>
         /// ラベルへジャンプ
         /// </summary>
         void JumpToLabel(string label);
+
+        void JumpToBlockEnd(IBlockStart startBlock);
 
         /// <summary>
         /// ページへジャンプ
@@ -32,5 +45,23 @@ namespace Kodama.ScenarioSystem {
         /// 指定した型、名前の変数の値を設定
         /// </summary>
         void SetVariableValue<T>(string variableName, T value);
+
+        /// <summary>
+        /// ブロックを表すインスタンスをプッシュ
+        /// </summary>
+        /// <param name="block"></param>
+        public void SetUpAndPushBlock(IBlockStart blockStart, Block block);
+
+        /// <summary>
+        /// ブロックを表すインスタンスをポップ
+        /// </summary>
+        /// <param name="block"></param>
+        public Block PopBlock();
+
+        /// <summary>
+        /// ブロックを表すインスタンスをピーク
+        /// </summary>
+        /// <param name="block"></param>
+        public Block PeekBlock();
     }
 }

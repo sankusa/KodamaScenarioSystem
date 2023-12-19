@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem {
     [Serializable]
     public abstract class VariableBase {
-        public abstract string Name {get;}
+        public abstract string Name {get;set;}
         internal abstract VariableBase Copy();
     }
 }

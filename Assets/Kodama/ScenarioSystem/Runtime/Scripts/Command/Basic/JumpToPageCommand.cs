@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private bool _returnOnExit;
 
         public override void Execute(ICommandService service) {
-            service.Player.JumpToPage(_pageName, _returnOnExit);
+            service.PlayProcess.JumpToPage(_pageName, _returnOnExit);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Kodama.ScenarioSystem {
                     foreach(CommandBase command in Scenario.Pages.SelectMany(x => x.Commands)) {
                         PreloadCts.Token.ThrowIfCancellationRequested();
                         if(command is IPreloadable preloadable) {
-                            await preloadable.PreloadAsync(engine);
+                            await preloadable.PreloadAsync();
                         }
                     }
                 }
@@ -52,7 +52,7 @@ namespace Kodama.ScenarioSystem {
                 // リリース処理呼び出し
                 foreach(CommandBase command in Scenario.Pages.SelectMany(x => x.Commands)) {
                     if(command is IPreloadable preloadable) {
-                        preloadable.Release(engine);
+                        preloadable.Release();
                     }
                 }
             }

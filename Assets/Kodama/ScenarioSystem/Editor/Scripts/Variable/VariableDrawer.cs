@@ -6,57 +6,65 @@ using System.ComponentModel;
 using System;
 using System.Linq;
 using UnityEditorInternal;
+using System.Reflection;
 
 namespace Kodama.ScenarioSystem.Editor {
+    // SerializeReferenceのFindPropertyRelative及びPropertyFieldは遅いので、可能な限り使用しない
     [CustomPropertyDrawer(typeof(Variable<>), true)]
-    public class VariableDrawer : PropertyDrawer {
+    public class VariableDrawer {
         private static RectUtil.LayoutLength[] rectLengths = new RectUtil.LayoutLength[]{ new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1.5f)};
-        public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
-            List<Rect> rects = RectUtil.DivideRectHorizontal(rect, rectLengths);
-            rects[0] = new Rect(rects[0].x, rects[0].y, rects[0].width, EditorGUIUtility.singleLineHeight);
-            rects[1] = new Rect(rects[1].x, rects[1].y, rects[1].width - 4, EditorGUIUtility.singleLineHeight);
-            
+        private static readonly string _valueFieldName = "_value";
 
-            string[] splitedPaths = property.propertyPath.Split('[', ']');
-            string typeName = ((Scenario)property.serializedObject.targetObject)
-                .Variables[int.Parse(splitedPaths[1])]
-                .GetType()
-                .BaseType
-                .GetField("_value", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .FieldType
-                .Name;
+        private Dictionary<Type, VariableValueFieldBase> _customValueDrawerDic = new Dictionary<Type, VariableValueFieldBase>();
 
-            typeName = TypeNameUtil.ConvertToPrimitiveTypeName(typeName);
-
-            EditorGUI.LabelField(rects[0], typeName);
-
-            EditorGUI.PropertyField(rects[1], property.FindPropertyRelative("_name"), GUIContent.none);
-
-            SerializedProperty valueProp = property.FindPropertyRelative("_value");
-            if(valueProp != null) {
-                EditorGUI.PropertyField(rects[2], valueProp, GUIContent.none, true);
-            }
-            else {
-                EditorGUI.LabelField(rects[2], "null");
+        public VariableDrawer() {
+            var drawerTypes = TypeCache.GetTypesWithAttribute(typeof(CustomVariableValueFieldAttribute));
+            foreach(Type drawerType in drawerTypes) {
+                var attribute = drawerType.GetCustomAttribute<CustomVariableValueFieldAttribute>();
+                _customValueDrawerDic[attribute.Type] = (VariableValueFieldBase)Activator.CreateInstance(drawerType);
             }
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            SerializedProperty valueProp = property.FindPropertyRelative("_value");
-            if(valueProp != null) {
-                if(valueProp.propertyType == SerializedPropertyType.Vector2
-                    || valueProp.propertyType == SerializedPropertyType.Vector3
-                    || valueProp.propertyType == SerializedPropertyType.Vector4
-                    || valueProp.propertyType == SerializedPropertyType.Rect
-                    || valueProp.propertyType == SerializedPropertyType.Bounds) {
-                        return EditorGUI.GetPropertyHeight(valueProp, true) - EditorGUIUtility.singleLineHeight - 2;
-                }
-                else {
-                    return EditorGUI.GetPropertyHeight(valueProp, true);
-                }
+        public void OnGUI(Rect rect, SerializedProperty property, VariableBase variable) {
+            // 必要な値を取得
+            Scenario scenario = property.serializedObject.targetObject as Scenario;
+            FieldInfo valueFieldInfo = variable.GetType().BaseType.GetField(_valueFieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            string typeName = TypeNameUtil.ConvertToPrimitiveTypeName(valueFieldInfo.FieldType.Name);
+
+            // 各要素の描画範囲
+            List<Rect> rects = RectUtil.DivideRectHorizontal(rect, rectLengths);
+            rects[0] = new Rect(rects[0].x, rects[0].y, rects[0].width, EditorGUIUtility.singleLineHeight);
+            rects[1] = new Rect(rects[1].x, rects[1].y, rects[1].width - 4, EditorGUIUtility.singleLineHeight);
+
+            // 描画
+            EditorGUI.LabelField(rects[0], typeName);
+
+            EditorGUI.BeginChangeCheck();
+            string variableName = EditorGUI.TextField(rects[1], variable.Name);
+            if(EditorGUI.EndChangeCheck()) {
+                Undo.RecordObject(scenario, "Change Variable Name");
+                variable.Name = variableName;
+                EditorUtility.SetDirty(scenario);
+            }
+
+            if(_customValueDrawerDic.ContainsKey(valueFieldInfo.FieldType)) {
+                _customValueDrawerDic[valueFieldInfo.FieldType].Draw(RectUtil.Margin(rects[2], bottomMargin: 2), scenario, variable);
+            } 
+            else {
+                SerializedProperty valueProp = property.FindPropertyRelative(_valueFieldName);
+                EditorGUI.PropertyField(rects[2], valueProp, GUIContent.none, true);
+            }
+        }
+
+        public float GetPropertyHeight(SerializedProperty property, VariableBase variable) {
+            SerializedProperty valueProp = property.FindPropertyRelative(_valueFieldName);
+            FieldInfo valueFieldInfo = variable.GetType().BaseType.GetField(_valueFieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if(_customValueDrawerDic.ContainsKey(valueFieldInfo.FieldType)) {
+                return _customValueDrawerDic[valueFieldInfo.FieldType].GetHeight();
             }
             else {
-                return EditorGUIUtility.singleLineHeight;
+                return EditorGUI.GetPropertyHeight(valueProp, true);
             }
         }
     }

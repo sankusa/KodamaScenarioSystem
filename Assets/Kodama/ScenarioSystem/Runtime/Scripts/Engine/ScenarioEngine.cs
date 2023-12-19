@@ -18,12 +18,6 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private ComponentBinding _componentBinding;
         private ServiceLocator _serviceLocator;
 
-        // シナリオ管理機能
-        private ScenarioCache _scenarioCache = new ScenarioCache();
-
-        // プリロード管理機能
-        private ScenarioPreloadManager _scenarioPreloadManager;
-
         // シナリオ再生機能
         private ScenarioPlayer _scenarioPlayer;
 
@@ -32,21 +26,20 @@ namespace Kodama.ScenarioSystem {
 
         void Awake() {
             _serviceLocator = new ServiceLocator(_componentBinding);
-            _scenarioPreloadManager = new ScenarioPreloadManager(this, _scenarioCache);
-            _scenarioPlayer = new ScenarioPlayer(_scenarioCache, _serviceLocator, _scenarioPreloadManager);
+            _scenarioPlayer = new ScenarioPlayer(_serviceLocator);
             // 初期アタッチ済みシナリオをキャッシュに追加
             foreach(Scenario scenario in _scenarios) {
                 AddScenario(scenario, false);
             }
             // 自動再生
             if(_playFirstScenarioOnAwake && _scenarios.Count > 0) {
-                _scenarioPlayer.PlayScenario(_scenarioCache.Elements[0].Scenario.name);
+                _scenarioPlayer.PlayScenario(_scenarios[0].name);
             }
         }
 
         void OnDestroy() {
             _scenarioPlayer.Dispose();
-            _scenarioCache.RemoveAll();
+            ScenarioManager.Instance.RemoveAll();
         }
 
         /// <summary>
@@ -56,13 +49,13 @@ namespace Kodama.ScenarioSystem {
         /// <param name="removeOnExitScenario">シナリオ終了時に自動でRemoveするか</param>
         /// <param name="onRemove">Removeコールバック</param>
         public void AddScenario(Scenario scenario, bool removeOnExitScenario = false, Action onRemove = null) =>
-            _scenarioCache.Add(scenario, removeOnExitScenario, onRemove);
+            ScenarioManager.Instance.Add(scenario, removeOnExitScenario, onRemove);
 
         /// <summary>
         /// シナリオを外す
         /// </summary>
         /// <param name="scenario"></param>
-        public void RemoveScenario(Scenario scenario) => _scenarioCache.Remove(scenario);
+        public void RemoveScenario(Scenario scenario) => ScenarioManager.Instance.Remove(scenario);
 
         /// <summary>
         /// シナリオ非同期実行

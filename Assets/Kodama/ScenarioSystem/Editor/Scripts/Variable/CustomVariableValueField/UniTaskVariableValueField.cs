@@ -1,0 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using Cysharp.Threading.Tasks;
+using UnityEditor;
+using UnityEngine;
+
+namespace Kodama.ScenarioSystem.Editor {
+    [CustomVariableValueField(typeof(UniTask))]
+    public class UniTaskVariableValueField : VariableValueField<UniTask> {
+        protected override UniTask Field(Rect rect, VariableBase variableBase) {
+            EditorGUI.LabelField(rect, "Null");
+            return default;
+        }
+    }
+}

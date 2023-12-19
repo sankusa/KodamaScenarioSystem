@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     public interface IPreloadable {
-        UniTask PreloadAsync(ScenarioEngine engine);
-        void Release(ScenarioEngine engine);
+        UniTask PreloadAsync();
+        void Release();
     }
 }

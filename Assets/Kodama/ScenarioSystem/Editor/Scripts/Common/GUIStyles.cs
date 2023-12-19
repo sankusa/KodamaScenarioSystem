@@ -5,51 +5,27 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
     public class GUIStyles {
-        private static GUIStyle _summaryLabel;
-        public static GUIStyle SummaryLabel {
-            get {
-                if(_summaryLabel == null) {
-                    _summaryLabel = new GUIStyle(EditorStyles.label) {
-                        richText = true,
-                        wordWrap = true
-                    };
-                }
-                return _summaryLabel;
-            }
-        }
+        public static GUIStyle SummaryLabel {get;}
+        public static GUIStyle LeanGroupBox {get;}
+        public static GUIStyle TitleBar {get;}
+        public static GUIStyle BorderedButton {get;}
+        public static GUIStyle ClearButton {get;}
 
-        private static GUIStyle _leanGroupBox;
-        public static GUIStyle LeanGroupBox {
-            get {
-                if(_leanGroupBox == null) {
-                    _leanGroupBox = new GUIStyle("GroupBox") {
-                        margin = new RectOffset(),
-                        padding = new RectOffset()
-                    };
-                }
-                return _leanGroupBox;
-            }
-        }
-
-        private static GUIStyle _titleBar;
-        public static GUIStyle TitleBar {
-            get {
-                if(_titleBar == null) {
-                    _titleBar = new GUIStyle("TimeAreaToolbar") {
-                        margin = new RectOffset(),
-                        padding = new RectOffset()
-                    };
-                }
-                return _titleBar;
-            }
-        }
-
-        private static GUIStyle _borderedButton;
-        public static GUIStyle BorderedButton {
-            get {
-                _borderedButton ??= new GUIStyle("AppToolbarButtonLeft");
-                return _borderedButton;
-            }
+        static GUIStyles() {
+            SummaryLabel = new GUIStyle(EditorStyles.label) {
+                richText = true,
+                wordWrap = true
+            };
+            LeanGroupBox = new GUIStyle("GroupBox") {
+                margin = new RectOffset(),
+                padding = new RectOffset()
+            };
+            TitleBar = new GUIStyle("TimeAreaToolbar") {
+                margin = new RectOffset(),
+                padding = new RectOffset()
+            };
+            BorderedButton = new GUIStyle("AppToolbarButtonLeft");
+            ClearButton = "RL FooterButton";
         }
     }
 }

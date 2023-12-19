@@ -84,7 +84,7 @@ namespace Kodama.ScenarioSystem.Editor {
                             _detailAreaSplitView.Begin();
 
                             using(new EditorGUILayout.VerticalScope(GUILayout.ExpandWidth(true))) {
-                                _pageDetailArea.DrawLayout(_status, currentPageProp, scenario.Pages[_status.CurrentPageIndex]);
+                                _pageDetailArea.DrawLayout(_status, scenario, currentPageProp, scenario.Pages[_status.CurrentPageIndex]);
                             }
 
                             _detailAreaSplitView.Split();

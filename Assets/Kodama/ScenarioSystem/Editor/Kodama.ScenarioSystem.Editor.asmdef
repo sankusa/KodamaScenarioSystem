@@ -1,8 +1,9 @@
 {
-    "name": "NewAssembly",
+    "name": "Kodama.ScenarioSystem.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:a35865b1413551a41b09df7a8305e3dd"
+        "GUID:a35865b1413551a41b09df7a8305e3dd",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [
         "Editor"

@@ -15,7 +15,7 @@ MonoBehaviour:
   _settings:
   - _groupId: Basic
     _displayName: "\u57FA\u672C"
-    _groupColor: {r: 0.7033004, g: 1, b: 0.2688679, a: 1}
+    _groupColor: {r: 1, g: 1, b: 1, a: 1}
   - _groupId: Control
     _displayName: "\u5236\u5FA1"
-    _groupColor: {r: 1, g: 0.495283, b: 0.495283, a: 1}
+    _groupColor: {r: 1, g: 1, b: 1, a: 1}

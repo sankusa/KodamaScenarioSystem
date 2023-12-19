@@ -5,5 +5,9 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public class ColorVariable : Variable<Color> {}
+    public class ColorVariable : Variable<Color> {
+        public ColorVariable() {
+            Value = Color.white;
+        }
+    }
 }
