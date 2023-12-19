@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using System.Reflection;
 
 namespace Kodama.ScenarioSystem {
     internal class PlayProcess : IPlayProcess {
@@ -232,6 +233,17 @@ namespace Kodama.ScenarioSystem {
             }
             return variable.Value;
         }
+        public object GetVariableValue(Type variableType, string variableName) {
+            var variables = CurrentVariables.Where(x => x.TargetType == variableType);
+            if(variables.Count() == 0) {
+                Debug.LogError($"{variableType.Name} variable not found.");
+            }
+            var variable = variables.Where(x => x.Name == variableName).FirstOrDefault();
+            if(variable == null) {
+                Debug.LogError($"variable (name = {variableName}) not found.");
+            }
+            return variable.GetValueAsObject();
+        }
 
         public void SetVariableValue<T>(string variableName, T value) {
             var castedVariables = CurrentVariables.OfType<Variable<T>>();
@@ -243,6 +255,17 @@ namespace Kodama.ScenarioSystem {
                 Debug.LogError($"variable (name = {variableName}) not found.");
             }
             variable.Value = value;
+        }
+        public void SetVariableValue(Type variableType, string variableName, object value) {
+            var variables = CurrentVariables.Where(x => x.TargetType == variableType);
+            if(variables.Count() == 0) {
+                Debug.LogError($"{variableType.Name} variable not found.");
+            }
+            var variable = variables.Where(x => x.Name == variableName).FirstOrDefault();
+            if(variable == null) {
+                Debug.LogError($"variable (name = {variableName}) not found.");
+            }
+            variable.SetValueAsObject(value);
         }
 #endregion
 

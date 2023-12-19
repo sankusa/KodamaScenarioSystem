@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,9 +43,19 @@ namespace Kodama.ScenarioSystem {
         T GetVariableValue<T>(string variableName);
 
         /// <summary>
+        /// 指定した型、名前の変数の値を取得
+        /// </summary>
+        object GetVariableValue(Type variableType, string variableName);
+
+        /// <summary>
         /// 指定した型、名前の変数の値を設定
         /// </summary>
         void SetVariableValue<T>(string variableName, T value);
+
+        /// <summary>
+        /// 指定した型、名前の変数の値を設定
+        /// </summary>
+        void SetVariableValue(Type variableType, string variableName, object value);
 
         /// <summary>
         /// ブロックを表すインスタンスをプッシュ

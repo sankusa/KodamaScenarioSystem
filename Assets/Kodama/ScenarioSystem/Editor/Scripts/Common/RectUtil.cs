@@ -110,12 +110,12 @@ namespace Kodama.ScenarioSystem.Editor {
             List<Rect> rects = new List<Rect>();
             for(int i = 0; i < heightList.Count; i++) {
                 if(heightList[i].LayoutType == LayoutType.Fixed) {
-                    rects.Add(new Rect(rect.x, currentRectYMin + topMargin, heightList[i].Length - topMargin - bottomMargin, rect.height));
+                    rects.Add(new Rect(rect.x, currentRectYMin + topMargin, rect.width, heightList[i].Length - topMargin - bottomMargin));
                     currentRectYMin += heightList[i].Length;
                 }
                 else if(heightList[i].LayoutType == LayoutType.Expand) {
                     float fixedHeight = expandSpace * heightList[i].Length / expandHeightTotal;
-                    rects.Add(new Rect(rect.x, currentRectYMin + topMargin, fixedHeight - topMargin - bottomMargin, rect.height));
+                    rects.Add(new Rect(rect.x, currentRectYMin + topMargin, rect.width, fixedHeight - topMargin - bottomMargin));
                     currentRectYMin += fixedHeight;
                 }
             }

@@ -7,12 +7,16 @@ namespace Kodama.ScenarioSystem {
     public class IfCommand : CommandBase, IBlockStart {
         public string BlockType => "If";
 
-        [SerializeField] private bool result;
+        [SerializeField] private Condition _condition;
 
         public override void Execute(ICommandService service) {
-            // 評価
-            IfBlock ifBlock = new IfBlock(){EvaluationFinished = result};
+            IfBlock ifBlock = new IfBlock();
             service.PlayProcess.SetUpAndPushBlock(this, ifBlock);
+
+            // 評価
+            bool result = _condition.Evaluate(service.PlayProcess);
+            ifBlock.EvaluationFinished = result;
+
             // Trueなら続行、FalseならBlockEndまで飛ぶ
             if(result == false) {
                 service.PlayProcess.JumpToIndex(ifBlock.EndIndex);
@@ -20,7 +24,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return "<color=orange>If</color>";
+            return "<color=orange><b>If</b></color>  " + _condition.GetSummary();
         }
     }
 }

@@ -96,7 +96,9 @@ namespace Kodama.ScenarioSystem.Editor {
                             }
                             Rect propertyDrawerRect = EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
                             propertyDrawerRect.x -= 10;
+                            propertyDrawerRect.xMax += 6;
                             propertyDrawerRect.y -= 16;
+                            propertyDrawerRect.yMax += 16;
                             if(currentCommandProp != null && propertyDrawerRect.height > 0) {
                                 EditorGUI.PropertyField(propertyDrawerRect, currentCommandProp, GUIContent.none, true);
                             }
