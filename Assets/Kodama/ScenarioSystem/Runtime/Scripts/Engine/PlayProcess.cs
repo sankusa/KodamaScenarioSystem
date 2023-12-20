@@ -87,6 +87,15 @@ namespace Kodama.ScenarioSystem {
                     else {
                         CurrentCommandIndex++;
                     }
+
+                    // ブロックの範囲を越えていたらブロックを破棄
+                    while(true) {
+                        Block block = PeekBlock();
+                        if(block == null) break;
+                        if(block.StartIndex <= CurrentCommandIndex && CurrentCommandIndex <= block.EndIndex) break;
+                        PopBlock();
+                    }
+
                     // コマンドインデックスが最大になったら終了
                     if(CurrentCommandIndex >= CurrentPage.Commands.Count) {
                         // ページプロセスをポップ

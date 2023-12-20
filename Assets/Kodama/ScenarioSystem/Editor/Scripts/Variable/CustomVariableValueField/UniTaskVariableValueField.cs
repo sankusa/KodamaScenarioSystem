@@ -9,7 +9,7 @@ namespace Kodama.ScenarioSystem.Editor {
     [CustomVariableValueField(typeof(UniTask))]
     public class UniTaskVariableValueField : VariableValueField<UniTask> {
         protected override UniTask Field(Rect rect, VariableBase variableBase) {
-            EditorGUI.LabelField(rect, "Null");
+            EditorGUI.LabelField(rect, "Default");
             return default;
         }
     }

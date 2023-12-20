@@ -37,7 +37,7 @@ namespace Kodama.ScenarioSystem.Editor {
                     GenericMenu menu = new GenericMenu();
                     foreach(var t in TypeCache.GetTypesDerivedFrom<VariableBase>().Where(t => !t.IsGenericType)) {
                         string typeName = t.BaseType
-                            .GetField("_value", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .GetField(Variable<object>.VariableName_Value, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                             .FieldType
                             .Name;
                         typeName = TypeNameUtil.ConvertToPrimitiveTypeName(typeName);
@@ -49,7 +49,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _variableList.drawHeaderCallback = rect => {
                     Rect headerRect = new Rect(rect.x - 4, rect.y, rect.width + 9, rect.height);
                     GUI.Box(headerRect, "", GUIStyles.TitleBar);
-                    EditorGUI.LabelField(headerRect, "変数");
+                    EditorGUI.LabelField(headerRect, "変数定義");
                 };
 
             }

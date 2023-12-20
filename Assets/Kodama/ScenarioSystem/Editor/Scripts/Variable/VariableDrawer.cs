@@ -13,7 +13,6 @@ namespace Kodama.ScenarioSystem.Editor {
     [CustomPropertyDrawer(typeof(Variable<>), true)]
     public class VariableDrawer {
         private static RectUtil.LayoutLength[] rectLengths = new RectUtil.LayoutLength[]{ new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1.5f)};
-        private static readonly string _valueFieldName = "_value";
 
         private Dictionary<Type, VariableValueFieldBase> _customValueDrawerDic = new Dictionary<Type, VariableValueFieldBase>();
 
@@ -28,7 +27,7 @@ namespace Kodama.ScenarioSystem.Editor {
         public void OnGUI(Rect rect, SerializedProperty property, VariableBase variable) {
             // 必要な値を取得
             Scenario scenario = property.serializedObject.targetObject as Scenario;
-            FieldInfo valueFieldInfo = variable.GetType().BaseType.GetField(_valueFieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo valueFieldInfo = variable.GetType().BaseType.GetField(Variable<object>.VariableName_Value, BindingFlags.NonPublic | BindingFlags.Instance);
             string typeName = TypeNameUtil.ConvertToPrimitiveTypeName(valueFieldInfo.FieldType.Name);
 
             // 各要素の描画範囲
@@ -51,21 +50,28 @@ namespace Kodama.ScenarioSystem.Editor {
                 _customValueDrawerDic[valueFieldInfo.FieldType].Draw(RectUtil.Margin(rects[2], bottomMargin: 2), scenario, variable);
             } 
             else {
-                SerializedProperty valueProp = property.FindPropertyRelative(_valueFieldName);
-                EditorGUI.PropertyField(rects[2], valueProp, GUIContent.none, true);
+                SerializedProperty valueProp = property.FindPropertyRelative(Variable<object>.VariableName_Value);
+                if(valueProp == null) {
+                    EditorGUI.LabelField(rects[2], "Default");
+                }
+                else {
+                    EditorGUI.PropertyField(rects[2], valueProp, GUIContent.none, true);
+                }
             }
         }
 
         public float GetPropertyHeight(SerializedProperty property, VariableBase variable) {
-            SerializedProperty valueProp = property.FindPropertyRelative(_valueFieldName);
-            FieldInfo valueFieldInfo = variable.GetType().BaseType.GetField(_valueFieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            SerializedProperty valueProp = property.FindPropertyRelative(Variable<object>.VariableName_Value);
+            FieldInfo valueFieldInfo = variable.GetType().BaseType.GetField(Variable<object>.VariableName_Value, BindingFlags.NonPublic | BindingFlags.Instance);
 
             if(_customValueDrawerDic.ContainsKey(valueFieldInfo.FieldType)) {
                 return _customValueDrawerDic[valueFieldInfo.FieldType].GetHeight();
             }
-            else {
-                return EditorGUI.GetPropertyHeight(valueProp, true);
-            }
+
+            if(valueProp == null) return EditorGUIUtility.singleLineHeight;
+
+            return EditorGUI.GetPropertyHeight(valueProp, true);
+
         }
     }
 }

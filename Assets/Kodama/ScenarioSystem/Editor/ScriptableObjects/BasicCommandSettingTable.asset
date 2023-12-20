@@ -45,7 +45,39 @@ MonoBehaviour:
     _groupId: Control
     _icon: {fileID: 0}
     _commandScript: {fileID: 11500000, guid: 57c9cb4037e5a5a4f9191231fa7e3878, type: 3}
+  - _displayName: ElseIf
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: 8cf13adfbb2ad734aac221981d94307f, type: 3}
   - _displayName: EndIf
     _groupId: Control
     _icon: {fileID: 0}
     _commandScript: {fileID: 11500000, guid: 8d869771672c08641b8c8012713e85b7, type: 3}
+  - _displayName: While
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: 521e97dc10e48e24ea4e763ba56dee58, type: 3}
+  - _displayName: EndWhile
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: d0c18c59827a7d348bdfeedeb2246346, type: 3}
+  - _displayName: Delay
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: 404194c1c0398dc4cb2a74799c9d452b, type: 3}
+  - _displayName: Break
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: e2207d9dc7334f4439a01f2237912798, type: 3}
+  - _displayName: Continue
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: 16fb5535f28b8154f950b62381487ab3, type: 3}
+  - _displayName: Repeat
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: 93750d603e9dcbd418cf136df9b52c0a, type: 3}
+  - _displayName: EndRepeat
+    _groupId: Control
+    _icon: {fileID: 0}
+    _commandScript: {fileID: 11500000, guid: f89b632badd91d044bd5aec0215d70c0, type: 3}

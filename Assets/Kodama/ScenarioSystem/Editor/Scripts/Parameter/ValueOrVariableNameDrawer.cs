@@ -28,7 +28,12 @@ namespace Kodama.ScenarioSystem.Editor {
                 SerializedProperty valueProp = property.FindPropertyRelative("_value");
                 Rect valueFieldRect = new Rect(rect.x, rect.y, rect.width - _miniPopUpWidth + 12, rect.height);
 
-                EditorGUI.PropertyField(valueFieldRect, valueProp, GUIContent.none);
+                if(valueProp == null) {
+                    EditorGUI.LabelField(valueFieldRect, "Default");
+                }
+                else {
+                    EditorGUI.PropertyField(valueFieldRect, valueProp, GUIContent.none);
+                }
                 rect.xMin += rect.width - _miniPopUpWidth;
             }
         
