@@ -69,7 +69,7 @@ namespace Kodama.ScenarioSystem {
                     // コマンドインデックスが最大になったら終了
                     if(_currentCommandIndex >= _page.Commands.Count) {
                         break;
-                    }Debug.Log(_currentCommandIndex + ":" + _page.Commands.Count);
+                    }
                 }
             }
             catch(OperationCanceledException) {
