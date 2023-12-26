@@ -7,6 +7,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Codice.Client.Common;
 using UnityEngine.AddressableAssets;
+using Codice.Client.BaseCommands.BranchExplorer;
 
 namespace Kodama.ScenarioSystem {
     public class ScenarioEngine : MonoBehaviour {
@@ -18,55 +19,70 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private ComponentBinding _componentBinding;
         private ServiceLocator _serviceLocator;
 
-        // シナリオ再生機能
-        private ScenarioPlayer _scenarioPlayer;
-
-        public bool WaitingPreload => _scenarioPlayer.WaitingPreload;
-        public bool IsPlaying => _scenarioPlayer.IsPlaying;
-
         void Awake() {
             _serviceLocator = new ServiceLocator(_componentBinding);
-            _scenarioPlayer = new ScenarioPlayer(_serviceLocator);
-            // 初期アタッチ済みシナリオをキャッシュに追加
+            // PlayableScenarioを準備
             foreach(Scenario scenario in _scenarios) {
-                AddScenario(scenario, false);
+                PlayableScenarioManager.Instance.GetOrCreatePlayableScenario(scenario, this);
             }
             // 自動再生
             if(_playFirstScenarioOnAwake && _scenarios.Count > 0) {
-                _scenarioPlayer.PlayScenario(_scenarios[0].name);
+                Play(_scenarios[0].name);
             }
         }
 
         void OnDestroy() {
-            _scenarioPlayer.Dispose();
-            ScenarioManager.Instance.RemoveAll();
+            // PlayableScenarioを解放
+            foreach(Scenario scenario in _scenarios) {
+                PlayableScenarioManager.Instance.ReleasePlayableScenario(this);
+            }
         }
-
-        /// <summary>
-        /// シナリオの追加
-        /// </summary>
-        /// <param name="scenario">シナリオ</param>
-        /// <param name="removeOnExitScenario">シナリオ終了時に自動でRemoveするか</param>
-        /// <param name="onRemove">Removeコールバック</param>
-        public void AddScenario(Scenario scenario, bool removeOnExitScenario = false, Action onRemove = null) =>
-            ScenarioManager.Instance.Add(scenario, removeOnExitScenario, onRemove);
-
-        /// <summary>
-        /// シナリオを外す
-        /// </summary>
-        /// <param name="scenario"></param>
-        public void RemoveScenario(Scenario scenario) => ScenarioManager.Instance.Remove(scenario);
 
         /// <summary>
         /// シナリオ非同期実行
         /// </summary>
-        public async UniTask PlayScenarioAsync(string scenarioName, CancellationToken cancellationToken = default) =>
-            await _scenarioPlayer.PlayScenarioAsync(scenarioName, cancellationToken);
+        public async UniTask PlayAsync(Scenario scenario, CancellationToken cancellationToken = default) {
+            CancellationToken linkedToken = CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                this.GetCancellationTokenOnDestroy()
+            ).Token;
+
+            linkedToken.ThrowIfCancellationRequested();
+
+            var tmpReferenceSource = new LightReferenceSource();
+
+            PlayableScenario playable = PlayableScenarioManager.Instance.GetOrCreatePlayableScenario(scenario, tmpReferenceSource);
+
+            await ScenarioPlayLoop.PlayAsync(playable.Scenario, null, _serviceLocator,
+                () => PlayableScenarioManager.Instance.ReleasePlayableScenario(tmpReferenceSource),
+                cancellationToken: linkedToken
+            );
+        }
 
         /// <summary>
         /// シナリオ同期実行
         /// </summary>
-        public void PlayScenario(string scenarioName, CancellationToken cancellationToken = default) =>
-            _scenarioPlayer.PlayScenario(scenarioName, cancellationToken);
+        public void Play(Scenario scenario, CancellationToken cancellationToken = default) =>
+            PlayAsync(scenario, cancellationToken).Forget(e => Debug.LogError(e));
+
+        /// <summary>
+        /// 準備済みシナリオ非同期実行
+        /// </summary>
+        public async UniTask PlayAsync(string scenarioName, Action onProcessFinished = null, CancellationToken cancellationToken = default) {
+            CancellationToken linkedToken = CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                this.GetCancellationTokenOnDestroy()
+            ).Token;
+
+            linkedToken.ThrowIfCancellationRequested();
+
+            await ScenarioPlayLoop.PlayAsync(scenarioName, null, _serviceLocator, onProcessFinished, null, linkedToken);
+        }
+            
+        /// <summary>
+        /// 準備済みシナリオ同期実行
+        /// </summary>
+        public void Play(string scenarioName, Action onAllProcessCompletedOrCancelled = null, CancellationToken cancellationToken = default) =>
+            PlayAsync(scenarioName, onAllProcessCompletedOrCancelled, cancellationToken).Forget(e => Debug.LogError(e));
     }
 }

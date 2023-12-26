@@ -7,6 +7,8 @@ namespace Kodama.ScenarioSystem {
     public class Scenario : ScriptableObject {
         [SerializeField] private List<ScenarioPage> _pages;
         public IReadOnlyList<ScenarioPage> Pages => _pages;
+        public ScenarioPage DefaultPage => _pages[0];
+
         [SerializeReference] private List<VariableBase> _variables;
         public IList<VariableBase> Variables => _variables;
     }

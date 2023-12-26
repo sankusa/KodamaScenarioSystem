@@ -8,8 +8,8 @@ namespace Kodama.ScenarioSystem {
         public string BlockType => "If";
         
         public override void Execute(ICommandService service) {
-            if(service.PlayProcess.PeekBlock() is IfBlock) {
-                service.PlayProcess.PopBlock();
+            if(service.PagePlayProcess.PeekBlock() is IfBlock) {
+                service.PagePlayProcess.PopBlock();
             }
         }
 

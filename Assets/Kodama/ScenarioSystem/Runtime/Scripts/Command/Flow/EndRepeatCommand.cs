@@ -8,8 +8,8 @@ namespace Kodama.ScenarioSystem {
         public string BlockType => "Repeat";
         
         public override void Execute(ICommandService service) {
-            if(service.PlayProcess.PeekBlock() is RepeatBlock repeatBlock) {
-                service.PlayProcess.JumpToIndex(repeatBlock.StartIndex);
+            if(service.PagePlayProcess.PeekBlock() is RepeatBlock repeatBlock) {
+                service.PagePlayProcess.JumpToIndex(repeatBlock.StartIndex);
             }
         }
 

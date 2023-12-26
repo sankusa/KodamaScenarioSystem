@@ -11,15 +11,15 @@ namespace Kodama.ScenarioSystem {
 
         public override void Execute(ICommandService service) {
             IfBlock ifBlock = new IfBlock();
-            service.PlayProcess.SetUpAndPushBlock(this, ifBlock);
+            service.PagePlayProcess.SetUpAndPushBlock(this, ifBlock);
 
             // 評価
-            bool result = _condition.Evaluate(service.PlayProcess);
+            bool result = _condition.Evaluate(service.PagePlayProcess);
             ifBlock.EvaluationFinished = result;
 
             // Trueなら続行、FalseならBlockEndまで飛ぶ
             if(result == false) {
-                service.PlayProcess.JumpToIndex(ifBlock.EndIndex);
+                service.PagePlayProcess.JumpToIndex(ifBlock.EndIndex);
             }
         }
 

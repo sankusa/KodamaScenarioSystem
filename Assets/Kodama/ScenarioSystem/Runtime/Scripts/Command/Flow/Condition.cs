@@ -63,7 +63,7 @@ namespace Kodama.ScenarioSystem {
             _valueOrVariableName = new IntValueOrVariableName();
         }
 
-        public bool Evaluate(IPlayProcess process) {
+        public bool Evaluate(IPagePlayProcess process) {
             object value1 = process.GetVariableValue(_variableName.TargetType, _variableName.Name);
             object value2 = string.IsNullOrEmpty(_valueOrVariableName.VariableName)
                 ? _valueOrVariableName.GetValueAsObject()

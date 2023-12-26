@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     public class CommandService : ICommandService {
-        private readonly IPlayProcess _playProcess;
-        public IPlayProcess PlayProcess => _playProcess;
+        private readonly IPagePlayProcess _pagePlayProcess;
+        public IPagePlayProcess PagePlayProcess => _pagePlayProcess;
 
         private readonly IServiceLocator _serviceLocator;
         public IServiceLocator ServiceLocator => _serviceLocator;
 
-        public CommandService(IPlayProcess playProcess, IServiceLocator serviceLocator) {
-            _playProcess = playProcess;
+        public CommandService(IPagePlayProcess pagePlayProcess, IServiceLocator serviceLocator) {
+            _pagePlayProcess = pagePlayProcess;
             _serviceLocator = serviceLocator;
         }
     }

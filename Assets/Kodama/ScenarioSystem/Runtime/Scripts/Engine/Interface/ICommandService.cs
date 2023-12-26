@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     public interface ICommandService {
-        IPlayProcess PlayProcess {get;}
+        IPagePlayProcess PagePlayProcess {get;}
         IServiceLocator ServiceLocator {get;}
     }
 }

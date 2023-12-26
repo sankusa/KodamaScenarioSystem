@@ -7,9 +7,9 @@ namespace Kodama.ScenarioSystem {
     public class ContinueCommand : CommandBase {
         
         public override void Execute(ICommandService service) {
-            if(service.PlayProcess.PeekBlock() is Block.ILoopBlock) {
-                Block block = service.PlayProcess.PopBlock();
-                service.PlayProcess.JumpToIndex(block.StartIndex);
+            if(service.PagePlayProcess.PeekBlock() is Block.ILoopBlock) {
+                Block block = service.PagePlayProcess.PopBlock();
+                service.PagePlayProcess.JumpToIndex(block.StartIndex);
             }
         }
 

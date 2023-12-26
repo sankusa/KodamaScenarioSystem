@@ -12,29 +12,29 @@ namespace Kodama.ScenarioSystem {
         public override void Execute(ICommandService service) {
             IfBlock ifBlock;
             // Ifブロックを取り出して再プッシュ
-            if(service.PlayProcess.PeekBlock() is IfBlock) {
-                ifBlock = service.PlayProcess.PopBlock() as IfBlock;
-                service.PlayProcess.SetUpAndPushBlock(this, ifBlock);
+            if(service.PagePlayProcess.PeekBlock() is IfBlock) {
+                ifBlock = service.PagePlayProcess.PopBlock() as IfBlock;
+                service.PagePlayProcess.SetUpAndPushBlock(this, ifBlock);
             }
             // Ifブロック中でなければ、新規作成
             else {
                 ifBlock = new IfBlock();
-                service.PlayProcess.SetUpAndPushBlock(this, ifBlock);
+                service.PagePlayProcess.SetUpAndPushBlock(this, ifBlock);
             }
 
             // 評価終了済ならジャンプ
             if(ifBlock.EvaluationFinished) {
-                service.PlayProcess.JumpToIndex(ifBlock.EndIndex);
+                service.PagePlayProcess.JumpToIndex(ifBlock.EndIndex);
             }
             // 評価未了ならIfCommandと同じ動作
             else {
                 // 評価
-                bool result = _condition.Evaluate(service.PlayProcess);
+                bool result = _condition.Evaluate(service.PagePlayProcess);
                 ifBlock.EvaluationFinished = result;
 
                 // Trueなら続行、FalseならBlockEndまで飛ぶ
                 if(result == false) {
-                    service.PlayProcess.JumpToIndex(ifBlock.EndIndex);
+                    service.PagePlayProcess.JumpToIndex(ifBlock.EndIndex);
                 }
             }
         }

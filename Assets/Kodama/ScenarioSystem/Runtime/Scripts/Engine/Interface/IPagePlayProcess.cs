@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    public interface IPlayProcess  {
-        bool IsPaused {get;}
+    public interface IPagePlayProcess {
+        string SubsequentPageName {set;}
+        string SubsequentScenarioName {set;}
+        bool SwitchRootProcessOnPlaySubsequentScenario {set;}
+        Action OnNewRootProcessFinished {set;}
         /// <summary>
         /// 一時停止
         /// </summary>
@@ -19,6 +22,7 @@ namespace Kodama.ScenarioSystem {
         /// インデックスへジャンプ
         /// </summary>
         void JumpToIndex(int index);
+        void JumpToEndIndex();
 
         /// <summary>
         /// ラベルへジャンプ
@@ -26,16 +30,6 @@ namespace Kodama.ScenarioSystem {
         void JumpToLabel(string label);
 
         void JumpToBlockEnd(IBlockStart startBlock);
-
-        /// <summary>
-        /// ページへジャンプ
-        /// </summary>
-        void JumpToPage(string pageName, bool returnOnExit = false);
-
-        /// <summary>
-        /// 他のシナリオへジャンプ
-        /// </summary>
-        void JumpToScenario(string scenarioName, bool returnOnExit = false);
 
         /// <summary>
         /// 指定した型、名前の変数の値を取得

@@ -11,17 +11,17 @@ namespace Kodama.ScenarioSystem {
 
         public override void Execute(ICommandService service) {
             RepeatBlock repeatBlock;
-            if(service.PlayProcess.PeekBlock() is RepeatBlock rp && rp.RepeatCommand == this) {
-                repeatBlock = service.PlayProcess.PeekBlock() as RepeatBlock;
+            if(service.PagePlayProcess.PeekBlock() is RepeatBlock rp && rp.RepeatCommand == this) {
+                repeatBlock = service.PagePlayProcess.PeekBlock() as RepeatBlock;
                 repeatBlock.Counter++;
             }
             else {
                 repeatBlock = new RepeatBlock(this);
-                service.PlayProcess.SetUpAndPushBlock(this, repeatBlock);
+                service.PagePlayProcess.SetUpAndPushBlock(this, repeatBlock);
             }
 
             if(repeatBlock.Counter >= _times) {
-                service.PlayProcess.JumpToIndex(repeatBlock.EndIndex + 1);
+                service.PagePlayProcess.JumpToIndex(repeatBlock.EndIndex + 1);
             }
         }
 

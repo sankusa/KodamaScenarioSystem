@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
         public string TargetLabel => _targetLabel;
 
         public override void Execute(ICommandService service) {
-            service.PlayProcess.JumpToLabel(_targetLabel);
+            service.PagePlayProcess.JumpToLabel(_targetLabel);
         }
     }
 }
