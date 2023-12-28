@@ -22,10 +22,11 @@ namespace Kodama.ScenarioSystem {
 
         private Action<ScenarioPlayProcess> _onAllPageProcessFinished;
 
-        public ScenarioPlayProcess(RootPlayProcess rootProcess, Scenario scenario, Action<ScenarioPlayProcess> _onAllPageProcessFinished) {
+        public ScenarioPlayProcess(RootPlayProcess rootProcess, Scenario scenario, Action<ScenarioPlayProcess> onAllPageProcessFinished) {
             _rootProcess = rootProcess;
             _scenario = scenario;
             _variables = Scenario?.Variables.Select(x => x.Copy()).ToList();
+            _onAllPageProcessFinished = onAllPageProcessFinished;
         }
 
         public PagePlayProcess CreatePageProcess(ScenarioPage page) {

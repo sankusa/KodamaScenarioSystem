@@ -53,9 +53,9 @@ namespace Kodama.ScenarioSystem {
 
             PlayableScenario playable = PlayableScenarioManager.Instance.GetOrCreatePlayableScenario(scenario, tmpReferenceSource);
 
-            await ScenarioPlayLoop.PlayAsync(playable.Scenario, null, _serviceLocator,
+            await ProcessManager.PlayNewProcessAsync(playable.Scenario, null, _serviceLocator,
                 () => PlayableScenarioManager.Instance.ReleasePlayableScenario(tmpReferenceSource),
-                cancellationToken: linkedToken
+                linkedToken
             );
         }
 
@@ -76,7 +76,7 @@ namespace Kodama.ScenarioSystem {
 
             linkedToken.ThrowIfCancellationRequested();
 
-            await ScenarioPlayLoop.PlayAsync(scenarioName, null, _serviceLocator, onProcessFinished, null, linkedToken);
+            await ProcessManager.PlayNewProcessAsync(scenarioName, null, _serviceLocator, onProcessFinished, linkedToken);
         }
             
         /// <summary>
