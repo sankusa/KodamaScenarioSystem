@@ -67,7 +67,12 @@ namespace Kodama.ScenarioSystem.Editor {
                 // ページが選択されていたら
                 if(0 <= _status.CurrentPageIndex && _status.CurrentPageIndex < pagesProp.arraySize) {
                     SerializedProperty currentPageProp = pagesProp.GetArrayElementAtIndex(_status.CurrentPageIndex);
-                    SerializedProperty currentPageCommandsProp = currentPageProp.FindPropertyRelative("_commands");
+
+                    SerializedObject serializedPage = new SerializedObject(currentPageProp.objectReferenceValue);
+                    serializedPage.Update();
+                    EditorGUI.BeginChangeCheck();
+
+                    SerializedProperty currentPageCommandsProp = serializedPage.FindProperty("_commands");
                     SerializedProperty currentCommandProp = null;
                     if(_status.CurrentCommandIndex < currentPageCommandsProp.arraySize) {
                         currentCommandProp = currentPageCommandsProp.GetArrayElementAtIndex(_status.CurrentCommandIndex);
@@ -84,7 +89,7 @@ namespace Kodama.ScenarioSystem.Editor {
                             _detailAreaSplitView.Begin();
 
                             using(new EditorGUILayout.VerticalScope(GUILayout.ExpandWidth(true))) {
-                                _pageDetailArea.DrawLayout(_status, scenario, currentPageProp, scenario.Pages[_status.CurrentPageIndex]);
+                                _pageDetailArea.DrawLayout(_status, scenario, serializedPage);
                             }
 
                             _detailAreaSplitView.Split();
@@ -117,13 +122,17 @@ namespace Kodama.ScenarioSystem.Editor {
                                 _commandAreaSplitView.Begin();
                                 _commandGroupArea.DrawLayout(_status);
                                 _commandAreaSplitView.Split();
-                                _commandListArea.DrawLayout(_status, scenario, scenario.Pages[_status.CurrentPageIndex]);
+                                _commandListArea.DrawLayout(_status, serializedPage);
                                 _commandAreaSplitView.End();
                             }
 
                             _inspectorSplitView.End();
                             _detailAreaSplitView.End();
                         }
+                    }
+
+                    if(EditorGUI.EndChangeCheck()) {
+                        serializedPage.ApplyModifiedProperties();
                     }
                 }
             }

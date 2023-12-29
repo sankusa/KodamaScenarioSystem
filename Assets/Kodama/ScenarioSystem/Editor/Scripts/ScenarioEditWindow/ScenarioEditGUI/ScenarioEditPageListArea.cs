@@ -10,24 +10,47 @@ namespace Kodama.ScenarioSystem.Editor {
 
         public void DrawLayout(ScenarioEditGUIStatus status, Scenario scenario, SerializedObject serializedObject) {
             if(_pageList == null) {
-                _pageList = new ReorderableList(serializedObject, serializedObject.FindProperty("_pages"));
+                _pageList = new ReorderableList(serializedObject, serializedObject.FindProperty("_pages")) {
+                    drawHeaderCallback = rect => EditorGUI.LabelField(rect, $"{scenario.Pages.Count} Pages"),
 
-                _pageList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, $"{scenario.Pages.Count} Pages");
+                    drawElementCallback = (rect, index, isActive, isFocused) => {
+                        if (scenario.Pages[index] == null) {
+                            EditorGUI.LabelField(rect, "Null");
+                        }
+                        else {
+                            EditorGUI.LabelField(rect, scenario.Pages[index].name);
+                        }
+                    },
 
-                _pageList.drawElementCallback = (rect, index, isActive, isFocused) => {
-                    EditorGUI.LabelField(rect, scenario.Pages[index].Name);
-                };
+                    onSelectCallback = list => {
+                        status.CurrentPageIndex = list.index;
+                    },
 
-                _pageList.onSelectCallback = list => {
-                    status.CurrentPageIndex = list.index;
-                };
+                    onAddCallback = list => {
+                        ScenarioPage newPage = ScriptableObject.CreateInstance<ScenarioPage>();
+                        newPage.name = "New Page";
+                        newPage.Scenario = scenario;
+                        Undo.RegisterCreatedObjectUndo(newPage, "Add new page");
+                        AssetDatabase.AddObjectToAsset(newPage, scenario);
 
-                _pageList.onAddCallback = list => {
-                    SerializedProperty pagesProp = serializedObject.FindProperty("_pages");
-                    pagesProp.InsertArrayElementAtIndex(pagesProp.arraySize);
-                    SerializedProperty newPageProp = pagesProp.GetArrayElementAtIndex(pagesProp.arraySize - 1);
-                    SerializedProperty commandsProp = newPageProp.FindPropertyRelative("_commands");
-                    commandsProp.arraySize = 0;
+                        SerializedProperty pagesProp = serializedObject.FindProperty("_pages");
+                        pagesProp.InsertArrayElementAtIndex(pagesProp.arraySize);
+                        SerializedProperty newPageProp = pagesProp.GetArrayElementAtIndex(pagesProp.arraySize - 1);
+                        newPageProp.objectReferenceValue = newPage;
+                    },
+
+                    onRemoveCallback = list => {
+                        SerializedProperty pagesProp = serializedObject.FindProperty("_pages");
+                        if (list.index >= pagesProp.arraySize) return;
+                        SerializedProperty pageProp = pagesProp.GetArrayElementAtIndex(list.index);
+                        ScenarioPage page = pageProp.objectReferenceValue as ScenarioPage;
+                        
+                        Undo.RecordObject(scenario, "Remove ScenarioPage");
+                        scenario.Pages.RemoveAt(list.index);
+                        Undo.DestroyObjectImmediate(page);
+
+                        EditorUtility.SetDirty(scenario);
+                    },
                 };
 
                 _pageList.drawHeaderCallback = rect => {

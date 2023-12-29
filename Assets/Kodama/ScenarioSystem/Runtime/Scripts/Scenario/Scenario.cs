@@ -7,7 +7,7 @@ namespace Kodama.ScenarioSystem {
     [CreateAssetMenu(fileName = "New " + nameof(Scenario), menuName = nameof(Kodama) + "/" + nameof(ScenarioSystem) + "/" + nameof(Scenario))]
     public class Scenario : ScriptableObject {
         [SerializeField] private List<ScenarioPage> _pages;
-        public IReadOnlyList<ScenarioPage> Pages => _pages;
+        public IList<ScenarioPage> Pages => _pages;
         public ScenarioPage DefaultPage => _pages[0];
 
         [SerializeReference] private List<VariableBase> _variables;

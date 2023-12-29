@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Codice.CM.Client.Gui;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace Kodama.ScenarioSystem.Editor {
         public static GUIStyle TitleBar {get;}
         public static GUIStyle BorderedButton {get;}
         public static GUIStyle ClearButton {get;}
+        public static GUIStyle CommandListElementStyle {get;}
 
         static GUIStyles() {
             SummaryLabel = new GUIStyle(EditorStyles.label) {
@@ -24,8 +26,11 @@ namespace Kodama.ScenarioSystem.Editor {
                 margin = new RectOffset(),
                 padding = new RectOffset()
             };
-            BorderedButton = new GUIStyle("AppToolbarButtonLeft");
+            BorderedButton = "AppToolbarButtonLeft";
             ClearButton = "RL FooterButton";
+            CommandListElementStyle = new GUIStyle("GameViewBackground") {
+                margin = new RectOffset(0, 0, 0, 4)
+            };
         }
     }
 }

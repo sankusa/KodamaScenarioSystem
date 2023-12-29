@@ -43,7 +43,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public PagePlayProcess CreatePageProcess(string pageName) {
-            ScenarioPage page = Scenario.Pages.FirstOrDefault(x => x.Name == pageName);
+            ScenarioPage page = Scenario.Pages.FirstOrDefault(x => x.name == pageName);
             if(page == null) {
                 Debug.LogWarning($"Page \"{pageName}\" not found.");
                 return null;

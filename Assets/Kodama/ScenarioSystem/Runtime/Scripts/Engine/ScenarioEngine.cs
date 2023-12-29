@@ -63,7 +63,9 @@ namespace Kodama.ScenarioSystem {
         /// シナリオ同期実行
         /// </summary>
         public void Play(Scenario scenario, CancellationToken cancellationToken = default) =>
-            PlayAsync(scenario, cancellationToken).Forget(e => Debug.LogError(e));
+            PlayAsync(scenario, cancellationToken).Forget(e => {
+                if((e is OperationCanceledException) == false) Debug.LogError(e);
+            });
 
         /// <summary>
         /// 準備済みシナリオ非同期実行

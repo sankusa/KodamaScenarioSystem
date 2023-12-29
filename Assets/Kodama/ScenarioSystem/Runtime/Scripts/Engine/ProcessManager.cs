@@ -16,7 +16,7 @@ namespace Kodama.ScenarioSystem {
                 pageProcess = scenarioProcess.CreatePageProcess(scenario.DefaultPage);
             }
             else {
-                pageProcess = scenarioProcess.CreatePageProcess(scenario.Pages.FirstOrDefault(x => x.Name == pageName));
+                pageProcess = scenarioProcess.CreatePageProcess(scenario.Pages.FirstOrDefault(x => x.name == pageName));
             }          
 
             await CorePlayLoopAsync(pageProcess, cancellationToken);
@@ -94,7 +94,7 @@ namespace Kodama.ScenarioSystem {
                 pageProcess = scenarioProcess.CreatePageProcess(scenario.DefaultPage);
             }
             else {
-                pageProcess = scenarioProcess.CreatePageProcess(scenario.Pages.FirstOrDefault(x => x.Name == pageName));
+                pageProcess = scenarioProcess.CreatePageProcess(scenario.Pages.FirstOrDefault(x => x.name == pageName));
             }          
 
             await CorePlayLoopAsync(pageProcess, cancellationToken);

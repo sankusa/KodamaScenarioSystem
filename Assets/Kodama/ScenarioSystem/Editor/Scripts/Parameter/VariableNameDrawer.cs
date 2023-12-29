@@ -13,7 +13,8 @@ namespace Kodama.ScenarioSystem.Editor {
         public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
             VariableName variableName = property.GetObject() as VariableName;
             Type targetType = variableName.TargetType;
-            Scenario scenario = property.serializedObject.targetObject as Scenario;
+            ScenarioPage page = property.serializedObject.targetObject as ScenarioPage;
+            Scenario scenario = page.Scenario;
             SerializedProperty nameProp = property.FindPropertyRelative("_name");
         
             string emptyConvertedVariableName = string.IsNullOrEmpty(nameProp.stringValue) ? _emptyString : nameProp.stringValue;

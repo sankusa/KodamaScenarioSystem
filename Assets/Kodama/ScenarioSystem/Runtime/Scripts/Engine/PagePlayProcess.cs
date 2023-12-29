@@ -76,9 +76,9 @@ namespace Kodama.ScenarioSystem {
                 throw;
             }
             catch(Exception e) {
-                Debug.LogError(_page.Name + ":" + _currentCommandIndex);
+                Debug.LogError(_page.name + ":" + _currentCommandIndex);
                 CommandBase command = _page.Commands[_currentCommandIndex];
-                LogCommandException(false, _scenarioProcess.Scenario.name, _page.Name, _currentCommandIndex, command.GetType(), e);
+                LogCommandException(false, _scenarioProcess.Scenario.name, _page.name, _currentCommandIndex, command.GetType(), e);
                 throw;
             }
             finally {
@@ -118,7 +118,7 @@ namespace Kodama.ScenarioSystem {
                         }
                     })
                     .Forget(e => {
-                        LogCommandException(true, _scenarioProcess.Scenario.name, page.Name, commandIndex, commandBase.GetType(), e);
+                        LogCommandException(true, _scenarioProcess.Scenario.name, page.name, commandIndex, commandBase.GetType(), e);
                     });
                 }
             }

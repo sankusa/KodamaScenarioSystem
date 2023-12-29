@@ -12,9 +12,7 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditPageDetailArea {
         private ReorderableList _commandList;
-        private Vector2 _scrollPos;
-        private string _pathOld;
-
+        private int _pageInstanceIdOld;
         private bool _commandParameterChanged = false;
 
         private Stack<string> _indentBlockTypeStack = new Stack<string>();
@@ -28,10 +26,15 @@ namespace Kodama.ScenarioSystem.Editor {
             _commandParameterChanged = true;
         }
 
-        public void DrawLayout(ScenarioEditGUIStatus guiStatus, Scenario scenario, SerializedProperty pageProp, ScenarioPage page) {
-            bool pageChanged = _pathOld != pageProp.propertyPath;
-            if(_commandList == null || pageChanged || _commandParameterChanged) {
-                _commandList = new ReorderableList(pageProp.serializedObject, pageProp.FindPropertyRelative("_commands"));
+        public void DrawLayout(ScenarioEditGUIStatus guiStatus, Scenario scenario, SerializedObject serializedPage) {
+            ScenarioPage page = serializedPage.targetObject as ScenarioPage;
+            bool pageChanged = _pageInstanceIdOld != page.GetInstanceID();
+            // コマンド追加系操作ののUndo時、ReorderableListに要素数の減少が反映されず、
+            // Undo前の要素数を描画しようとしてNullReferenceExceptionが発生。
+            // 対策として、要素数の食い違いがあったらReorderableListを再生成する。
+            bool invalidReorderableListSize = _commandList != null ? (_commandList.count != page.Commands.Count) : false;
+            if(_commandList == null || pageChanged || _commandParameterChanged || invalidReorderableListSize) {
+                _commandList = new ReorderableList(serializedPage, serializedPage.FindProperty("_commands"));
 
                 _commandList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Commands");
 
@@ -40,6 +43,8 @@ namespace Kodama.ScenarioSystem.Editor {
                     if(index == 0) {
                         _indentBlockTypeStack.Clear();
                     }
+
+                    if(index >= page.Commands.Count) return;
 
                     CommandBase command = page.Commands[index];
                     //if(_commandList.count != page.Commands.Count) return;
@@ -99,14 +104,14 @@ namespace Kodama.ScenarioSystem.Editor {
 
                     using (new ContentColorScope(new Color(1, 1, 1, 0.5f))) {
                     if(GUI.Button(copyButtonRect, CommonEditorResources.Instance.CommandCopyIcon, GUIStyles.BorderedButton)) {
-                        Undo.RecordObject(scenario, "Copy Command");
-                        page.Commands.Insert(index + 1, page.Commands[index].Copy());
-                        EditorUtility.SetDirty(scenario);
+                        Undo.RecordObject(page, "Copy Command");
+                        page.InsertCommand(index + 1, page.Commands[index].Copy());
                         guiStatus.CurrentCommandIndex = index + 1;
                     }
                     //GUIContent i = EditorGUIUtility.TrIconContent("Toolbar Minus", "Remove selection from list");
                     if(GUI.Button(removeButtonRect, CommonEditorResources.Instance.CommandDeleteIcon, GUIStyles.BorderedButton)) {
-                        pageProp.FindPropertyRelative("_commands").DeleteArrayElementAtIndex(index);
+                        Undo.RecordObject(page, "Delete Command");
+                        page.RemoveCommandAt(index);
                     }
                     }
 
@@ -123,7 +128,14 @@ namespace Kodama.ScenarioSystem.Editor {
                 };
 
                 _commandList.elementHeightCallback = index => {
-                    return 13 + 15 * (1 + page.Commands[index].GetSummary().Where(c => c == '\n').Count());
+                    int rowCount;
+                    if(index < page.Commands.Count) {
+                        rowCount = 1 + page.Commands[index].GetSummary().Where(c => c == '\n').Count();
+                    }
+                    else {
+                        rowCount = 1;
+                    }
+                    return 13 + 15 * rowCount;
                 };
 
                 _commandList.onSelectCallback = list => {
@@ -147,7 +159,12 @@ namespace Kodama.ScenarioSystem.Editor {
                     );
                     EditorGUI.LabelField(rects[0], $"ページ {guiStatus.CurrentPageIndex + 1}");
                     EditorGUI.LabelField(rects[1], "ページ名");
-                    EditorGUI.PropertyField(rects[2], pageProp.FindPropertyRelative("_name"), GUIContent.none);
+
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUI.PropertyField(rects[2], serializedPage.FindProperty("m_Name"), GUIContent.none);
+                    if(EditorGUI.EndChangeCheck()) {
+                        serializedPage.ApplyModifiedProperties();
+                    }
                 };
                 _commandList.footerHeight = 0;
                 _commandList.displayAdd = false;
@@ -159,7 +176,7 @@ namespace Kodama.ScenarioSystem.Editor {
             _commandList.DoLayoutList();
             
             _commandParameterChanged = false;
-            _pathOld = pageProp.propertyPath;
+            _pageInstanceIdOld = page.GetInstanceID();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
         public string Message => _message;
 
         public override void Execute(ICommandService service) {
-            Debug.Log(_message);
+            Debug.Log($"{LogCaption}<b>Scenario</b>[ {Page.Scenario.name} ]    <b>Page</b>[ {Page.name} ]    <b>Index</b>[ {Index.ToString()} ]\n{_message}", Page.Scenario);
         }
 
         public override string GetSummary() {
