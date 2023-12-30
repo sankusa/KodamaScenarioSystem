@@ -49,7 +49,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _variableList.drawHeaderCallback = rect => {
                     Rect headerRect = new Rect(rect.x - 4, rect.y, rect.width + 9, rect.height);
                     GUI.Box(headerRect, "", GUIStyles.TitleBar);
-                    EditorGUI.LabelField(headerRect, "変数定義");
+                    EditorGUI.LabelField(headerRect, "Variable Define");
                 };
 
             }

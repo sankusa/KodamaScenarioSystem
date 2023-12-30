@@ -152,13 +152,13 @@ namespace Kodama.ScenarioSystem.Editor {
                     List<Rect> rects = RectUtil.DivideRectHorizontal(
                         headerRect,
                         new RectUtil.LayoutLength[]{
-                            new RectUtil.LayoutLength(1),
-                            new RectUtil.LayoutLength(60, RectUtil.LayoutType.Fixed),
+                            new RectUtil.LayoutLength(0.5f),
+                            new RectUtil.LayoutLength(84, RectUtil.LayoutType.Fixed),
                             new RectUtil.LayoutLength(1)
                         }
                     );
-                    EditorGUI.LabelField(rects[0], $"ページ {guiStatus.CurrentPageIndex + 1}");
-                    EditorGUI.LabelField(rects[1], "ページ名");
+                    EditorGUI.LabelField(rects[0], $"Page {guiStatus.CurrentPageIndex + 1}");
+                    EditorGUI.LabelField(rects[1], "Page Name : ");
 
                     EditorGUI.BeginChangeCheck();
                     EditorGUI.PropertyField(rects[2], serializedPage.FindProperty("m_Name"), GUIContent.none);

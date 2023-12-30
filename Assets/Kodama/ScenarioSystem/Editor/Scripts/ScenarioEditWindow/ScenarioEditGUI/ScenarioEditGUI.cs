@@ -9,7 +9,6 @@ namespace Kodama.ScenarioSystem.Editor {
         private ScenarioEditHeaderArea _headerArea;
         private ScenarioEditPageListArea _pageListArea;
         private ScenarioEditVariableArea _variableArea;
-        private ScenarioEditPageHeaderArea _pageHeaderArea;
         private ScenarioEditPageDetailArea _pageDetailArea;
         private ScenarioEditCommandGroupArea _commandGroupArea;
         private ScenarioEditCommandListArea _commandListArea;
@@ -25,7 +24,6 @@ namespace Kodama.ScenarioSystem.Editor {
             _headerArea = new ScenarioEditHeaderArea();
             _pageListArea = new ScenarioEditPageListArea();
             _variableArea = new ScenarioEditVariableArea();
-            _pageHeaderArea = new ScenarioEditPageHeaderArea();
             _pageDetailArea = new ScenarioEditPageDetailArea();
             _commandGroupArea = new ScenarioEditCommandGroupArea();
             _commandListArea = new ScenarioEditCommandListArea();
@@ -97,7 +95,7 @@ namespace Kodama.ScenarioSystem.Editor {
                             _inspectorSplitView.Begin();
 
                             using(new EditorGUILayout.VerticalScope(GUIStyles.TitleBar)) {
-                                EditorGUILayout.LabelField("コマンドパラメータ編集");
+                                EditorGUILayout.LabelField("Command Inspector");
                             }
                             Rect propertyDrawerRect = EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
                             propertyDrawerRect.x -= 10;
@@ -116,7 +114,7 @@ namespace Kodama.ScenarioSystem.Editor {
                             using(new EditorGUILayout.VerticalScope(GUIStyles.LeanGroupBox)) {
                                 GUI.backgroundColor = _;
                                 using(new EditorGUILayout.VerticalScope(GUIStyles.TitleBar)) {
-                                    EditorGUILayout.LabelField("コマンド");
+                                    EditorGUILayout.LabelField("Command Select");
                                 }
                                 
                                 _commandAreaSplitView.Begin();

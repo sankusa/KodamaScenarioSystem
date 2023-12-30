@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public class JumpToLabelCommand : CommandBase {
+    public class GoToLabelCommand : CommandBase {
         [SerializeField] private string _targetLabel;
         public string TargetLabel => _targetLabel;
 
@@ -16,6 +16,10 @@ namespace Kodama.ScenarioSystem {
                 if(Page.Commands[i] is LabelCommand labelCommand && labelCommand.Label == _targetLabel) break;
             }
             service.PagePlayProcess.JumpToIndex(i);
+        }
+
+        public override string GetSummary() {
+            return $"<color={Colors.BasicSummaryCaption}>Go To [ <color={Colors.Args}>{_targetLabel}</color> ] Label</color>";
         }
     }
 }

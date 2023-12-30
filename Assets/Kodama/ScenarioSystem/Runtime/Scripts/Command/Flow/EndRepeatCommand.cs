@@ -14,7 +14,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return "<color=orange><b>EndRepeat</b></color>";
+            return $"<color={Colors.BlockSummaryCaption}>EndRepeat</color>";
         }
     }
 }

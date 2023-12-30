@@ -31,7 +31,7 @@ namespace Kodama.ScenarioSystem {
 
                 case CallType.Async:
                     ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _pageName, cancellationToken)
-                        .Forget();
+                        .ForgetAndLogException();
                     break;
             }
         }

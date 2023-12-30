@@ -37,15 +37,26 @@ namespace Kodama.ScenarioSystem {
         }
 
         public async UniTask PlayAsync(CancellationToken cancellationToken = default) {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            CommandService commandService = new CommandService(this, _scenarioProcess.RootProcess.ServiceLocator);
-
             try {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // コマンドに提供する機能群を作成
+                CommandService commandService = new CommandService(this, _scenarioProcess.RootProcess.ServiceLocator);
+
                 while(true) {
                     CommandBase command = _page.Commands[_currentCommandIndex];
+
                     // コマンド実行
-                    await ExecuteCommandAsync(command, commandService,  cancellationToken);
+                    try {
+                        await ExecuteCommandAsync(command, commandService,  cancellationToken);
+                    }
+                    catch(OperationCanceledException) {
+                        throw;
+                    }
+                    catch(Exception e) {
+                        Debug.Log($"<b>Exception</b>[ " + e.GetType().FullName + " ] was thrown in " + CreateLogExceptionHeader(false, command));
+                        throw;
+                    }
 
                     // ポーズ中なら解除まで待機
                     await UniTask.WaitUntil(() => _isPaused == false, cancellationToken: cancellationToken);
@@ -72,15 +83,6 @@ namespace Kodama.ScenarioSystem {
                     }
                 }
             }
-            catch(OperationCanceledException) {
-                throw;
-            }
-            catch(Exception e) {
-                Debug.LogError(_page.name + ":" + _currentCommandIndex);
-                CommandBase command = _page.Commands[_currentCommandIndex];
-                LogCommandException(false, _scenarioProcess.Scenario.name, _page.name, _currentCommandIndex, command.GetType(), e);
-                throw;
-            }
             finally {
                 // 非同期実行中コマンドの終了を待って発火。
                 // 後続処理は即座に実行できるように処理は返す。
@@ -104,10 +106,6 @@ namespace Kodama.ScenarioSystem {
                 }
                 // 待機しない場合
                 else {
-                    // エラーログ出力用に値を保持
-                    ScenarioPage page = _page;
-                    int commandIndex = _currentCommandIndex;
-                    CommandBase commandBase = _page.Commands[commandIndex];
                     UniTask.Create(async () => {
                         _asyncExecutingCommandCounter++;
                         try {
@@ -117,9 +115,7 @@ namespace Kodama.ScenarioSystem {
                             _asyncExecutingCommandCounter--;
                         }
                     })
-                    .Forget(e => {
-                        LogCommandException(true, _scenarioProcess.Scenario.name, page.name, commandIndex, commandBase.GetType(), e);
-                    });
+                    .ForgetAndLogException(CreateLogExceptionHeader(true, asyncCommand));
                 }
             }
             else {
@@ -216,8 +212,8 @@ namespace Kodama.ScenarioSystem {
         }
 #endregion
 
-        private void LogCommandException(bool isAsync, string scenarioName, string pageName, int commandIndex, Type commandType, Exception e) {
-            Debug.LogError($"{(isAsync ? "[Async] " : "")} Scenario = \"{scenarioName}\", PageName = {pageName}, CommandIndex = {commandIndex}, CommandType = {commandType.Name}\n{e}");
+        private string CreateLogExceptionHeader(bool isAsync, CommandBase command) {
+            return $"{(isAsync ? "[Async] " : "")} {command.LogHeader}";
         }
     }
 }

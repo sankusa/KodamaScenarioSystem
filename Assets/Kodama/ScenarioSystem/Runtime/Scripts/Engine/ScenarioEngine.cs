@@ -63,9 +63,7 @@ namespace Kodama.ScenarioSystem {
         /// シナリオ同期実行
         /// </summary>
         public void Play(Scenario scenario, CancellationToken cancellationToken = default) =>
-            PlayAsync(scenario, cancellationToken).Forget(e => {
-                if((e is OperationCanceledException) == false) Debug.LogError(e);
-            });
+            PlayAsync(scenario, cancellationToken).ForgetAndLogException();
 
         /// <summary>
         /// 準備済みシナリオ非同期実行
@@ -85,6 +83,6 @@ namespace Kodama.ScenarioSystem {
         /// 準備済みシナリオ同期実行
         /// </summary>
         public void Play(string scenarioName, Action onAllProcessCompletedOrCancelled = null, CancellationToken cancellationToken = default) =>
-            PlayAsync(scenarioName, onAllProcessCompletedOrCancelled, cancellationToken).Forget(e => Debug.LogError(e));
+            PlayAsync(scenarioName, onAllProcessCompletedOrCancelled, cancellationToken).ForgetAndLogException();
     }
 }

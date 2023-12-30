@@ -85,19 +85,5 @@ namespace Kodama.ScenarioSystem {
                 if(playSubsequent == false) break;
             }
         }
-
-        public static async UniTask PlayAsync(Scenario scenario, string pageName, IServiceLocator serviceLocator, Action onProcessFinished, CancellationToken cancellationToken= default) {
-            RootPlayProcess rootProcess = new RootPlayProcess(serviceLocator, () => onProcessFinished?.Invoke());
-            ScenarioPlayProcess scenarioProcess = rootProcess.CreateScenarioProcess(scenario);
-            PagePlayProcess pageProcess;
-            if(string.IsNullOrEmpty(pageName)) {
-                pageProcess = scenarioProcess.CreatePageProcess(scenario.DefaultPage);
-            }
-            else {
-                pageProcess = scenarioProcess.CreatePageProcess(scenario.Pages.FirstOrDefault(x => x.name == pageName));
-            }          
-
-            await CorePlayLoopAsync(pageProcess, cancellationToken);
-        }
     }
 }

@@ -29,7 +29,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return "<color=orange><b>While</b></color>  " + _condition.GetSummary();
+            return $"<color={Colors.BlockSummaryCaption}>While</color>  " + _condition.GetSummary();
         }
     }
 }

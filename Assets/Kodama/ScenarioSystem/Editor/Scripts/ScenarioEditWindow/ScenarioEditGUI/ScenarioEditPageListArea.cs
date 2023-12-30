@@ -14,8 +14,8 @@ namespace Kodama.ScenarioSystem.Editor {
                     drawHeaderCallback = rect => EditorGUI.LabelField(rect, $"{scenario.Pages.Count} Pages"),
 
                     drawElementCallback = (rect, index, isActive, isFocused) => {
-                        if (scenario.Pages[index] == null) {
-                            EditorGUI.LabelField(rect, "Null");
+                        if(scenario.Pages[index] == scenario.DefaultPage) {
+                            EditorGUI.LabelField(rect, scenario.Pages[index].name + " ---- <Default>");
                         }
                         else {
                             EditorGUI.LabelField(rect, scenario.Pages[index].name);
@@ -56,7 +56,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _pageList.drawHeaderCallback = rect => {
                     Rect headerRect = new Rect(rect.x - 4, rect.y, rect.width + 9, rect.height);
                     GUI.Box(headerRect, "", GUIStyles.TitleBar);
-                    EditorGUI.LabelField(headerRect, "ページリスト");
+                    EditorGUI.LabelField(headerRect, "Page List");
                 };
             }
 

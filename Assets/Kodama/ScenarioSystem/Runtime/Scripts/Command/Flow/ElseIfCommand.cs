@@ -40,7 +40,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return "<color=orange><b>ElseIf</b></color>  " + _condition.GetSummary();
+            return $"<color={Colors.BlockSummaryCaption}>ElseIf</color>  " + _condition.GetSummary();
         }
     }
 }

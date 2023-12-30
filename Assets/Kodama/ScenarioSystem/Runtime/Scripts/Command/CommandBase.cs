@@ -31,7 +31,8 @@ namespace Kodama.ScenarioSystem {
             return GetType().Name;
         }
 
-        protected string LogCaption => $"<b><i><color={ColorPreference.CommandNameColor}>{GetType().Name}</color></i></b>    ";
+        public string LogCaption => $"<b><i><color={Colors.CommandNameColor}>{GetType().Name}</color></i></b>    ";
+        public string LogHeader => $"{LogCaption}<b>Scenario</b>[ {Page.Scenario.name} ]    <b>Page</b>[ {Page.name} ]    <b>Index</b>[ {Index.ToString()} ]";
 
         public CommandBase Copy() {
             return JsonUtility.FromJson(JsonUtility.ToJson(this), GetType()) as CommandBase;
