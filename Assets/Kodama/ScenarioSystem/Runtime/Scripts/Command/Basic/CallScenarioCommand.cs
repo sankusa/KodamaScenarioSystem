@@ -1,14 +1,11 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    [Serializable]
-    public class CallPage : AsyncCommandBase {
+    public class CallScenarioCommand : AsyncCommandBase {
         private enum CallType {
             Jump = 0,
             Await = 1,
@@ -16,21 +13,20 @@ namespace Kodama.ScenarioSystem {
         }
 
         [SerializeField] private CallType _callType;
-        [SerializeField] private string _pageName;
-
-        public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
+        [SerializeField] private string _scenarioName;
+        public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
-                    service.PagePlayProcess.SubsequentPageName = _pageName;
+                    service.PagePlayProcess.SubsequentScenarioName = _scenarioName;
                     service.PagePlayProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _pageName, cancellationToken);
+                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _scenarioName, null, cancellationToken);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _pageName, cancellationToken)
+                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _scenarioName, null, cancellationToken)
                         .ForgetAndLogException();
                     break;
             }

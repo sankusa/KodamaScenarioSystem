@@ -8,27 +8,27 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     internal class ProcessManager {
-        public static async UniTask PlayNewProcessAsync(Scenario scenario, string pageName, IServiceLocator serviceLocator, Action onProcessFinished, CancellationToken cancellationToken) {
+        public static async UniTask PlayNewProcessAsync(Scenario scenario, ScenarioPage page, IServiceLocator serviceLocator, Action onProcessFinished, CancellationToken cancellationToken) {
             RootPlayProcess rootProcess = new RootPlayProcess(serviceLocator, onProcessFinished);
             ScenarioPlayProcess scenarioProcess = rootProcess.CreateScenarioProcess(scenario);
             PagePlayProcess pageProcess;
-            if(string.IsNullOrEmpty(pageName)) {
+            if(page == null) {
                 pageProcess = scenarioProcess.CreatePageProcess(scenario.DefaultPage);
             }
             else {
-                pageProcess = scenarioProcess.CreatePageProcess(scenario.Pages.FirstOrDefault(x => x.name == pageName));
+                pageProcess = scenarioProcess.CreatePageProcess(page);
             }          
 
             await CorePlayLoopAsync(pageProcess, cancellationToken);
         }
 
-        public static async UniTask PlayNewProcessAsync(string scenarioName, string pageName, IServiceLocator serviceLocator, Action onProcessFinished, CancellationToken cancellationToken= default) {
+        public static async UniTask PlayNewProcessAsync(string scenarioName, ScenarioPage page, IServiceLocator serviceLocator, Action onProcessFinished, CancellationToken cancellationToken= default) {
             Scenario scenario = PlayableScenarioManager.Instance.FindPlayableByName(scenarioName)?.Scenario;
-            await PlayNewProcessAsync(scenario, pageName, serviceLocator, onProcessFinished, cancellationToken);
+            await PlayNewProcessAsync(scenario, page, serviceLocator, onProcessFinished, cancellationToken);
         }
 
-        public static async UniTask PlayPageInSameScenarioProcessAsync(PagePlayProcess pageProcess, string pageName, CancellationToken cancellationToken) {
-            PagePlayProcess newPageProcess = pageProcess.ScenarioProcess.CreatePageProcess(pageName);
+        public static async UniTask PlayPageInSameScenarioProcessAsync(PagePlayProcess pageProcess, ScenarioPage page, CancellationToken cancellationToken) {
+            PagePlayProcess newPageProcess = pageProcess.ScenarioProcess.CreatePageProcess(page);
             await CorePlayLoopAsync(newPageProcess, cancellationToken);
         }
 
@@ -65,19 +65,19 @@ namespace Kodama.ScenarioSystem {
                     scenarioProcess = rootProcess.CreateScenarioProcess(subsequentScenario);
 
                     // ページの指定が無ければデフォルトを設定
-                    if(string.IsNullOrEmpty(pageProcess.SubsequentPageName)) {
+                    if(pageProcess.SubsequentPage == null) {
                         pageProcess = scenarioProcess.CreatePageProcess(subsequentScenario.DefaultPage);
                     }
                     else {
-                        pageProcess = scenarioProcess.CreatePageProcess(pageProcess.SubsequentPageName);
+                        pageProcess = scenarioProcess.CreatePageProcess(pageProcess.SubsequentPage);
                     }
 
                     playSubsequent = true;
                 }
 
                 // ページが指定されていたら、シナリオプロセスから新規にページプロセスを生やす
-                if(string.IsNullOrEmpty(pageProcess.SubsequentPageName) == false) {
-                    pageProcess = scenarioProcess.CreatePageProcess(pageProcess.SubsequentPageName);
+                if(pageProcess.SubsequentPage != null) {
+                    pageProcess = scenarioProcess.CreatePageProcess(pageProcess.SubsequentPage);
 
                     playSubsequent = true;
                 }

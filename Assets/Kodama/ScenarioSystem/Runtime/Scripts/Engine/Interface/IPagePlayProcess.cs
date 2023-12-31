@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     public interface IPagePlayProcess {
-        string SubsequentPageName {set;}
+        ScenarioPage SubsequentPage {set;}
         string SubsequentScenarioName {set;}
         bool SwitchRootProcessOnPlaySubsequentScenario {set;}
         Action OnNewRootProcessFinished {set;}

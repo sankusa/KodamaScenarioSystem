@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    public class CallScenario : AsyncCommandBase {
+    [Serializable]
+    public class CallPageCommand : AsyncCommandBase {
         private enum CallType {
             Jump = 0,
             Await = 1,
@@ -13,20 +16,22 @@ namespace Kodama.ScenarioSystem {
         }
 
         [SerializeField] private CallType _callType;
-        [SerializeField] private string _scenarioName;
-        public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
+        [SerializeField] private ScenarioPage _targetPage;
+        public ScenarioPage TargetPage => _targetPage;
+
+        public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
-                    service.PagePlayProcess.SubsequentScenarioName = _scenarioName;
+                    service.PagePlayProcess.SubsequentPage = _targetPage;
                     service.PagePlayProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _scenarioName, null, cancellationToken);
+                    await ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetPage, cancellationToken);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _scenarioName, null, cancellationToken)
+                    ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetPage, cancellationToken)
                         .ForgetAndLogException();
                     break;
             }

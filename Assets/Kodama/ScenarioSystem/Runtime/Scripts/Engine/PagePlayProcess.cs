@@ -25,7 +25,7 @@ namespace Kodama.ScenarioSystem {
         private Action<PagePlayProcess> _onAllCommandFinished;
 
         // 後続処理情報
-        public string SubsequentPageName {get; set;}
+        public ScenarioPage SubsequentPage {get; set;}
         public string SubsequentScenarioName {get; set;}
         public bool SwitchRootProcessOnPlaySubsequentScenario {get; set;}
         public Action OnNewRootProcessFinished {get; set;}

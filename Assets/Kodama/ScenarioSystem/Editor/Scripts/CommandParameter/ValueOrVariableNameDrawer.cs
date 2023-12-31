@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem.Editor {
     [CustomPropertyDrawer(typeof(ValueOrVariableName<>), true)]
     public class ValueOrVariableNameDrawer : PropertyDrawer {
         private const string _emptyString = "<Value>";
-        private const float _miniPopUpWidth = 35;
+        private const float _miniPopUpWidth = 20;
         private static readonly string[] _emptyVariableNameArray = new string[]{_emptyString};
         public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
             ValueOrVariableName valueOrVariableName = property.GetObject() as ValueOrVariableName;
@@ -22,12 +22,12 @@ namespace Kodama.ScenarioSystem.Editor {
             if(!string.IsNullOrEmpty(label.text)) {
                 Rect labelRect = new Rect(rect.x, rect.y, EditorGUIUtility.labelWidth, rect.height);
                 EditorGUI.LabelField(labelRect, label);
-                rect.xMin += EditorGUIUtility.labelWidth;
+                rect.xMin += EditorGUIUtility.labelWidth + EditorGUIUtility.standardVerticalSpacing;
             }
 
             if(string.IsNullOrEmpty(variableNameProp.stringValue)) {
                 SerializedProperty valueProp = property.FindPropertyRelative("_value");
-                Rect valueFieldRect = new Rect(rect.x, rect.y, rect.width - _miniPopUpWidth + 12, rect.height);
+                Rect valueFieldRect = new Rect(rect.x, rect.y, rect.width - _miniPopUpWidth - 2, rect.height);
 
                 if(valueProp == null) {
                     EditorGUI.LabelField(valueFieldRect, "Default");

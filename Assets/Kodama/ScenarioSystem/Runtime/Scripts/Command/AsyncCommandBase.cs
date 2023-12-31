@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
         /// <summary>
         /// 待機するか
         /// </summary>
-        [SerializeField] private bool _wait = true;
+        [SerializeField, HideInInspector] private bool _wait = true;
         public bool Wait => _wait;
         /// <summary>
         /// 非同期コマンドの場合は処理内容は空。代わりにExcecuteAsyncを呼び出す。

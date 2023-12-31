@@ -28,11 +28,11 @@ MonoBehaviour:
   - _displayName: "\u30DA\u30FC\u30B8\u30B8\u30E3\u30F3\u30D7"
     _groupId: Basic
     _icon: {fileID: 0}
-    _commandScript: {fileID: 11500000, guid: add83637d942b9b469fe0b1d2e7494be, type: 3}
+    _commandScript: {fileID: 11500000, guid: 507fa3951397f5b489b2f4dff8e5acce, type: 3}
   - _displayName: "\u30B7\u30CA\u30EA\u30AA\u79FB\u52D5"
     _groupId: Basic
     _icon: {fileID: 0}
-    _commandScript: {fileID: 11500000, guid: 78e248fefa715dd47bbc154f79a42d35, type: 3}
+    _commandScript: {fileID: 11500000, guid: 56a9db2b845dbd54f8df3c5e6b28ced3, type: 3}
   - _displayName: "\u30EA\u30D5\u30EC\u30AF\u30B7\u30E7\u30F3"
     _groupId: Control
     _icon: {fileID: 0}
