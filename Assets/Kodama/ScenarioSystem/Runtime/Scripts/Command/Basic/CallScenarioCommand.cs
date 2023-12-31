@@ -13,23 +13,31 @@ namespace Kodama.ScenarioSystem {
         }
 
         [SerializeField] private CallType _callType;
-        [SerializeField] private string _scenarioName;
+        [SerializeField] private Scenario _targetScenario;
+        public Scenario TargetScenario => _targetScenario;
+        [SerializeField] private ScenarioPage _targetPage;
+        public ScenarioPage TargetPage => _targetPage;
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
-                    service.PagePlayProcess.SubsequentScenarioName = _scenarioName;
+                    service.PagePlayProcess.SubsequentScenario = _targetScenario;
+                    service.PagePlayProcess.SubsequentPage = _targetPage;
                     service.PagePlayProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _scenarioName, null, cancellationToken);
+                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetScenario, _targetPage, cancellationToken);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _scenarioName, null, cancellationToken)
+                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetScenario, _targetPage, cancellationToken)
                         .ForgetAndLogException();
                     break;
             }
+        }
+
+        public override string GetSummary() {
+            return $"<color={Colors.CallSummaryCaption}>Call Scenario [ <color={Colors.Args}>{_targetScenario?.name}</color> ] Page [ <color={Colors.Args}>{_targetPage?.name}</color> ] (<color={Colors.Args}>{_callType.ToString()}</color>)</color>";
         }
     }
 }

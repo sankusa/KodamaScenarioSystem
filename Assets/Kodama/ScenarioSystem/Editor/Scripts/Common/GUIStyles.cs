@@ -16,7 +16,6 @@ namespace Kodama.ScenarioSystem.Editor {
         static GUIStyles() {
             SummaryLabel = new GUIStyle(EditorStyles.label) {
                 richText = true,
-                wordWrap = true
             };
             LeanGroupBox = new GUIStyle("GroupBox") {
                 margin = new RectOffset(),

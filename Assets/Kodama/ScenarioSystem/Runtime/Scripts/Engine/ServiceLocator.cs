@@ -18,6 +18,8 @@ namespace Kodama.ScenarioSystem {
                 t = _componentBinding.Components.OfType<T>().FirstOrDefault();
                 if(t != null) return t;
             }
+            t = GlobalComponentBinding.AllComponents.OfType<T>().FirstOrDefault();
+            if(t != null) return t;
             return t;
         }
 
@@ -26,6 +28,7 @@ namespace Kodama.ScenarioSystem {
             if(_componentBinding != null) {
                 tAll.Concat(_componentBinding.Components.OfType<T>());
             }
+            tAll.Concat(GlobalComponentBinding.AllComponents.OfType<T>());
             return tAll;
         }
     }

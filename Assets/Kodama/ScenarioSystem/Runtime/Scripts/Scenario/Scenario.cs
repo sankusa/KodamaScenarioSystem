@@ -12,5 +12,9 @@ namespace Kodama.ScenarioSystem {
 
         [SerializeReference] private List<VariableBase> _variables;
         public IList<VariableBase> Variables => _variables;
+
+        public ScenarioPage FindPageByName(string pageName) {
+            return _pages.Find(x => x.name == pageName);
+        }
     }
 }
