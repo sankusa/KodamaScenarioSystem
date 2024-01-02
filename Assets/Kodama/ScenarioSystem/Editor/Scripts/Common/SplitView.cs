@@ -66,7 +66,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
         public void Split() {
             GUILayout.EndScrollView();
-            //GUILayout.Space(4);
+            DrawResizeHandle();
         }
 
         public void End() {
@@ -76,8 +76,6 @@ namespace Kodama.ScenarioSystem.Editor {
             else {
                 EditorGUILayout.EndVertical();
             }
-
-            DrawResizeHandle();
         }
 
         private void DrawResizeHandle() {

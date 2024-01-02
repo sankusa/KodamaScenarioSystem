@@ -38,7 +38,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"<color={Colors.CallSummaryCaption}>Call Page [ <color={Colors.Args}>{_targetPage?.name}</color> ] (<color={Colors.Args}>{_callType.ToString()}</color>)</color>";
+            return $"<color={Colors.CallSummaryCaption}>Call Page [ <color={Colors.Args}>{(_targetPage != null ? _targetPage.name : "")}</color> ] (<color={Colors.Args}>{_callType.ToString()}</color>)</color>";
         }
     }
 }

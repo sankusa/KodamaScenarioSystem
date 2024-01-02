@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -18,6 +19,18 @@ namespace Kodama.ScenarioSystem
         }
         [SerializeReference] private List<CommandBase> _commands = new List<CommandBase>();
         public IReadOnlyList<CommandBase> Commands => _commands;
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// For Graph View
+        /// </summary>
+        /// <param name="command"></param>
+        [SerializeField] private Vector2 _nodePosition;
+        public Vector2 NodePosition {
+            get => _nodePosition;
+            set => _nodePosition = value;
+        }
+#endif
 
         public void AddCommand(CommandBase command) {
             _commands.Add(command);
@@ -64,6 +77,10 @@ namespace Kodama.ScenarioSystem
             }
 
             return _commands.Count;
+        }
+
+        public IEnumerable<ScenarioPage> GetReferencingFamilyPages() {
+            return Commands.Where(x => x is CallPageCommand).Select(x => (x as CallPageCommand).TargetPage).Where(x => x != null).Distinct();
         }
     }
 }

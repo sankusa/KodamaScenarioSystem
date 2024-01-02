@@ -28,7 +28,7 @@ namespace Kodama.ScenarioSystem.Editor {
             BorderedButton = "AppToolbarButtonLeft";
             ClearButton = "RL FooterButton";
             CommandListElementStyle = new GUIStyle("GameViewBackground") {
-                margin = new RectOffset(0, 0, 0, 4)
+                margin = new RectOffset(0, 0, 0, 0)
             };
         }
     }

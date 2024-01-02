@@ -23,6 +23,11 @@ namespace Kodama.ScenarioSystem.Editor {
         private static void LoadAsset() {
             _instance = AssetUtility.LoadAllAssets<CommonEditorResources>().FirstOrDefault();
         }
+        [SerializeField] private Texture2D _commandAddIcon;
+        public Texture2D CommandAddIcon => _commandAddIcon;
+
+        [SerializeField] private Texture2D _commandInsertIcon;
+        public Texture2D CommandInsertIcon => _commandInsertIcon;
 
         [SerializeField] private Texture2D _commandDeleteIcon;
         public Texture2D CommandDeleteIcon => _commandDeleteIcon;

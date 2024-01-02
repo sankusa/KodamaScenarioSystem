@@ -17,7 +17,16 @@ namespace Kodama.ScenarioSystem {
 
             if(commandProp == null) return;
 
+            // Commandsの要素削除時、SerializedObjectに削除が反映される前にこの関数が呼び出される場合がある
+            // この場合propertyPathを利用したインスタンス取得(GetObject)はインデックスのずれた要素を取得
+            // してしまうので早期リターン
+            if(commandProp.serializedObject.FindProperty("_commands").arraySize
+            != (commandProp.serializedObject.targetObject as ScenarioPage).Commands.Count) {
+                return;
+            }
+
             CommandBase command = commandProp.GetObject() as CommandBase;
+            if(command == null) return;
 
             // ヘッダ
             Rect headerRect = new Rect(rect){
@@ -34,10 +43,13 @@ namespace Kodama.ScenarioSystem {
             if(setting != null) EditorGUI.LabelField(headerLabelRect, $"<b>{setting.DisplayName}</b>", GUIStyles.SummaryLabel);
 
             if(command is AsyncCommandBase) {
-                Rect waitLabelRect = new Rect(headerRect) {x = headerRect.xMax - 60, xMax = headerRect.xMax - 20};
-                Rect waitToggleRect = new Rect(headerRect) {x = headerRect.xMax - 20};
-                EditorGUI.LabelField(waitLabelRect, "Await");
-                EditorGUI.PropertyField(waitToggleRect, commandProp.FindPropertyRelative("_wait"), GUIContent.none);
+                SerializedProperty waitProp = commandProp.FindPropertyRelative("_wait");
+                if(waitProp != null) {
+                    Rect waitLabelRect = new Rect(headerRect) {x = headerRect.xMax - 60, xMax = headerRect.xMax - 20};
+                    Rect waitToggleRect = new Rect(headerRect) {x = headerRect.xMax - 20};
+                    EditorGUI.LabelField(waitLabelRect, "Await");
+                    EditorGUI.PropertyField(waitToggleRect, waitProp, GUIContent.none);
+                }
             }
 
             // PropertyField

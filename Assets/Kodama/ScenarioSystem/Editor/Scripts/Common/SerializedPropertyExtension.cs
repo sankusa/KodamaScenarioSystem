@@ -8,50 +8,45 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
     public static class SerializedPropertyExtension {
-        public static object GetObject(this SerializedProperty prop)
-        {
-            var path = prop.propertyPath.Replace(".Array.data[", "[");
+        public static object GetObject(this SerializedProperty prop) {
+            string path = prop.propertyPath.Replace(".Array.data[", "[");
             object obj = prop.serializedObject.targetObject;
-            var elements = path.Split('.');
-            foreach(var element in elements.Take(elements.Length))
-            {
-                if(element.Contains("["))
-                {
-                    var elementName = element.Substring(0, element.IndexOf("["));
-                    var index = Convert.ToInt32(element.Substring(element.IndexOf("[")).Replace("[","").Replace("]",""));
-                    obj = GetValue(obj, elementName, index);
+            string[] pathElements = path.Split('.');
+            foreach(string pathElement in pathElements.Take(pathElements.Length)) {
+                if(pathElement.Contains("[")) {
+                    string arrayName = pathElement.Substring(0, pathElement.IndexOf("["));
+                    int index = int.Parse(pathElement.Substring(pathElement.IndexOf("[")).Replace("[","").Replace("]",""));
+                    obj = GetValue(obj, arrayName, index);
                 }
-                else
-                {
-                    obj = GetValue(obj, element);
+                else {
+                    obj = GetValue(obj, pathElement);
                 }
             }
             return obj;
         }
 
-        private static object GetValue(object source, string name)
-        {
-            if(source == null)
-                return null;
-            var type = source.GetType();
-            var f = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if(f == null)
-            {
-                var p = type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                if(p == null)
-                    return null;
-                return p.GetValue(source, null);
-            }
-            return f.GetValue(source);
+        private static object GetValue(object source, string name) {
+            if(source == null) return null;
+
+            Type type = source.GetType();
+            FieldInfo fieldInfo = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            if(fieldInfo != null) return fieldInfo.GetValue(source);
+
+            PropertyInfo propertyInfo = type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            if(propertyInfo != null) return propertyInfo.GetValue(source, null);
+
+            return null;
         }
 
-        private static object GetValue(object source, string name, int index)
-        {
-            var enumerable = GetValue(source, name) as IEnumerable;
-            var enm = enumerable.GetEnumerator();
-            while(index-- >= 0)
-                enm.MoveNext();
-            return enm.Current;
+        private static object GetValue(object source, string name, int index) {
+            IEnumerable enumerable = GetValue(source, name) as IEnumerable;
+            IEnumerator enumerator = enumerable.GetEnumerator();
+            
+            for(int i = 0; i <= index; i++) {
+                enumerator.MoveNext();
+            }
+
+            return enumerator.Current;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.Xml.Serialization;
 using PlasticPipe.PlasticProtocol.Messages;
 using UnityEditor;
 using UnityEditor.Experimental;
+using UnityEditor.IMGUI.Controls;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -104,9 +106,18 @@ namespace Kodama.ScenarioSystem.Editor {
 
                     using (new ContentColorScope(new Color(1, 1, 1, 0.5f))) {
                     if(GUI.Button(copyButtonRect, CommonEditorResources.Instance.CommandCopyIcon, GUIStyles.BorderedButton)) {
-                        Undo.RecordObject(page, "Copy Command");
-                        page.InsertCommand(index + 1, page.Commands[index].Copy());
-                        guiStatus.CurrentCommandIndex = index + 1;
+                        // Undo.RecordObject(page, "Copy Command");
+                        // page.InsertCommand(index + 1, page.Commands[index].Copy());
+                        // guiStatus.CurrentCommandIndex = index + 1;
+                        new CommandDropdown(
+                            new UnityEditor.IMGUI.Controls.AdvancedDropdownState(), 
+                            commandType => {
+                                Undo.RecordObject(page, "Copy Command");
+                                page.InsertCommand(index + 1, CommandBase.CreateInstance(commandType, page));
+                                guiStatus.CurrentCommandIndex = index + 1;
+                            }
+                            ).ShowDropDown(new Rect(0, 0, 200, 0));
+
                     }
                     //GUIContent i = EditorGUIUtility.TrIconContent("Toolbar Minus", "Remove selection from list");
                     if(GUI.Button(removeButtonRect, CommonEditorResources.Instance.CommandDeleteIcon, GUIStyles.BorderedButton)) {

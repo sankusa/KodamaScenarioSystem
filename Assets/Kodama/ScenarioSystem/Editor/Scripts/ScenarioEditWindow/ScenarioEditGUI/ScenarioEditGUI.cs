@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditGUI {
@@ -21,7 +22,9 @@ namespace Kodama.ScenarioSystem.Editor {
         private SplitView _inspectorSplitView;
         private SplitView _commandAreaSplitView;
 
-        public ScenarioEditGUI() {
+        private PageGraphView _pageGraphView;
+
+        public ScenarioEditGUI(Scenario scenario, VisualElement rootVisualElement) {
             _headerArea = new ScenarioEditHeaderArea();
             _pageListArea = new ScenarioEditPageListArea();
             _variableArea = new ScenarioEditVariableArea();
@@ -35,32 +38,47 @@ namespace Kodama.ScenarioSystem.Editor {
             _inspectorSplitView = new SplitView(SplitView.Direction.Vertical, 0.5f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_inspectorSplitView)}", handleColor: new Color(0.2f, 0.2f, 0.2f));
             _commandAreaSplitView = new SplitView(SplitView.Direction.Horizontal, 0.5f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_commandAreaSplitView)}", handleColor: new Color(0.15f, 0.15f, 0.15f));
             _status = new ScenarioEditGUIStatus();
+
+            _pageGraphView = new PageGraphView(scenario);
+            _pageGraphView.OnNodeClick += page => {
+                _status.CurrentPageIndex = scenario.Pages.IndexOf(page);
+            };
+            rootVisualElement.Add(_pageGraphView);
         }
 
         public void DrawLayout(ScenarioEditWindowStatus windowStatus, Scenario scenario, SerializedObject serializedObject) {
             var boxStyle = GUIStyles.LeanGroupBox;
             SerializedProperty pagesProp = serializedObject.FindProperty("_pages");
 
-            //using var _ = new BackgroundColorScope(new Color(0.8f, 0.8f, 0.8f));
-            
             serializedObject.Update();
             EditorGUI.BeginChangeCheck();
-
-            // ヘッダ
-            _headerArea.DrawLayout(scenario, serializedObject);
             
             _pageListSplitView.Begin();
 
             // ぺージ一覧(画面左)
             // using(new EditorGUILayout.VerticalScope(boxStyle)) {
                 _leftAreaSplitView.Begin();
-                _pageListArea.DrawLayout(_status, scenario, serializedObject);
+                // _pageListArea.DrawLayout(_status, scenario, serializedObject);
+                Rect pageGraphViewRect = EditorGUILayout.BeginHorizontal(GUILayout.ExpandHeight(true));
+                EditorGUILayout.EndVertical();
+
+                // layoutイベント時は更新しない(0でリサイズされたことに起因してrepaintが呼ばれ、結果として毎フレーム画面が更新されてしまう)
+                if(pageGraphViewRect.width != 0) {
+                    _pageGraphView.style.width = pageGraphViewRect.width;
+                    _pageGraphView.style.height = pageGraphViewRect.height;
+                }
+
                 _leftAreaSplitView.Split();
                 _variableArea.DrawLayout(_status, scenario, serializedObject);
                 _leftAreaSplitView.End();
             // }
 
             _pageListSplitView.Split();
+
+            EditorGUILayout.BeginVertical();
+
+            // ヘッダ
+            _headerArea.DrawLayout(scenario, serializedObject);
 
             // ページが1つ以上ある&pagesPropの内容がscenarioに反映されるまでラグがあるようなのでそのチェック
             if(pagesProp.arraySize > 0 && scenario.Pages.Count == pagesProp.arraySize) {
@@ -122,6 +140,8 @@ namespace Kodama.ScenarioSystem.Editor {
                     }
                 }
             }
+
+            EditorGUILayout.EndVertical();
             
             _pageListSplitView.End();
 
