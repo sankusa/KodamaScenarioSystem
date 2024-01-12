@@ -14,7 +14,7 @@ namespace Kodama.ScenarioSystem.Editor {
             do {
                 Rect rect = new Rect(position.x, positionY, position.width, EditorGUI.GetPropertyHeight(property));
                 positionY += rect.height + EditorGUIUtility.standardVerticalSpacing;
-                EditorGUI.PropertyField(rect, property);
+                EditorGUI.PropertyField(rect, property, true);
             } while(property.NextVisible(false) && property.depth == depth);
         }
 
@@ -24,7 +24,7 @@ namespace Kodama.ScenarioSystem.Editor {
             int depth = property.depth;
             float height = 0;
             do {
-                height += EditorGUI.GetPropertyHeight(property);
+                height += EditorGUI.GetPropertyHeight(property, true);
             } while(property.NextVisible(false) && property.depth == depth);
             return height;
         }

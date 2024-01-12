@@ -34,5 +34,8 @@ namespace Kodama.ScenarioSystem.Editor {
 
         [SerializeField] private Texture2D _commandCopyIcon;
         public Texture2D CommandCopyIcon => _commandCopyIcon;
+
+        [SerializeField] private Texture2D _menuIcon;
+        public Texture2D MenuIcon => _menuIcon;
     }
 }

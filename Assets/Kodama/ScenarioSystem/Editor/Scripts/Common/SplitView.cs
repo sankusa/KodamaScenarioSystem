@@ -28,6 +28,8 @@ namespace Kodama.ScenarioSystem.Editor {
         private readonly string _sessionStateKey;
         private Color _handleColor = Color.white;
 
+        private const float _handleWidth = 2;
+
         public SplitView(Direction direction, float defaultSplitRate = 0.5f, float minSize1 = 100, float minSize2 = 100, string sessionStateKey = "", Color handleColor = default) {
             _direction = direction;
             _splitRate = defaultSplitRate;
@@ -66,6 +68,12 @@ namespace Kodama.ScenarioSystem.Editor {
 
         public void Split() {
             GUILayout.EndScrollView();
+            if(_direction == Direction.Horizontal) {
+                GUILayoutUtility.GetRect(0, 0, GUILayout.Width(_handleWidth));
+            }
+            else {
+                GUILayoutUtility.GetRect(0, 0, GUILayout.Height(_handleWidth));
+            }
             DrawResizeHandle();
         }
 
@@ -82,10 +90,10 @@ namespace Kodama.ScenarioSystem.Editor {
             // ハンドルの矩形
             Rect resizeHandleRect;
             if(_direction == Direction.Horizontal) {
-                resizeHandleRect = new Rect(_availableArea.x + _availableArea.width * _splitRate, _availableArea.y, 2, _availableArea.height);
+                resizeHandleRect = new Rect(_availableArea.x + _availableArea.width * _splitRate, _availableArea.y, _handleWidth, _availableArea.height);
             }
             else {
-                resizeHandleRect = new Rect(_availableArea.x, _availableArea.y + _availableArea.height * _splitRate, _availableArea.width, 2);
+                resizeHandleRect = new Rect(_availableArea.x, _availableArea.y + _availableArea.height * _splitRate, _availableArea.width, _handleWidth);
             }
 
             Rect mouseAcceptRect = new Rect(resizeHandleRect.x - 1, resizeHandleRect.y - 1, resizeHandleRect.width + 2, resizeHandleRect.height + 2);

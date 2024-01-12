@@ -7,6 +7,9 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     public class GUIStyles {
         public static GUIStyle SummaryLabel {get;}
+        public static GUIStyle ScenarioCaption {get;}
+        public static GUIStyle ScenarioNameTextField {get;}
+        public static GUIStyle BoldTextField {get;}
         public static GUIStyle LeanGroupBox {get;}
         public static GUIStyle TitleBar {get;}
         public static GUIStyle BorderedButton {get;}
@@ -17,9 +20,23 @@ namespace Kodama.ScenarioSystem.Editor {
             SummaryLabel = new GUIStyle(EditorStyles.label) {
                 richText = true,
             };
+            ScenarioCaption = new GUIStyle(GUI.skin.box) {
+                richText = true,
+                margin = new RectOffset(),
+            };
+            ScenarioNameTextField = new GUIStyle(EditorStyles.textField) {
+                richText = true,
+                fontStyle = FontStyle.Bold,
+                fixedHeight = 24,
+                fontSize = 18,
+            };
+            BoldTextField = new GUIStyle(EditorStyles.textField) {
+                richText = true,
+                fontStyle = FontStyle.Bold,
+            };
             LeanGroupBox = new GUIStyle("GroupBox") {
                 margin = new RectOffset(),
-                padding = new RectOffset()
+                padding = new RectOffset(),
             };
             TitleBar = new GUIStyle("TimeAreaToolbar") {
                 margin = new RectOffset(),
@@ -27,7 +44,7 @@ namespace Kodama.ScenarioSystem.Editor {
             };
             BorderedButton = "AppToolbarButtonLeft";
             ClearButton = "RL FooterButton";
-            CommandListElementStyle = new GUIStyle("GameViewBackground") {
+            CommandListElementStyle = new GUIStyle("GroupBox") {
                 margin = new RectOffset(0, 0, 0, 0)
             };
         }

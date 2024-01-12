@@ -9,9 +9,9 @@ namespace Kodama.ScenarioSystem {
     public class ScenarioEditCommandInspector {
         public void DrawLayout(SerializedProperty commandProp) {
             // フレームのみ先に描画
-            using(new EditorGUILayout.VerticalScope(GUIStyles.TitleBar)) {
-                EditorGUILayout.LabelField("Command Inspector");
-            }
+            // using(new EditorGUILayout.VerticalScope(GUIStyles.TitleBar)) {
+            //     EditorGUILayout.LabelField("Command Inspector");
+            // }
             Rect rect = EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
             EditorGUILayout.EndVertical();
 
@@ -21,7 +21,7 @@ namespace Kodama.ScenarioSystem {
             // この場合propertyPathを利用したインスタンス取得(GetObject)はインデックスのずれた要素を取得
             // してしまうので早期リターン
             if(commandProp.serializedObject.FindProperty("_commands").arraySize
-            != (commandProp.serializedObject.targetObject as ScenarioPage).Commands.Count) {
+                != (commandProp.serializedObject.targetObject as ScenarioPage).Commands.Count) {
                 return;
             }
 

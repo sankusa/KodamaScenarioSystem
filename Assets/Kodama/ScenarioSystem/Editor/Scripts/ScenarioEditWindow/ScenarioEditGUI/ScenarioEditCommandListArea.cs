@@ -23,7 +23,7 @@ namespace Kodama.ScenarioSystem.Editor {
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
             foreach(CommandSetting setting in settings) {
-                GUILayout.Box("", GUIStyles.CommandListElementStyle, GUILayout.Height(20));
+                GUILayout.Box("", GUIStyles.CommandListElementStyle, GUILayout.Height(20), GUILayout.ExpandWidth(true));
 
                 Rect rect = GUILayoutUtility.GetLastRect();
                 Rect iconRect = new Rect(rect.xMin, rect.yMin, 20, 20);
@@ -35,9 +35,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 }
                 EditorGUI.LabelField(nameRect, setting.DisplayName);
                 if(GUI.Button(addButtonRect, CommonEditorResources.Instance.CommandAddIcon)) {
-                    Undo.RecordObject(page, "Add Command");
                     int insertIndex = guiStatus.CurrentCommandIndex + 1;
-                    insertIndex = Mathf.Clamp(insertIndex, 0, page.Commands.Count);
                     page.InsertCommand(insertIndex, CommandBase.CreateInstance(setting.CommandScript.GetClass(), page));
                     guiStatus.CurrentCommandIndex++;
                 }

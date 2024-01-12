@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
-    internal class ScenarioEditHeaderArea {
+    internal class ScenarioEditScenarioHeaderArea {
         public void DrawLayout(Scenario scenario, SerializedObject serializedObject) {
             using(new EditorGUILayout.HorizontalScope()) {
                 // シナリオ名
@@ -20,9 +20,10 @@ namespace Kodama.ScenarioSystem.Editor {
                     EditorGUILayout.ObjectField(scenario, typeof(Scenario), allowSceneObjects: false, GUILayout.Height(24), GUILayout.Width(35));
                 }
                 // 戻る
-                if(GUILayout.Button("< Back", GUIStyles.BorderedButton, GUILayout.Width(80), GUILayout.Height(24))) {
+                if(GUILayout.Button("< Back", GUIStyles.BorderedButton, GUILayout.Width(80), GUILayout.Height(23))) {
                     ScenarioEditWindow.Open();
                 }
+                GUILayout.Space(3);
             }
         } 
     }

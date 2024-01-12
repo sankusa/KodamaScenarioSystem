@@ -5,6 +5,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace Kodama.ScenarioSystem
 {
     [Serializable]
@@ -30,23 +34,37 @@ namespace Kodama.ScenarioSystem
             get => _nodePosition;
             set => _nodePosition = value;
         }
-#endif
+
+        private const string _undoRedoLabel_AddCommand = "Add Command";
+        private const string _undoRedoLabel_RemoveCommand = "Remove Command";
 
         public void AddCommand(CommandBase command) {
+            Undo.RecordObject(this, _undoRedoLabel_AddCommand);
             _commands.Add(command);
         }
 
         public void InsertCommand(int index, CommandBase command) {
-            _commands.Insert(index, command);
+            int insertIndex = Mathf.Clamp(index, 0, Commands.Count);
+            Undo.RecordObject(this, _undoRedoLabel_AddCommand);
+            _commands.Insert(insertIndex, command);
+        }
+
+        public void InsertCommands(int index, IEnumerable<CommandBase> commands) {
+            int insertIndex = Mathf.Clamp(index, 0, Commands.Count);
+            Undo.RecordObject(this, _undoRedoLabel_AddCommand);
+            _commands.InsertRange(insertIndex, commands);
         }
 
         public bool RemoveCommand(CommandBase command) {
+            Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
             return _commands.Remove(command);
         }
 
         public void RemoveCommandAt(int index) {
+            Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
             _commands.RemoveAt(index);
         }
+#endif
 
         public int IndexOf(CommandBase command) {
             return _commands.IndexOf(command);

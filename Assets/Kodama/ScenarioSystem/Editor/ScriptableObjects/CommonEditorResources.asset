@@ -16,3 +16,4 @@ MonoBehaviour:
   _commandInsertIcon: {fileID: 2800000, guid: ba128b501b457ec47bc7079635ab4c6a, type: 3}
   _commandDeleteIcon: {fileID: 2800000, guid: cfb1aeda6d3ed844f9b027ae73f1a279, type: 3}
   _commandCopyIcon: {fileID: 2800000, guid: 9717778c74f0b4744b4b7345525290ec, type: 3}
+  _menuIcon: {fileID: 2800000, guid: db48a255ca8cd864a8046561fa358779, type: 3}

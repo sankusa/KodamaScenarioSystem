@@ -18,6 +18,9 @@ namespace Kodama.ScenarioSystem {
 
         public int Index => Page.IndexOf(this);
 
+        // CreateInstance以からのインスタンス化は禁止
+        protected CommandBase() {}
+
         /// <summary>
         /// コマンド実行
         /// </summary>
@@ -36,6 +39,12 @@ namespace Kodama.ScenarioSystem {
 
         public CommandBase Copy() {
             return JsonUtility.FromJson(JsonUtility.ToJson(this), GetType()) as CommandBase;
+        }
+
+        public CommandBase Copy(ScenarioPage page) {
+            CommandBase copied = Copy();
+            copied._page = page;
+            return copied;
         }
     }
 }
