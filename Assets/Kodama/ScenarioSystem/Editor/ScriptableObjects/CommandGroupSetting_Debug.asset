@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6867bbb7ac8e2b4f841c72334c6fd57, type: 3}
+  m_Name: CommandGroupSetting_Debug
+  m_EditorClassIdentifier: 
+  _priority: -2
+  _displayName: Debug
+  _color: {r: 0.20784314, g: 0.24705882, b: 0.16862746, a: 1}
+  _captionColor: {r: 0.53333336, g: 0.8392157, b: 0.43137255, a: 1}
+  _commandSettings:
+  - _commandScript: {fileID: 11500000, guid: 47c6087a22e2f934e929592eee85ef48, type: 3}
+    _displayName: Log
+    _icon: {fileID: 2800000, guid: 35dec9207c9798f42b182308ec4e0ba9, type: 3}
+    _iconColor: {r: 0.3882353, g: 0.54901963, b: 0.33333334, a: 1}
+    _summaryPosition: 0

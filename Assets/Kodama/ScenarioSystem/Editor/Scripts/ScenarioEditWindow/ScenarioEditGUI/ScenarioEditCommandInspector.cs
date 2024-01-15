@@ -39,8 +39,9 @@ namespace Kodama.ScenarioSystem {
 
             GUI.Box(headerRect, "", GUIStyles.LeanGroupBox);
 
-            CommandSetting setting = CommandSettingTable.AllSettings.FirstOrDefault(x => x.CommandScript != null && x.CommandScript.GetClass() == command.GetType());
-            if(setting != null) EditorGUI.LabelField(headerLabelRect, $"<b>{setting.DisplayName}</b>", GUIStyles.SummaryLabel);
+            (CommandGroupSetting commandGroupSetting, CommandSetting commandSetting) =
+                CommandGroupSetting.Find(command);
+            if(commandSetting != null) EditorGUI.LabelField(headerLabelRect, $"<b>{commandSetting.DisplayName}</b>", GUIStyles.SummaryLabel);
 
             if(command is AsyncCommandBase) {
                 SerializedProperty waitProp = commandProp.FindPropertyRelative("_wait");

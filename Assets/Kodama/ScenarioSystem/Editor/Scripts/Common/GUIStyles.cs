@@ -7,6 +7,7 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     public class GUIStyles {
         public static GUIStyle SummaryLabel {get;}
+        public static GUIStyle CenteredLabel {get;}
         public static GUIStyle ScenarioCaption {get;}
         public static GUIStyle ScenarioNameTextField {get;}
         public static GUIStyle BoldTextField {get;}
@@ -19,6 +20,9 @@ namespace Kodama.ScenarioSystem.Editor {
         static GUIStyles() {
             SummaryLabel = new GUIStyle(EditorStyles.label) {
                 richText = true,
+            };
+            CenteredLabel = new GUIStyle(EditorStyles.label) {
+                alignment = TextAnchor.MiddleCenter,
             };
             ScenarioCaption = new GUIStyle(GUI.skin.box) {
                 richText = true,

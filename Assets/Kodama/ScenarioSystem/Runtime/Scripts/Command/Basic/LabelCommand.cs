@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
         public string Label => _label;
 
         public override string GetSummary() {
-            return $"<color={Colors.BasicSummaryCaption}>Label [ <color={Colors.Args}>{_label}</color> ]</color>";
+            return $"<b>{_label}</b>";
         }
     }
 }

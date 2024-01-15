@@ -13,8 +13,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
         public void DrawLayout(ScenarioEditGUIStatus guiStatus, SerializedObject serializedPage) {
             ScenarioPage page = serializedPage.targetObject as ScenarioPage;
-            IEnumerable<CommandSetting> settings = CommandSettingTable.AllSettings.Where(x => x.GroupId == guiStatus.CurrentCommandGroupId);
-            CommandGroupSetting groupSetting = CommandGroupSettingTable.AllSettings.FirstOrDefault(x => x.GroupId == guiStatus.CurrentCommandGroupId);
+            CommandGroupSetting groupSetting = CommandGroupSetting.All.FirstOrDefault(x => x.name == guiStatus.CurrentCommandGroupSettingName);
 
             if(groupSetting == null) return;
 
@@ -22,27 +21,27 @@ namespace Kodama.ScenarioSystem.Editor {
 
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
-            foreach(CommandSetting setting in settings) {
-                GUILayout.Box("", GUIStyles.CommandListElementStyle, GUILayout.Height(20), GUILayout.ExpandWidth(true));
-
-                Rect rect = GUILayoutUtility.GetLastRect();
-                Rect iconRect = new Rect(rect.xMin, rect.yMin, 20, 20);
-                Rect nameRect = new Rect(rect.xMin + 20, rect.yMin, rect.width - 40, 20);
-                Rect addButtonRect = new Rect(rect.xMax - 20, rect.yMin, 20, 20);
-                // Rect insertButtonRect = new Rect(rect.xMax - 20, rect.yMin, 20, 20);
-                using (new ContentColorScope(groupSetting.GroupColor)) {
-                    EditorGUI.LabelField(iconRect, new GUIContent(setting.Icon, null));
-                }
-                EditorGUI.LabelField(nameRect, setting.DisplayName);
-                if(GUI.Button(addButtonRect, CommonEditorResources.Instance.CommandAddIcon)) {
+            foreach(CommandSetting setting in groupSetting.CommandSettings) {
+                Rect buttonRect = GUILayoutUtility.GetRect(0, 20, GUILayout.ExpandWidth(true));
+                if(GUI.Button(buttonRect, "", GUIStyles.BorderedButton)) {
                     int insertIndex = guiStatus.CurrentCommandIndex + 1;
                     page.InsertCommand(insertIndex, CommandBase.CreateInstance(setting.CommandScript.GetClass(), page));
                     guiStatus.CurrentCommandIndex++;
                 }
-                // if(GUI.Button(insertButtonRect, CommonEditorResources.Instance.CommandInsertIcon)) {
-                //     Undo.RecordObject(page, "Insert Command");
-                //     page.InsertCommand(guiStatus.CurrentCommandIndex, CommandBase.CreateInstance(setting.CommandScript.GetClass(), page));
-                // }
+
+                Rect buttonInnerRect = RectUtil.Margin(buttonRect, 1, 1, 1, 1);
+
+                Color buttonColor = groupSetting.Color;
+                buttonColor.a = 0.7f;
+                EditorGUI.DrawRect(buttonInnerRect, buttonColor);
+
+                Rect rect = GUILayoutUtility.GetLastRect();
+                Rect iconRect = new Rect(rect.xMin, rect.yMin, 20, 20);
+                Rect nameRect = new Rect(rect.xMin + 20, rect.yMin, rect.width - 20, 20);
+                using (new ContentColorScope(setting.IconColor)) {
+                    EditorGUI.LabelField(iconRect, new GUIContent(setting.Icon, null));
+                }
+                EditorGUI.LabelField(nameRect, setting.DisplayName);
             }
 
             EditorGUILayout.EndScrollView();

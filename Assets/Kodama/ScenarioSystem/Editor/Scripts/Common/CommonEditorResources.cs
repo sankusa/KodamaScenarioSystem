@@ -23,6 +23,22 @@ namespace Kodama.ScenarioSystem.Editor {
         private static void LoadAsset() {
             _instance = AssetUtility.LoadAllAssets<CommonEditorResources>().FirstOrDefault();
         }
+
+        [SerializeField] private Color _backgroundColor;
+        public Color BackgroundColor => _backgroundColor;
+
+        [SerializeField] private Color _summaryTextColor;
+        public Color SummaryTextColor => _summaryTextColor;
+
+        [SerializeField] private Color _entryNodeColor;
+        public Color EntryNodeColor => _entryNodeColor;
+
+        [SerializeField] private Color _nodeArrowColor;
+        public Color NodeArrowColor => _nodeArrowColor;
+
+        [SerializeField] private Color _nodeSelectionBorder;
+        public Color NodeSelectionBorder => _nodeSelectionBorder;
+
         [SerializeField] private Texture2D _commandAddIcon;
         public Texture2D CommandAddIcon => _commandAddIcon;
 

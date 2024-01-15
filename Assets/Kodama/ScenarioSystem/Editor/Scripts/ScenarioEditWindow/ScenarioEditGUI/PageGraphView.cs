@@ -116,7 +116,7 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         public void DrawEdge() {
-            Color color = new Color(0.13f, 0.73f, 0.53f);
+            Color color = CommonEditorResources.Instance.NodeArrowColor;
             Handles.color = color;
 
             foreach(PageGraphNode node in _nodes) {

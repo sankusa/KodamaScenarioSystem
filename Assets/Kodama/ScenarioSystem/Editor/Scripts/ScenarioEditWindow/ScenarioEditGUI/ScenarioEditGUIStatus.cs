@@ -37,20 +37,20 @@ namespace Kodama.ScenarioSystem.Editor {
         /// <summary>
         /// 選択中のコマンド分類
         /// </summary>
-        private string _currentCommandGroupId;
-        private static readonly string _currentCommandGroupIdSessionStateKey = $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_currentCommandGroupId)}";
-        public string CurrentCommandGroupId {
-            get => _currentCommandGroupId;
+        private string _currentCommandGroupSettingName;
+        private static readonly string _currentCommandGroupSettingNameSessionStateKey = $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_currentCommandGroupSettingName)}";
+        public string CurrentCommandGroupSettingName {
+            get => _currentCommandGroupSettingName;
             set {
-                _currentCommandGroupId = value;
-                SessionState.SetString(_currentCommandGroupIdSessionStateKey, _currentCommandGroupId);
+                _currentCommandGroupSettingName = value;
+                SessionState.SetString(_currentCommandGroupSettingNameSessionStateKey, _currentCommandGroupSettingName);
             }
         }
 
         public ScenarioEditGUIStatus() {
             _currentPageIndex = SessionState.GetInt(_currentPageIndexSessionStateKey, 0);
             _currentCommandIndex = SessionState.GetInt(_currentCommandIndexSessionStateKey, 0);
-            _currentCommandGroupId = SessionState.GetString(_currentCommandGroupIdSessionStateKey, "");
+            _currentCommandGroupSettingName = SessionState.GetString(_currentCommandGroupSettingName, "");
         }
     }
 }

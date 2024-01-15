@@ -7,19 +7,22 @@ namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditCommandGroupArea {
         private Vector2 _scrollPos;
         public void DrawLayout(ScenarioEditGUIStatus guiStatus) {
-            var buttonStyle = new GUIStyle(GUI.skin.button);
-            //buttonStyle.stretchWidth = false;
-            //buttonStyle.width;
             using var vs = new EditorGUILayout.VerticalScope();
             
-            //EditorGUILayout.LabelField("コマンド分類");
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
-            foreach(CommandGroupSetting groupSetting in CommandGroupSettingTable.AllSettings) {
-                using var bgs = new BackgroundColorScope(groupSetting.GroupColor);
-                if(GUILayout.Button(groupSetting.DisplayName, buttonStyle)) {
-                    guiStatus.CurrentCommandGroupId = groupSetting.GroupId;
+            foreach(CommandGroupSetting groupSetting in CommandGroupSetting.All) {
+                Rect buttonRect = GUILayoutUtility.GetRect(0, 22, GUILayout.ExpandWidth(true));
+                Rect buttonInnerRect = RectUtil.Margin(buttonRect, 1, 1, 1, 1);
+
+                Color buttonColor = groupSetting.Color;
+                buttonColor.a = 0.7f;
+                
+                if(GUI.Button(buttonRect, "", GUIStyles.BorderedButton)) {
+                    guiStatus.CurrentCommandGroupSettingName = groupSetting.name;
                 }
+                EditorGUI.DrawRect(buttonInnerRect, buttonColor);
+                EditorGUI.LabelField(buttonInnerRect, groupSetting.DisplayName, GUIStyles.CenteredLabel);
             }
 
             EditorGUILayout.EndScrollView();

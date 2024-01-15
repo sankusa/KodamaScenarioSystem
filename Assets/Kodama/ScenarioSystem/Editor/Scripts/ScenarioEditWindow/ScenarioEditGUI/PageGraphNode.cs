@@ -21,7 +21,6 @@ namespace Kodama.ScenarioSystem.Editor {
         public Vector2 Bottom => new Vector2(layout.center.x, layout.yMin + 3.5f);
 
         private const string _selectionBorderName = "selection-border";
-        private static readonly Color _selectionBorderColor = new Color(0.6f, 1, 0.5f);
 
         public PageGraphNode(ScenarioPage page) {
             _page = page;
@@ -39,14 +38,17 @@ namespace Kodama.ScenarioSystem.Editor {
                 Label defaultLabel = new Label("<Default>");
                 defaultLabel.style.alignSelf = Align.Center;
                 titleContainer.Insert(0, defaultLabel);
-                titleContainer.style.backgroundColor = new Color(0.0355f, 0.4433f, 0.2686f, 0.95f);
+                titleContainer.style.backgroundColor = CommonEditorResources.Instance.EntryNodeColor;
+            }
+            else {
+                titleContainer.style.backgroundColor = CommonEditorResources.Instance.BackgroundColor;
             }
 
             VisualElement selectionBorder = Children().FirstOrDefault(x => x.name == _selectionBorderName);
-            selectionBorder.style.borderTopColor = _selectionBorderColor;
-            selectionBorder.style.borderBottomColor = _selectionBorderColor;
-            selectionBorder.style.borderLeftColor = _selectionBorderColor;
-            selectionBorder.style.borderRightColor = _selectionBorderColor;
+            selectionBorder.style.borderTopColor = CommonEditorResources.Instance.NodeSelectionBorder;
+            selectionBorder.style.borderBottomColor = CommonEditorResources.Instance.NodeSelectionBorder;
+            selectionBorder.style.borderLeftColor = CommonEditorResources.Instance.NodeSelectionBorder;
+            selectionBorder.style.borderRightColor = CommonEditorResources.Instance.NodeSelectionBorder;
             
             expanded = false;
             style.left = _page.NodePosition.x;

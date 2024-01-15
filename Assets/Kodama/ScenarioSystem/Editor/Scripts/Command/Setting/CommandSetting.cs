@@ -4,18 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Kodama.ScenarioSystem {
-    [Serializable]
-    internal class CommandSetting
-    {
-        [SerializeField] private string _displayName;
-        [SerializeField] private string _groupId;
-        [SerializeField] private Texture2D _icon;
-        [SerializeField] private MonoScript _commandScript;
+namespace Kodama.ScenarioSystem.Editor {
+    public enum SummaryPosition {
+        Right,
+        Bottom,
+    }
 
-        public string DisplayName => _displayName;
-        public string GroupId => _groupId;
-        public Texture2D Icon => _icon;
+    [Serializable]
+    public class CommandSetting {
+        [SerializeField] private MonoScript _commandScript;
+        [SerializeField] private string _displayName;
+        [Header("Display Style")]
+        [SerializeField] private Texture2D _icon;
+        [SerializeField] private Color _iconColor;
+        [SerializeField] private SummaryPosition _summaryPosition;
+
         public MonoScript CommandScript => _commandScript;
+        public string DisplayName => _displayName;
+        public Texture2D Icon => _icon;
+        public Color IconColor => _iconColor;
+        public SummaryPosition SummaryPosition => _summaryPosition;
     }
 }

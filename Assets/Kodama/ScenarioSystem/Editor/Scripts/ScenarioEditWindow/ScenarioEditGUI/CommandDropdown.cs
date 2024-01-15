@@ -16,12 +16,15 @@ namespace Kodama.ScenarioSystem.Editor {
 
         protected override AdvancedDropdownItem BuildRoot() {
             var root = new AdvancedDropdownItem("Root");
-            foreach(CommandGroupSetting groupSetting in CommandGroupSettingTable.AllSettings) {
-                root.AddChild(new AdvancedDropdownItem(groupSetting.GroupId));
+            foreach(CommandGroupSetting groupSetting in CommandGroupSetting.All) {
+                AdvancedDropdownItem groupItem = new AdvancedDropdownItem(groupSetting.DisplayName);
+                root.AddChild(groupItem);
+
+                foreach(CommandSetting setting in groupSetting.CommandSettings) {
+                    groupItem.AddChild(new CommandDropdownItem(setting));
+                }
             }
-            foreach(CommandSetting setting in CommandSettingTable.AllSettings) {
-                root.children.FirstOrDefault(x => x.name == setting.GroupId)?.AddChild(new CommandDropdownItem(setting));
-            }
+
 
             // for (var i = 0; i < 10; i++) {
             //     var item = new AdvancedDropdownItem($"Item {i + 1}");

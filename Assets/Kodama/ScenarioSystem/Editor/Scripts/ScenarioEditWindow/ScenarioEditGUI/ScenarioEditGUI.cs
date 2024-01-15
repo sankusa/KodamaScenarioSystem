@@ -50,10 +50,12 @@ namespace Kodama.ScenarioSystem.Editor {
             rootVisualElement.Add(_pageGraphView);
         }
 
-        public void DrawLayout(ScenarioEditWindowStatus windowStatus, Scenario scenario, SerializedObject serializedScenario) {
+        public void DrawLayout(Rect windowPositiion, ScenarioEditWindowStatus windowStatus, Scenario scenario, SerializedObject serializedScenario) {
             // シナリオ更新
             serializedScenario.Update();
 
+            EditorGUI.DrawRect(new Rect(windowPositiion) {x = 0, y = 0}, CommonEditorResources.Instance.BackgroundColor);
+            
             using (var change = new EditorGUI.ChangeCheckScope()) {
                 _pageListSplitView.Begin();
                 DrawLayoutLeftArea(scenario, serializedScenario);

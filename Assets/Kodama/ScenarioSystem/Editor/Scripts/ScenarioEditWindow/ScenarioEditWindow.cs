@@ -1,3 +1,4 @@
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -120,7 +121,7 @@ namespace Kodama.ScenarioSystem.Editor {
                     _serializedObject = new SerializedObject(_currentScenario);
                 }
 
-                _scenarioEditGUI.DrawLayout(_windowStatus, _currentScenario, _serializedObject);
+                _scenarioEditGUI.DrawLayout(position, _windowStatus, _currentScenario, _serializedObject);
             }
         }
     }

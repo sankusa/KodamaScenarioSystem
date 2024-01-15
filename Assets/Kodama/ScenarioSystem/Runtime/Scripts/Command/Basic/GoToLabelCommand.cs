@@ -19,7 +19,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"<color={Colors.BasicSummaryCaption}>Go To [ <color={Colors.Args}>{_targetLabel}</color> ] Label</color>";
+            return $"<b>{_targetLabel}</b>";
         }
     }
 }

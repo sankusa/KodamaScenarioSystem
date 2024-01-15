@@ -15,7 +15,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"Delay {_seconds} s";
+            return $"{_seconds} s";
         }
     }
 }

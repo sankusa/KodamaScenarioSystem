@@ -23,6 +23,46 @@ namespace Kodama.ScenarioSystem.Editor {
 
         private Vector2 _scrollPos;
 
+        private class SummaryDrawerCacheElement {
+            public readonly Type[] _types;
+            public readonly CommandSummaryDrawerBase _summaryDrawer;
+            public SummaryDrawerCacheElement(Type summaryDrawerType) {
+                _types = summaryDrawerType
+                    .GetCustomAttributes(typeof(CommandSummaryDrawerAttribute), false)
+                    .Select(x => (x as CommandSummaryDrawerAttribute).Type).ToArray();
+
+                _summaryDrawer = Activator.CreateInstance(summaryDrawerType) as CommandSummaryDrawerBase;
+            }
+        }
+        private class SummaryDrawerCache {
+            private readonly SummaryDrawerCacheElement[] _elements;
+            public SummaryDrawerCache() {
+                _elements = TypeCache
+                    .GetTypesDerivedFrom<CommandSummaryDrawerBase>()
+                    .Select(x => new SummaryDrawerCacheElement(x))
+                    .ToArray();
+            }
+            public CommandSummaryDrawerBase GetSummaryDrawer(CommandBase command) {
+                CommandSummaryDrawerBase target = null;
+                Type commandType = command.GetType();
+                while(true) {
+                    target = _elements
+                        .FirstOrDefault(x => x._types.Contains(commandType))
+                        ?._summaryDrawer;
+
+                    if(target != null) return target;
+
+                    commandType = commandType.BaseType;
+                    if(commandType is null) return null;
+                }
+            }
+        }
+        private readonly SummaryDrawerCache _summaryDrawerCache;
+
+        public ScenarioEditPageDetailArea() {
+            _summaryDrawerCache = new SummaryDrawerCache();
+        }
+
         // コマンドのパラメータが変更され、サマリの行数に変更があっても
         // 要素の増減や入れ替えがあるまでReorderableListのElementHeightが更新されないので
         // その場合は外部からフラグを立ててもらい、ReorderableList自体を作り直す
@@ -43,7 +83,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _commandList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Commands");
 
                 _commandList.drawElementCallback = (rect, index, isActive, isFocused) => {
-                    rect = new Rect(rect) {xMin = 0, xMax = rect.xMax + 6};
+                    rect = new Rect(rect) {xMax = rect.xMax + 6};
                     // 初期化
                     if(index == 0) {
                         _indentBlockTypeStack.Clear();
@@ -53,17 +93,19 @@ namespace Kodama.ScenarioSystem.Editor {
 
                     CommandBase command = page.Commands[index];
                     //if(_commandList.count != page.Commands.Count) return;
-                    CommandSetting commandSetting = CommandSettingTable.AllSettings
-                        .FirstOrDefault(x => {
-                            if(x.CommandScript != null) {
-                                return x.CommandScript.GetClass() == command.GetType();
-                            }
-                            else {
-                                return false;
-                            }
-                        });
-                    if(commandSetting == null) return;
-                    CommandGroupSetting commandGroupSetting = CommandGroupSettingTable.AllSettings.FirstOrDefault(x => x.GroupId == commandSetting.GroupId);
+                    // CommandSetting commandSetting = CommandSettingTable.AllSettings
+                    //     .FirstOrDefault(x => {
+                    //         if(x.CommandScript != null) {
+                    //             return x.CommandScript.GetClass() == command.GetType();
+                    //         }
+                    //         else {
+                    //             return false;
+                    //         }
+                    //     });
+                    // SCommandGroupSetting commandGroupSetting = SCommandGroupSetting.All.FirstOrDefault(x => x.GroupId == commandSetting?.GroupId);
+
+                    (CommandGroupSetting commandGroupSetting, CommandSetting commandSetting) =
+                        CommandGroupSetting.Find(command);
 
                     // ブロック終了コマンドならインデント-1
                     if(command is IBlockEnd blockEnd) {
@@ -78,36 +120,30 @@ namespace Kodama.ScenarioSystem.Editor {
 
                     Rect contentRect = RectUtil.Margin(rect, _indentWidth * indentLevel, bottomMargin: -1);
 
-                    Rect summaryBoxRect = contentRect;//RectUtil.Margin(contentRect, 8, 68, 0, 0);
-
-                    Rect iconRect = RectUtil.Margin(new Rect(summaryBoxRect.x + 3, summaryBoxRect.y, 24, 24), 3, 3, 3, 3);
-                    
-                    Rect summaryRect = RectUtil.Margin(summaryBoxRect, commandSetting.Icon != null ? 30 : 8, 3, 3, 3);
+                    Rect summaryBoxRect = RectUtil.Margin(contentRect, 0, 68, 0, 1);
+                    Rect summaryBoxInnerRect = RectUtil.Margin(summaryBoxRect, 1, 1, 1, 1);
 
                     Rect menuButtonRect = new Rect(contentRect.xMax - 66, contentRect.y + 1, 22, contentRect.height - 3);
                     Rect copyButtonRect = new Rect(contentRect.xMax - 45, contentRect.y + 1, 22, contentRect.height - 3);
                     Rect removeButtonRect = new Rect(contentRect.xMax - 24, contentRect.y + 1, 22, contentRect.height - 3);
 
-                    Color backgroundColor = commandGroupSetting.GroupColor;
-                    backgroundColor.a = 0.5f;
-
                     if(indentLevel > 0) {
-                        using (new BackgroundColorScope(new Color(0.9f, 0.9f, 0.9f))) {
+                        using (new BackgroundColorScope(new Color(0.5f, 0.5f, 0.5f))) {
                             GUI.Box(indentRect, "", GUIStyles.LeanGroupBox);
                         }
                     }
-                    using (new ColorScope(backgroundColor)) {
-                        //GUI.Box(contentRect, "", GUIStyles.LeanGroupBox);
-                        //GUI.DrawTexture(contentRect, EditorGUIUtility.whiteTexture);
+                    GUI.Box(summaryBoxRect, "", GUIStyles.LeanGroupBox);
+
+                    if(commandSetting != null && commandGroupSetting != null) {
+                        Color groupColor = commandGroupSetting != null ? commandGroupSetting.Color : Color.white;
+                        EditorGUI.DrawRect(summaryBoxInnerRect, groupColor);
+
+                        CommandSummaryDrawerBase summaryDrawer = _summaryDrawerCache.GetSummaryDrawer(command);
+                        summaryDrawer.Draw(summaryBoxInnerRect, command, commandGroupSetting, commandSetting);
                     }
-                    // EditorGUI.LabelField(labelRect, commandSetting.DisplayName);
-                    using (new BackgroundColorScope(new Color(0.9f, 0.9f, 0.9f))) {
-                        GUI.Box(summaryBoxRect, "", GUIStyles.LeanGroupBox);
+                    else {
+                        EditorGUI.LabelField(summaryBoxInnerRect, command.GetType().Name);
                     }
-                    using (new ContentColorScope(commandGroupSetting != null ? commandGroupSetting.GroupColor : Color.white)) {
-                        EditorGUI.LabelField(iconRect, new GUIContent(commandSetting.Icon, null));
-                    }
-                    EditorGUI.LabelField(summaryRect, command.GetSummary(), GUIStyles.SummaryLabel);
 
                     using (new ContentColorScope(new Color(1, 1, 1, 0.5f))) {
                     if(GUI.Button(menuButtonRect, CommonEditorResources.Instance.MenuIcon, GUIStyles.BorderedButton)) {
@@ -141,9 +177,7 @@ namespace Kodama.ScenarioSystem.Editor {
                     }
 
                     if(_commandList.index == index) {
-                        using (new BackgroundColorScope(backgroundColor)) {
-                            GUI.Box(contentRect, "", GUIStyles.LeanGroupBox);
-                        }
+                        EditorGUI.DrawRect(contentRect, new Color(1, 1, 1, 0.1f));
                     }
 
                     // ブロック開始コマンドならインデント+1
@@ -153,14 +187,14 @@ namespace Kodama.ScenarioSystem.Editor {
                 };
 
                 _commandList.elementHeightCallback = index => {
-                    int rowCount;
-                    if(index < page.Commands.Count) {
-                        rowCount = 1 + page.Commands[index].GetSummary().Where(c => c == '\n').Count();
-                    }
-                    else {
-                        rowCount = 1;
-                    }
-                    return 6 + 15 * rowCount;
+                    CommandBase command = page.Commands[index];
+                    (CommandGroupSetting commandGroupSetting, CommandSetting commandSetting) =
+                        CommandGroupSetting.Find(command);
+
+                    if(commandGroupSetting == null || commandSetting == null) return 21;
+
+                    CommandSummaryDrawerBase summaryDrawer = _summaryDrawerCache.GetSummaryDrawer(command);
+                    return 2 + summaryDrawer.GetHeight(command, commandGroupSetting, commandSetting);
                 };
 
                 _commandList.onSelectCallback = list => {

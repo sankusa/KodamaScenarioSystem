@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem {
     [Serializable]
     public class LogCommand : CommandBase {
-        [SerializeField] private string _message;
+        [SerializeField, TextArea(1, 10)] private string _message;
         public string Message => _message;
 
         public override void Execute(ICommandService service) {
@@ -14,7 +14,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"<color={Colors.CommandNameColor}>Log [ <color={Colors.Args}>{_message}</color> ]</color>";
+            return $"{_message}";
         }
     }
 }

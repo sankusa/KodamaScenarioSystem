@@ -25,7 +25,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"<color={Colors.BlockSummaryCaption}>Repeat</color>  {_times.ToString()}";
+            return $"{_times.ToString()} times";
         }
     }
 }
