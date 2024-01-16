@@ -12,8 +12,8 @@ namespace Kodama.ScenarioSystem.Editor {
         public static IEnumerable<CommandGroupSetting> All => _all.OrderBy(x => x.Priority);
 
         public static (CommandGroupSetting, CommandSetting) Find(CommandBase command) {
-            foreach(CommandGroupSetting groupSetting in All) {
-                foreach(CommandSetting commandSetting in groupSetting.CommandSettings) {
+            foreach(CommandGroupSetting groupSetting in _all) {
+                foreach(CommandSetting commandSetting in groupSetting._commandSettings) {
                     if(commandSetting.CommandScript?.GetClass() == command.GetType()) return (groupSetting, commandSetting);
                 }
             }

@@ -7,7 +7,7 @@ namespace Kodama.ScenarioSystem.Editor {
         private Color defaultColor;
 
         public ContentColorScope(Color overwriteColor) {
-            defaultColor = GUI.backgroundColor;
+            defaultColor = GUI.contentColor;
             GUI.contentColor = overwriteColor;
         }
 

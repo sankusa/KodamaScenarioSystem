@@ -129,9 +129,13 @@ namespace Kodama.ScenarioSystem.Editor {
                     _pageHeader.DrawLayout(serializedPage);
                 }
 
-                using(new EditorGUILayout.VerticalScope(GUILayout.ExpandWidth(true))) {
-                    _pageDetailArea.DrawLayout(_status, scenario, serializedPage);
-                }
+                Rect detailAreaRect = EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+                _pageDetailArea.DrawLayout(new Rect(detailAreaRect) {x = 0, y = 0}, _status, scenario, serializedPage);
+                EditorGUILayout.EndVertical();
+
+                // using(new EditorGUILayout.VerticalScope(GUILayout.ExpandWidth(true))) {
+                    
+                // }
 
                 // コマンドクリップボード操作
                 

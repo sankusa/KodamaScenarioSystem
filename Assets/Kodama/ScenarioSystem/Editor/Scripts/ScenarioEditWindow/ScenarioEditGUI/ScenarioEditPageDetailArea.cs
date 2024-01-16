@@ -22,6 +22,7 @@ namespace Kodama.ScenarioSystem.Editor {
         private const int _indentWidth = 16;
 
         private Vector2 _scrollPos;
+        private Rect _rectSize;
 
         private class SummaryDrawerCacheElement {
             public readonly Type[] _types;
@@ -70,7 +71,9 @@ namespace Kodama.ScenarioSystem.Editor {
             _commandParameterChanged = true;
         }
 
-        public void DrawLayout(ScenarioEditGUIStatus guiStatus, Scenario scenario, SerializedObject serializedPage) {
+        public void DrawLayout(Rect rectSize, ScenarioEditGUIStatus guiStatus, Scenario scenario, SerializedObject serializedPage) {
+            _rectSize = rectSize;
+
             ScenarioPage page = serializedPage.targetObject as ScenarioPage;
             bool pageChanged = _pageInstanceIdOld != page.GetInstanceID();
             // コマンド追加系操作ののUndo時、ReorderableListに要素数の減少が反映されず、
@@ -104,9 +107,6 @@ namespace Kodama.ScenarioSystem.Editor {
                     //     });
                     // SCommandGroupSetting commandGroupSetting = SCommandGroupSetting.All.FirstOrDefault(x => x.GroupId == commandSetting?.GroupId);
 
-                    (CommandGroupSetting commandGroupSetting, CommandSetting commandSetting) =
-                        CommandGroupSetting.Find(command);
-
                     // ブロック終了コマンドならインデント-1
                     if(command is IBlockEnd blockEnd) {
                         if(_indentBlockTypeStack.Count > 0 && blockEnd.BlockType == _indentBlockTypeStack.Peek()) {
@@ -114,70 +114,79 @@ namespace Kodama.ScenarioSystem.Editor {
                         }
                     }
 
-                    // インデント
-                    int indentLevel = _indentBlockTypeStack.Count;
-                    Rect indentRect = new Rect(rect.x, rect.y, _indentWidth * indentLevel + 1, rect.height + 1);
+                    // ScrollViewの描画範囲外なら描画処理を行わない
+                    Rect elementRealRect = rect; // スクロール分を補正した実際の描画範囲
+                    elementRealRect.x -= _scrollPos.x;
+                    elementRealRect.y -= _scrollPos.y;
+                    if(_rectSize.Overlaps(elementRealRect)) {
+                        // インデント
+                        int indentLevel = _indentBlockTypeStack.Count;
+                        Rect indentRect = new Rect(rect.x, rect.y, _indentWidth * indentLevel + 1, rect.height + 1);
 
-                    Rect contentRect = RectUtil.Margin(rect, _indentWidth * indentLevel, bottomMargin: -1);
+                        Rect contentRect = RectUtil.Margin(rect, _indentWidth * indentLevel, bottomMargin: -1);
 
-                    Rect summaryBoxRect = RectUtil.Margin(contentRect, 0, 68, 0, 1);
-                    Rect summaryBoxInnerRect = RectUtil.Margin(summaryBoxRect, 1, 1, 1, 1);
+                        Rect summaryBoxRect = RectUtil.Margin(contentRect, 0, 68, 0, 1);
+                        Rect summaryBoxInnerRect = RectUtil.Margin(summaryBoxRect, 1, 1, 1, 1);
 
-                    Rect menuButtonRect = new Rect(contentRect.xMax - 66, contentRect.y + 1, 22, contentRect.height - 3);
-                    Rect copyButtonRect = new Rect(contentRect.xMax - 45, contentRect.y + 1, 22, contentRect.height - 3);
-                    Rect removeButtonRect = new Rect(contentRect.xMax - 24, contentRect.y + 1, 22, contentRect.height - 3);
+                        Rect menuButtonRect = new Rect(contentRect.xMax - 66, contentRect.y + 1, 22, contentRect.height - 3);
+                        Rect copyButtonRect = new Rect(contentRect.xMax - 45, contentRect.y + 1, 22, contentRect.height - 3);
+                        Rect removeButtonRect = new Rect(contentRect.xMax - 24, contentRect.y + 1, 22, contentRect.height - 3);
 
-                    if(indentLevel > 0) {
-                        using (new BackgroundColorScope(new Color(0.5f, 0.5f, 0.5f))) {
-                            GUI.Box(indentRect, "", GUIStyles.LeanGroupBox);
+                        if(indentLevel > 0) {
+                            using (new BackgroundColorScope(new Color(0.5f, 0.5f, 0.5f))) {
+                                GUI.Box(indentRect, "", GUIStyles.LeanGroupBox);
+                            }
                         }
-                    }
-                    GUI.Box(summaryBoxRect, "", GUIStyles.LeanGroupBox);
+                        GUI.Box(summaryBoxRect, "", GUIStyles.LeanGroupBox);
 
-                    if(commandSetting != null && commandGroupSetting != null) {
-                        Color groupColor = commandGroupSetting != null ? commandGroupSetting.Color : Color.white;
-                        EditorGUI.DrawRect(summaryBoxInnerRect, groupColor);
+                        // サマリ表示
+                        (CommandGroupSetting commandGroupSetting, CommandSetting commandSetting) =
+                            CommandGroupSetting.Find(command);
+                        if(commandSetting != null && commandGroupSetting != null) {
+                            Color groupColor = commandGroupSetting != null ? commandGroupSetting.Color : Color.white;
+                            EditorGUI.DrawRect(summaryBoxInnerRect, groupColor);
 
-                        CommandSummaryDrawerBase summaryDrawer = _summaryDrawerCache.GetSummaryDrawer(command);
-                        summaryDrawer.Draw(summaryBoxInnerRect, command, commandGroupSetting, commandSetting);
-                    }
-                    else {
-                        EditorGUI.LabelField(summaryBoxInnerRect, command.GetType().Name);
-                    }
+                            CommandSummaryDrawerBase summaryDrawer = _summaryDrawerCache.GetSummaryDrawer(command);
+                            summaryDrawer.Draw(summaryBoxInnerRect, command, commandGroupSetting, commandSetting);
+                        }
+                        else {
+                            EditorGUI.LabelField(summaryBoxInnerRect, command.GetType().Name);
+                        }
 
-                    using (new ContentColorScope(new Color(1, 1, 1, 0.5f))) {
-                    if(GUI.Button(menuButtonRect, CommonEditorResources.Instance.MenuIcon, GUIStyles.BorderedButton)) {
-                        GenericMenu menu = new GenericMenu();
-                        menu.AddItem(
-                            new GUIContent("Copy"),
-                            on: false,
-                            func: () => CommandClipBoard.CopyToClipBoard(new List<CommandBase>(){command})
-                        );
-                        menu.DropDown(menuButtonRect);
-                    }
-                    if(GUI.Button(copyButtonRect, CommonEditorResources.Instance.CommandCopyIcon, GUIStyles.BorderedButton)) {
-                        Undo.RecordObject(page, "Duplicate Command");
-                        page.InsertCommand(index + 1, page.Commands[index].Copy());
-                        guiStatus.CurrentCommandIndex = index + 1;
-                        // new CommandDropdown(
-                        //     new UnityEditor.IMGUI.Controls.AdvancedDropdownState(), 
-                        //     commandType => {
-                        //         Undo.RecordObject(page, "Copy Command");
-                        //         page.InsertCommand(index + 1, CommandBase.CreateInstance(commandType, page));
-                        //         guiStatus.CurrentCommandIndex = index + 1;
-                        //     }
-                        //     ).ShowDropDown(new Rect(0, 0, 200, 0));
+                        using (new ContentColorScope(new Color(1, 1, 1, 0.5f))) {
+                        if(GUI.Button(menuButtonRect, CommonEditorResources.Instance.MenuIcon, GUIStyles.BorderedButton)) {
+                            GenericMenu menu = new GenericMenu();
+                            menu.AddItem(
+                                new GUIContent("Copy"),
+                                on: false,
+                                func: () => CommandClipBoard.CopyToClipBoard(new List<CommandBase>(){command})
+                            );
+                            menu.DropDown(menuButtonRect);
+                        }
+                        if(GUI.Button(copyButtonRect, CommonEditorResources.Instance.CommandCopyIcon, GUIStyles.BorderedButton)) {
+                            Undo.RecordObject(page, "Duplicate Command");
+                            page.InsertCommand(index + 1, page.Commands[index].Copy());
+                            guiStatus.CurrentCommandIndex = index + 1;
+                            // new CommandDropdown(
+                            //     new UnityEditor.IMGUI.Controls.AdvancedDropdownState(), 
+                            //     commandType => {
+                            //         Undo.RecordObject(page, "Copy Command");
+                            //         page.InsertCommand(index + 1, CommandBase.CreateInstance(commandType, page));
+                            //         guiStatus.CurrentCommandIndex = index + 1;
+                            //     }
+                            //     ).ShowDropDown(new Rect(0, 0, 200, 0));
 
-                    }
-                    //GUIContent i = EditorGUIUtility.TrIconContent("Toolbar Minus", "Remove selection from list");
-                    if(GUI.Button(removeButtonRect, CommonEditorResources.Instance.CommandDeleteIcon, GUIStyles.BorderedButton)) {
-                        Undo.RecordObject(page, "Delete Command");
-                        page.RemoveCommandAt(index);
-                    }
-                    }
+                        }
+                        //GUIContent i = EditorGUIUtility.TrIconContent("Toolbar Minus", "Remove selection from list");
+                        if(GUI.Button(removeButtonRect, CommonEditorResources.Instance.CommandDeleteIcon, GUIStyles.BorderedButton)) {
+                            Undo.RecordObject(page, "Delete Command");
+                            page.RemoveCommandAt(index);
+                        }
+                        }
 
-                    if(_commandList.index == index) {
-                        EditorGUI.DrawRect(contentRect, new Color(1, 1, 1, 0.1f));
+                        if(_commandList.index == index) {
+                            EditorGUI.DrawRect(contentRect, new Color(1, 1, 1, 0.1f));
+                        }
                     }
 
                     // ブロック開始コマンドならインデント+1
@@ -194,7 +203,7 @@ namespace Kodama.ScenarioSystem.Editor {
                     if(commandGroupSetting == null || commandSetting == null) return 21;
 
                     CommandSummaryDrawerBase summaryDrawer = _summaryDrawerCache.GetSummaryDrawer(command);
-                    return 2 + summaryDrawer.GetHeight(command, commandGroupSetting, commandSetting);
+                    return summaryDrawer.GetHeight(command, commandGroupSetting, commandSetting);
                 };
 
                 _commandList.onSelectCallback = list => {
