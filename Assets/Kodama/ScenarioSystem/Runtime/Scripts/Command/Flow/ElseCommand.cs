@@ -23,9 +23,5 @@ namespace Kodama.ScenarioSystem {
                 service.PagePlayProcess.SetUpAndPushBlock(this, ifBlock);
             }
         }
-
-        public override string GetSummary() {
-            return "";
-        }
     }
 }

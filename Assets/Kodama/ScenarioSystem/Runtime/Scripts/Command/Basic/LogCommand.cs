@@ -14,7 +14,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"{_message}";
+            return _message;
         }
     }
 }

@@ -62,7 +62,7 @@ namespace Kodama.ScenarioSystem {
                 // yMax = rect.yMax,
             };
             if(commandProp != null && propertyDrawerRect.height > 0) {
-                EditorGUI.PropertyField(propertyDrawerRect, commandProp, GUIContent.none, true);
+                EditorGUI.PropertyField(propertyDrawerRect, commandProp, GUIContent.none);
             }
         }
     }

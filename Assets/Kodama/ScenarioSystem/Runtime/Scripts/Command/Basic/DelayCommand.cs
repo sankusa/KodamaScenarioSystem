@@ -15,7 +15,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"{_seconds} s";
+            return _seconds.ToString() + " s";
         }
     }
 }

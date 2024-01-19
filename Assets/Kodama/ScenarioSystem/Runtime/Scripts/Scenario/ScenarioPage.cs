@@ -41,28 +41,34 @@ namespace Kodama.ScenarioSystem
         public void AddCommand(CommandBase command) {
             Undo.RecordObject(this, _undoRedoLabel_AddCommand);
             _commands.Add(command);
+            EditorUtility.SetDirty(this);
         }
 
         public void InsertCommand(int index, CommandBase command) {
             int insertIndex = Mathf.Clamp(index, 0, Commands.Count);
             Undo.RecordObject(this, _undoRedoLabel_AddCommand);
             _commands.Insert(insertIndex, command);
+            EditorUtility.SetDirty(this);
         }
 
         public void InsertCommands(int index, IEnumerable<CommandBase> commands) {
             int insertIndex = Mathf.Clamp(index, 0, Commands.Count);
             Undo.RecordObject(this, _undoRedoLabel_AddCommand);
             _commands.InsertRange(insertIndex, commands);
+            EditorUtility.SetDirty(this);
         }
 
         public bool RemoveCommand(CommandBase command) {
             Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
-            return _commands.Remove(command);
+            bool ret = _commands.Remove(command);
+            EditorUtility.SetDirty(this);
+            return ret;
         }
 
         public void RemoveCommandAt(int index) {
             Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
             _commands.RemoveAt(index);
+            EditorUtility.SetDirty(this);
         }
 #endif
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -37,7 +38,21 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return $"{(_targetScenario != null ? _targetScenario.name : "")},  {(_targetPage != null ? _targetPage.name : "")},  {_callType.ToString()}";
+            StringBuilder sb = SharedStringBuilder.Instance;
+            sb.Append(_targetScenario != null ? _targetScenario.name : "");
+            sb.Append(",  ");
+            sb.Append(_targetPage != null ? _targetPage.name : "");
+            sb.Append(",  ");
+            sb.Append(_callType.ToString());
+            string summary = sb.ToString();
+            sb.Clear();
+
+            return summary;
+        }
+
+        public override string Validate() {
+            if(_targetScenario == null) return "Target scenario is null";
+            return null;
         }
     }
 }

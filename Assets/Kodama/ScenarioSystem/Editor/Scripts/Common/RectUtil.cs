@@ -60,7 +60,7 @@ namespace Kodama.ScenarioSystem.Editor {
         /// <returns></returns>
         public static List<Rect> DivideRectHorizontal(
             Rect rect,
-            IList<LayoutLength> widthList,
+            LayoutLength[] widthList,
             float leftMargin = 0,
             float rightMargin = 0
         ) {
@@ -72,7 +72,7 @@ namespace Kodama.ScenarioSystem.Editor {
             // Rect生成
             float currentRectXMin = rect.x;
             List<Rect> rects = new List<Rect>();
-            for(int i = 0; i < widthList.Count; i++) {
+            for(int i = 0; i < widthList.Length; i++) {
                 if(widthList[i].LayoutType == LayoutType.Fixed) {
                     rects.Add(new Rect(currentRectXMin + leftMargin, rect.y, widthList[i].Length - leftMargin - rightMargin, rect.height));
                     currentRectXMin += widthList[i].Length;

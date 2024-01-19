@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
@@ -80,7 +81,21 @@ namespace Kodama.ScenarioSystem {
         }
 
         public string GetSummary() {
-            return $"{_variableName.GetSummary()}  {_operator.GetOperatorString()}  {_valueOrVariableName.GetSummary()}";
+            StringBuilder sb = SharedStringBuilder.Instance;
+            sb.Append(_variableName.GetSummary());
+            sb.Append("  ");
+            sb.Append(_operator.GetOperatorString());
+            sb.Append("  ");
+            sb.Append(_valueOrVariableName.GetSummary());
+            string summary = sb.ToString();
+            sb.Clear();
+
+            return summary;
+        }
+
+        public string Validate() {
+            if(string.IsNullOrEmpty(_variableName.Name)) return "Variable name is empty";
+            return null;
         }
     }
 }

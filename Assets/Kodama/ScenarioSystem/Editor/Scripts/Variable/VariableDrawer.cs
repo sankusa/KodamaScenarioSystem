@@ -12,7 +12,7 @@ namespace Kodama.ScenarioSystem.Editor {
     // SerializeReferenceのFindPropertyRelative及びPropertyFieldは遅いので、可能な限り使用しない
     [CustomPropertyDrawer(typeof(Variable<>), true)]
     public class VariableDrawer {
-        private static RectUtil.LayoutLength[] rectLengths = new RectUtil.LayoutLength[]{ new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1.5f)};
+        private static RectUtil.LayoutLength[] _rectLengths = new RectUtil.LayoutLength[]{ new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1.5f)};
 
         private Dictionary<Type, VariableValueFieldBase> _customValueDrawerDic = new Dictionary<Type, VariableValueFieldBase>();
 
@@ -31,7 +31,7 @@ namespace Kodama.ScenarioSystem.Editor {
             string typeName = TypeNameUtil.ConvertToPrimitiveTypeName(valueFieldInfo.FieldType.Name);
 
             // 各要素の描画範囲
-            List<Rect> rects = RectUtil.DivideRectHorizontal(rect, rectLengths);
+            List<Rect> rects = RectUtil.DivideRectHorizontal(rect, _rectLengths);
             rects[0] = new Rect(rects[0].x, rects[0].y, rects[0].width, EditorGUIUtility.singleLineHeight);
             rects[1] = new Rect(rects[1].x, rects[1].y, rects[1].width - 4, EditorGUIUtility.singleLineHeight);
 

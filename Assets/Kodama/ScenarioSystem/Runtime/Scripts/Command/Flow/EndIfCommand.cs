@@ -11,9 +11,5 @@ namespace Kodama.ScenarioSystem {
                 service.PagePlayProcess.PopBlock();
             }
         }
-
-        public override string GetSummary() {
-            return "";
-        }
     }
 }

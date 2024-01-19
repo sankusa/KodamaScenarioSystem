@@ -91,8 +91,6 @@ namespace Kodama.ScenarioSystem.Editor {
             _sb.Clear();
 
             EditorGUI.LabelField(rect, label, GUIStyles.SummaryLabel);
-
-            // EditorGUI.LabelField(rect, $"<color=#{labelColorString}>{commandSetting.DisplayName}</color>", GUIStyles.SummaryLabel);
         }
 
         protected virtual void DrawSummary(Rect rect, CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
@@ -106,13 +104,17 @@ namespace Kodama.ScenarioSystem.Editor {
             string summary = _sb.ToString();
             _sb.Clear();
 
-            EditorGUI.LabelField(rect, summary, GUIStyles.SummaryLabel);
-            
-            // EditorGUI.LabelField(rect, $"<color=#{textBaseColorString}>{command.GetSummary()}</color>", GUIStyles.SummaryLabel);
+            EditorGUI.LabelField(rect, summary, GUIStyles.SummaryLabel);            
         }
 
         protected virtual void DrawErrorMessageView(Rect rect, CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
-            //GUI.Box(RectUtil.Margin(rect, -1, -1, 0, -1), GUIContent.none, GUIStyles.LeanGroupBox);
+            string errorMessage = command.Validate();
+            if(string.IsNullOrEmpty(errorMessage)) return;
+
+            // rect.xMin += _standardSpace;
+            // rect.xMax -= _standardSpace;
+
+            EditorGUI.HelpBox(rect, errorMessage, MessageType.Error);
         }
 
         public override float GetHeight(CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
@@ -121,17 +123,35 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         protected virtual float GetMainViewHeight(CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
-            int summaryRowCount = 1 + command.GetSummary().Count(c => c == '\n');
-            bool drawLabel = WillDrawLabel(command, groupSetting, commandSetting);
+            float contentHeight = 0;
+
+            // サマリ行数
+            string summary = command.GetSummary();
+            int summaryRowCount;
+            if(string.IsNullOrEmpty(summary)) {
+                summaryRowCount = 1;
+            }
+            else {
+                summaryRowCount = summary.CountLine();
+            }
+
+            // 行数分高さを加算
             float summaryHeight = summaryRowCount * _lineHeight;
-            float adjustForSummaryPosition = commandSetting.SummaryPosition == SummaryPosition.Bottom
-                ? (drawLabel ? _lineHeight + _multipleSummaryOffset.y : 0)
-                : 0;
-            return _standardSpace * 2 + summaryHeight + adjustForSummaryPosition + 1;
+            contentHeight += summaryHeight;
+
+            // サマリ位置:下の場合の位置調整
+            bool drawLabel = WillDrawLabel(command, groupSetting, commandSetting);
+            if(drawLabel && commandSetting.SummaryPosition == SummaryPosition.Bottom) {
+                contentHeight += _lineHeight + _multipleSummaryOffset.y;
+            }
+
+            return _standardSpace * 2 + contentHeight + 1;
         }
 
         protected virtual float GetErrorMessageViewHeight(CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
-            return 0;
+            string errorMessage = command.Validate();
+            if(string.IsNullOrEmpty(errorMessage)) return 0;
+            return errorMessage.CountLine() * _lineHeight + _standardSpace * 2;
         }
     }
 }

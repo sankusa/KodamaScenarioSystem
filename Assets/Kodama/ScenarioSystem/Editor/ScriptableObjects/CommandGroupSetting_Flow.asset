@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _priority: -4
   _displayName: Flow
-  _color: {r: 0.28627452, g: 0.23529413, b: 0.19607845, a: 1}
+  _color: {r: 0.2735849, g: 0.22909088, b: 0.19486472, a: 1}
   _captionColor: {r: 1, g: 0.61960787, b: 0.33333334, a: 1}
   _commandSettings:
   - _commandScript: {fileID: 11500000, guid: 87920939e9ed73d4b8ceaa275ec03d1e, type: 3}

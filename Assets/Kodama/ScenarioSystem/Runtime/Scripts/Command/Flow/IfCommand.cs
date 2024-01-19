@@ -25,5 +25,9 @@ namespace Kodama.ScenarioSystem {
         public override string GetSummary() {
             return _condition.GetSummary();
         }
+
+        public override string Validate() {
+            return _condition.Validate();
+        }
     }
 }

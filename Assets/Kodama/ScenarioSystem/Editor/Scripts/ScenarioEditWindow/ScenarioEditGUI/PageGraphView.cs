@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Reflection;
 
 namespace Kodama.ScenarioSystem.Editor {
     internal class PageGraphView : GraphView {
@@ -13,6 +14,8 @@ namespace Kodama.ScenarioSystem.Editor {
         private readonly List<PageGraphNode> _nodes = new List<PageGraphNode>();
 
         public event Action<ScenarioPage> OnNodeClick;
+
+        private SelectionDragger _selectionDragger;
 
         public PageGraphView(Scenario scenario) : base() {
             _scenario = scenario;
@@ -30,7 +33,8 @@ namespace Kodama.ScenarioSystem.Editor {
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new RectangleSelector());
-            this.AddManipulator(new ContextualMenuManipulator(OnContextMenuPopulate));
+            this.AddManipulator(new ContextualMenuManipulator(OnContextMenuPopulate));                 
+            this.AddManipulator(new SelectionDragger() {panSpeed = Vector2.zero});
 
             graphViewChanged += change => {
                 _nodes.ForEach(x => x.ReflectChangeToPage());
@@ -69,7 +73,9 @@ namespace Kodama.ScenarioSystem.Editor {
             PageGraphNode node = new PageGraphNode(page);
             AddElement(node);
             _nodes.Add(node);
-            node.OnClick += page => OnNodeClick?.Invoke(page);
+            node.OnClick += page => {
+                OnNodeClick?.Invoke(page);
+            };
         }
 
         private void OnContextMenuPopulate(ContextualMenuPopulateEvent e) {

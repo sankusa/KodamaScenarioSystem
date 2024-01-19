@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43a1343ad243b34489b319c36ed1afa0, type: 3}
   m_Name: CommonEditorResources
   m_EditorClassIdentifier: 
-  _backgroundColor: {r: 0.19616678, g: 0.20392157, b: 0.19607843, a: 1}
+  _backgroundColor: {r: 0.20392157, g: 0.20036975, b: 0.19607843, a: 1}
   _summaryTextColor: {r: 0.8490566, g: 0.7961908, b: 0.7168921, a: 1}
-  _entryNodeColor: {r: 0.22745098, g: 0.43529412, b: 0.29351178, a: 1}
-  _nodeArrowColor: {r: 0.58898294, g: 0.754717, b: 0.34531865, a: 1}
+  _entryNodeColor: {r: 0, g: 0, b: 0, a: 1}
+  _nodeArrowColor: {r: 0.33333334, g: 0.7176471, b: 0.8980393, a: 1}
   _nodeSelectionBorder: {r: 0.5882353, g: 0.75294125, b: 0.34509805, a: 1}
   _commandAddIcon: {fileID: 2800000, guid: 267428fbffaa52f41b00ddd5a6281f45, type: 3}
   _commandInsertIcon: {fileID: 2800000, guid: ba128b501b457ec47bc7079635ab4c6a, type: 3}

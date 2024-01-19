@@ -31,7 +31,15 @@ namespace Kodama.ScenarioSystem {
         /// エディタ表示用のサマリ作成
         /// </summary>
         public virtual string GetSummary() {
-            return GetType().Name;
+            return null;
+        }
+
+        /// <summary>
+        /// バリデーション
+        /// </summary>
+        /// <returns>エラーメッセージ</returns>
+        public virtual string Validate() {
+            return null;
         }
 
         public string LogCaption => $"<b><i><color={Colors.CommandNameColor}>{GetType().Name}</color></i></b>    ";

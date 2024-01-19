@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -18,6 +19,17 @@ namespace Kodama.ScenarioSystem.Editor {
                 }
             }
             return (null, null);
+        }
+
+        public static Dictionary<Type, (CommandGroupSetting, CommandSetting)> GenerateCurrentSettingDictonary() {
+            Dictionary<Type, (CommandGroupSetting, CommandSetting)> settingDic = new Dictionary<Type, (CommandGroupSetting, CommandSetting)>();
+            foreach(CommandGroupSetting groupSetting in _all) {
+                foreach(CommandSetting commandSetting in groupSetting._commandSettings) {
+                    Type settingType = commandSetting.CommandScript?.GetClass();
+                    settingDic[settingType] = (groupSetting, commandSetting);
+                }
+            }
+            return settingDic;
         }
 
         [InitializeOnLoadMethod]

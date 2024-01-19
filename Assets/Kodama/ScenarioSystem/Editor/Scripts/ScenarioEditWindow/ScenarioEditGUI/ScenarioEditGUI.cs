@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -9,7 +10,6 @@ namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditGUI {
         private ScenarioEditScenarioHeaderArea _scenarioHeader;
         private ScenarioEditPageHeaderArea _pageHeader;
-        private ScenarioEditHeaderArea _headerArea;
         private ScenarioEditPageListArea _pageListArea;
         private ScenarioEditVariableArea _variableArea;
         private ScenarioEditPageDetailArea _pageDetailArea;
@@ -26,10 +26,14 @@ namespace Kodama.ScenarioSystem.Editor {
 
         private PageGraphView _pageGraphView;
 
+        private ScenarioPage _currentPage;
+        private SerializedObject _currentSerializedPage;
+
+        private DateTime _pageLastChangedTime;
+
         public ScenarioEditGUI(Scenario scenario, VisualElement rootVisualElement) {
             _scenarioHeader = new ScenarioEditScenarioHeaderArea();
             _pageHeader = new ScenarioEditPageHeaderArea();
-            _headerArea = new ScenarioEditHeaderArea();
             _pageListArea = new ScenarioEditPageListArea();
             _variableArea = new ScenarioEditVariableArea();
             _pageDetailArea = new ScenarioEditPageDetailArea();
@@ -106,15 +110,18 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         private void DrawLayoutPageEditor(Scenario scenario, SerializedObject serializedScenario, SerializedProperty pagesProp) {
-            SerializedProperty currentPageProp = pagesProp.GetArrayElementAtIndex(_status.CurrentPageIndex);
-            ScenarioPage currentPage = currentPageProp.objectReferenceValue as ScenarioPage;
+            SerializedProperty pageProp = pagesProp.GetArrayElementAtIndex(_status.CurrentPageIndex);
+            ScenarioPage page = pageProp.objectReferenceValue as ScenarioPage;
 
-            SerializedObject serializedPage = new SerializedObject(currentPageProp.objectReferenceValue);
+            if(page != _currentPage) {
+                _currentPage = page;
+                _currentSerializedPage = new SerializedObject(page);
+            }
             
-            serializedPage.Update();
+            _currentSerializedPage.Update();
             EditorGUI.BeginChangeCheck();
 
-            SerializedProperty currentPageCommandsProp = serializedPage.FindProperty("_commands");
+            SerializedProperty currentPageCommandsProp = _currentSerializedPage.FindProperty("_commands");
             SerializedProperty currentCommandProp = null;
             if(_status.CurrentCommandIndex < currentPageCommandsProp.arraySize) {
                 currentCommandProp = currentPageCommandsProp.GetArrayElementAtIndex(_status.CurrentCommandIndex);
@@ -126,16 +133,12 @@ namespace Kodama.ScenarioSystem.Editor {
 
                 using(new EditorGUILayout.VerticalScope(GUIStyles.LeanGroupBox)) {
                     _scenarioHeader.DrawLayout(scenario, serializedScenario);
-                    _pageHeader.DrawLayout(serializedPage);
+                    _pageHeader.DrawLayout(_currentSerializedPage);
                 }
 
                 Rect detailAreaRect = EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-                _pageDetailArea.DrawLayout(new Rect(detailAreaRect) {x = 0, y = 0}, _status, scenario, serializedPage);
+                _pageDetailArea.DrawLayout(new Rect(detailAreaRect) {x = 0, y = 0}, _status, scenario, _currentSerializedPage);
                 EditorGUILayout.EndVertical();
-
-                // using(new EditorGUILayout.VerticalScope(GUILayout.ExpandWidth(true))) {
-                    
-                // }
 
                 // コマンドクリップボード操作
                 
@@ -144,7 +147,7 @@ namespace Kodama.ScenarioSystem.Editor {
                     using(new EditorGUILayout.HorizontalScope()) {
                         if(GUILayout.Button("Add")) {
                             int insertIndex = _status.CurrentCommandIndex + 1;
-                            currentPage.InsertCommands(insertIndex, CommandClipBoard.CopyFromClipBoard(currentPage));
+                            _currentPage.InsertCommands(insertIndex, CommandClipBoard.CopyFromClipBoard(_currentPage));
                             _status.CurrentCommandIndex++;
                         }
                         if(GUILayout.Button("Clear")) {
@@ -167,7 +170,7 @@ namespace Kodama.ScenarioSystem.Editor {
                     _commandAreaSplitView.Begin();
                     _commandGroupArea.DrawLayout(_status);
                     _commandAreaSplitView.Split();
-                    _commandListArea.DrawLayout(_status, serializedPage);
+                    _commandListArea.DrawLayout(_status, _currentSerializedPage);
                     _commandAreaSplitView.End();
                 }
 
@@ -176,8 +179,17 @@ namespace Kodama.ScenarioSystem.Editor {
             }
 
             if(EditorGUI.EndChangeCheck()) {
-                serializedPage.ApplyModifiedProperties();
+                _currentSerializedPage.ApplyModifiedPropertiesWithoutUndo();
             }
+
+            // 最後のページ内容更新から微小な時間経過後に更新を反映する
+            // 文字列の長押し入力で重くなることへの対応
+            // if(_pageLastChangedTime != default) {
+            //     if(DateTime.Now - _pageLastChangedTime >= new TimeSpan(0, 0, 0, 0, 150)) {
+            //         _currentSerializedPage.ApplyModifiedProperties();
+            //         _pageLastChangedTime = default;
+            //     }
+            // }
         }
     }
 }
