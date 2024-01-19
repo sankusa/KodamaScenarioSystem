@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    [Serializable]
     public class LogCommand : CommandBase {
         [SerializeField, TextArea(1, 10)] private string _message;
         public string Message => _message;

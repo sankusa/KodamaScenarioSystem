@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    [Serializable]
     public class GoToLabelCommand : CommandBase {
         [SerializeField] private string _targetLabel;
         public string TargetLabel => _targetLabel;

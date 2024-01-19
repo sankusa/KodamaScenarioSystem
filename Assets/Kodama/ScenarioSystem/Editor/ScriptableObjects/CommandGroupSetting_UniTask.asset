@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _priority: -3
   _displayName: UniTask
-  _color: {r: 0.24705882, g: 0.16862746, b: 0.24705711, a: 1}
+  _color: {r: 0.23584908, g: 0.18578678, b: 0.23584908, a: 1}
   _captionColor: {r: 0.764151, g: 0.5226504, b: 0.76182884, a: 1}
   _commandSettings:
   - _commandScript: {fileID: 11500000, guid: 404194c1c0398dc4cb2a74799c9d452b, type: 3}

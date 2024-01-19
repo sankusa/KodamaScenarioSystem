@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Kodama.ScenarioSystem {
     internal class PlayableScenario : IDisposable {
@@ -28,6 +29,7 @@ namespace Kodama.ScenarioSystem {
         public bool IsDisposed => _isDisposed;
 
         public PlayableScenario(Scenario scenario) {
+            Assert.IsNotNull(scenario);
             Scenario = scenario;
             PreloadResourcesAsync().Forget(e => {
                 Debug.LogError(e);

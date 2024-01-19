@@ -6,7 +6,6 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    [Serializable]
     public class DelayCommand : AsyncCommandBase {
         [SerializeField] private float _seconds;
 

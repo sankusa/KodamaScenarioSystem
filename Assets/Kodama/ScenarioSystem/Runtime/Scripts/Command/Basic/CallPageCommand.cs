@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
-    [Serializable]
     public class CallPageCommand : AsyncCommandBase {
         private enum CallType {
             Jump = 0,

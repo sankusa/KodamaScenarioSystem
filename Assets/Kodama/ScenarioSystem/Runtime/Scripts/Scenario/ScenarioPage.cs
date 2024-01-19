@@ -21,7 +21,7 @@ namespace Kodama.ScenarioSystem
                 _scenario = value;
             }
         }
-        [SerializeReference] private List<CommandBase> _commands = new List<CommandBase>();
+        [SerializeField] private List<CommandBase> _commands = new List<CommandBase>();
         public IReadOnlyList<CommandBase> Commands => _commands;
 
 #if UNITY_EDITOR
@@ -41,34 +41,37 @@ namespace Kodama.ScenarioSystem
         public void AddCommand(CommandBase command) {
             Undo.RecordObject(this, _undoRedoLabel_AddCommand);
             _commands.Add(command);
-            EditorUtility.SetDirty(this);
+            AssetDatabase.AddObjectToAsset(command, this);
         }
 
         public void InsertCommand(int index, CommandBase command) {
             int insertIndex = Mathf.Clamp(index, 0, Commands.Count);
             Undo.RecordObject(this, _undoRedoLabel_AddCommand);
             _commands.Insert(insertIndex, command);
-            EditorUtility.SetDirty(this);
+            AssetDatabase.AddObjectToAsset(command, this);
         }
 
         public void InsertCommands(int index, IEnumerable<CommandBase> commands) {
             int insertIndex = Mathf.Clamp(index, 0, Commands.Count);
             Undo.RecordObject(this, _undoRedoLabel_AddCommand);
             _commands.InsertRange(insertIndex, commands);
-            EditorUtility.SetDirty(this);
+            foreach(CommandBase command in commands) {
+                AssetDatabase.AddObjectToAsset(command, this);
+            }
         }
 
         public bool RemoveCommand(CommandBase command) {
             Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
             bool ret = _commands.Remove(command);
-            EditorUtility.SetDirty(this);
+            Undo.DestroyObjectImmediate(command);
             return ret;
         }
 
         public void RemoveCommandAt(int index) {
+            CommandBase command = _commands[index];
             Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
             _commands.RemoveAt(index);
-            EditorUtility.SetDirty(this);
+            Undo.DestroyObjectImmediate(command);
         }
 #endif
 

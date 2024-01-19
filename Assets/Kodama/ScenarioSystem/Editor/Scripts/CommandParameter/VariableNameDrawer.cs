@@ -13,7 +13,8 @@ namespace Kodama.ScenarioSystem.Editor {
         public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
             VariableName variableName = property.GetObject() as VariableName;
             Type targetType = variableName.TargetType;
-            ScenarioPage page = property.serializedObject.targetObject as ScenarioPage;
+            CommandBase command = property.serializedObject.targetObject as CommandBase;
+            ScenarioPage page = command.Page;
             Scenario scenario = page.Scenario;
             SerializedProperty nameProp = property.FindPropertyRelative("_name");
         
