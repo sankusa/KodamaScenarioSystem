@@ -9,16 +9,15 @@ using UnityEngine.Assertions;
 using UnityEditor;
 #endif
 
-namespace Kodama.ScenarioSystem
-{
+namespace Kodama.ScenarioSystem {
     [Serializable]
     public class ScenarioPage : ScriptableObject {
-        [SerializeField] private Scenario _scenario;
-        public Scenario Scenario {
-            get => _scenario;
+        [SerializeField] private Scenario _parentScenario;
+        public Scenario ParentScenario {
+            get => _parentScenario;
             set {
-                Assert.IsTrue(_scenario == null);
-                _scenario = value;
+                Assert.IsTrue(_parentScenario == null);
+                _parentScenario = value;
             }
         }
         [SerializeField] private List<CommandBase> _commands = new List<CommandBase>();
@@ -106,8 +105,17 @@ namespace Kodama.ScenarioSystem
             return _commands.Count;
         }
 
-        public IEnumerable<ScenarioPage> GetReferencingFamilyPages() {
-            return Commands.Where(x => x is CallPageCommand).Select(x => (x as CallPageCommand).TargetPage).Where(x => x != null).Distinct();
+        public bool IsSiblig(ScenarioPage page) {
+            return ParentScenario.Pages.Contains(page);
+        }
+
+        public IEnumerable<ScenarioPage> GetReferencingSiblingPages() {
+            return Commands
+                .Where(x => x is CallPageCommand)
+                .Select(x => (x as CallPageCommand).TargetPage)
+                .Where(x => x != null)
+                .Where(x => IsSiblig(x))
+                .Distinct();
         }
     }
 }

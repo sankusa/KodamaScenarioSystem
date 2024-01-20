@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     public class DelayCommand : AsyncCommandBase {
-        [SerializeField] private float _seconds;
+        [SerializeField, Min(0)] private float _seconds;
 
         public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             await UniTask.Delay((int)(_seconds * 1000), cancellationToken: cancellationToken);

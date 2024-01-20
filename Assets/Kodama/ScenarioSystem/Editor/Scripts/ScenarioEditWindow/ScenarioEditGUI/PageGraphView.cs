@@ -107,7 +107,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
         private void SetDefaultPage(DropdownMenuAction menuAction) {
             PageGraphNode node = selection[0] as PageGraphNode;
-            node.Page.Scenario.ChangeDefaultPage(node.Page);
+            node.Page.ParentScenario.ChangeDefaultPage(node.Page);
 
             Rebuild();
         }
@@ -126,7 +126,7 @@ namespace Kodama.ScenarioSystem.Editor {
             Handles.color = color;
 
             foreach(PageGraphNode node in _nodes) {
-                foreach(ScenarioPage referencingPage in node.Page.GetReferencingFamilyPages()) {
+                foreach(ScenarioPage referencingPage in node.Page.GetReferencingSiblingPages()) {
                     PageGraphNode targetNode = _nodes.Find(x => x.Page == referencingPage);
                     // 描画
                     Vector2 fromPos = node.Top * contentViewContainer.transform.scale.x + (Vector2)contentViewContainer.transform.position;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
@@ -9,7 +10,14 @@ namespace Kodama.ScenarioSystem {
         public string Label => _label;
 
         public override string GetSummary() {
-            return $"<b>{_label}</b>";
+            StringBuilder sb = SharedStringBuilder.Instance;
+            sb.Append("<b>");
+            sb.Append(_label);
+            sb.Append("</b>");
+            string summary = sb.ToString();
+            sb.Clear();
+
+            return summary;
         }
     }
 }

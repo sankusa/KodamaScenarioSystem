@@ -93,9 +93,19 @@ namespace Kodama.ScenarioSystem {
             return summary;
         }
 
-        public string Validate() {
-            if(string.IsNullOrEmpty(_variableName.Name)) return "Variable name is empty";
-            return null;
+        public string Validate(CommandBase parentCommand) {
+            StringBuilder sb = SharedStringBuilder.Instance;
+            string variableNameErrorMessage = _variableName.Validate(parentCommand);
+            string valueOrVariableNameErrorMessage = _valueOrVariableName.Validate(parentCommand);
+            sb.Append(variableNameErrorMessage);
+            if(string.IsNullOrEmpty(variableNameErrorMessage) == false && string.IsNullOrEmpty(valueOrVariableNameErrorMessage) == false) {
+                sb.Append("\n");
+            }
+            sb.Append(valueOrVariableNameErrorMessage);
+            string errorMessage = sb.ToString();
+            sb.Clear();
+
+            return errorMessage;
         }
     }
 }

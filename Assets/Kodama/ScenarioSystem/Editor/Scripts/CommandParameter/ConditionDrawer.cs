@@ -9,13 +9,6 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     [CustomPropertyDrawer(typeof(Condition))]
     public class ConditionDrawer : PropertyDrawer {
-        private static RectUtil.LayoutLength[] _widths = new RectUtil.LayoutLength[]{
-            new RectUtil.LayoutLength(1),
-            new RectUtil.LayoutLength(1),
-            new RectUtil.LayoutLength(1),
-            new RectUtil.LayoutLength(1)
-        };
-
         private static List<Type> _availableTypes;
         private static string[] _variableTypeNames;
         private static Dictionary<Type, Type> _variableNameDic = new Dictionary<Type, Type>();
@@ -44,40 +37,41 @@ namespace Kodama.ScenarioSystem.Editor {
             SerializedProperty valueOrVariableNameProp = property.FindPropertyRelative("_valueOrVariableName");
             Condition condition = property.GetObject() as Condition;
             Type targetType = condition.VariableName.TargetType;
-            Scenario scenario = property.serializedObject.targetObject as Scenario;
+            CommandBase command = property.serializedObject.targetObject as CommandBase;
 
             // 型変更時の各値の更新とSerializedPropertyを通した値の更新が同フレームで行われた場合に
             // 変更が正しく反映されない事象が発生したので、型変更時には他の更新は行わない。
             bool typeChangedThisFrame = false;
 
-            if(string.IsNullOrEmpty(label.text) == false) {
-                EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), $"<b>{label.text}</b>", GUIStyles.SummaryLabel);
-                rect.yMin += EditorGUIUtility.singleLineHeight;
-            }
+            Rect headerRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
+            EditorGUI.LabelField(headerRect, label, EditorStyles.boldLabel);
+            rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-            GUI.Box(rect, "");
-            rect = RectUtil.Margin(rect, 4, 4, 4, 4);
+            EditorGUI.indentLevel++;
 
-            List<Rect> rects = RectUtil.DivideRectVertical(rect, _widths);
             // 型選択
+            Rect typeRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
             int typeIndex = Array.IndexOf(_variableTypeNames, TypeNameUtil.ConvertToPrimitiveTypeName(targetType.Name));
-            int newTypeIndex = EditorGUI.Popup(rects[0], "Type", typeIndex, _variableTypeNames);
+            int newTypeIndex = EditorGUI.Popup(typeRect, "Type", typeIndex, _variableTypeNames);
             if(newTypeIndex != typeIndex) {
                 targetType = _availableTypes[newTypeIndex];
-                Undo.RecordObject(scenario, "Condition Type Chenged");
+                Undo.RecordObject(command, "Condition Type Chenged");
                 condition.VariableName = Activator.CreateInstance(_variableNameDic[targetType]) as VariableName;
                 condition.ValueOrVariableName = Activator.CreateInstance(_valueOrVariableNameDic[targetType]) as ValueOrVariableName;
                 condition.Operator = Condition.CompareOperator.EqualTo;
-                EditorUtility.SetDirty(scenario);
                 typeChangedThisFrame = true;
             }
+            rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             // 変数1
+            Rect variableNameRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
             if(typeChangedThisFrame == false && variableNameProp != null) {
-                EditorGUI.PropertyField(rects[1], variableNameProp, new GUIContent("Variable Name"), true);
+                EditorGUI.PropertyField(variableNameRect, variableNameProp, new GUIContent("A"), true);
             }
+            rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             
             // 比較演算子
+            Rect operatorRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
             Condition.CompareOperator[] operators;
             if(targetType.GetInterfaces().Any(t => t == typeof(IComparable))) {
                 operators = Condition.OperatorsForCompareable;
@@ -87,21 +81,25 @@ namespace Kodama.ScenarioSystem.Editor {
             }
             int operatorIndex = Array.IndexOf(operators, condition.Operator);
             if(operatorIndex == -1) operatorIndex = 0;
-            operatorIndex = EditorGUI.Popup(rects[2], "Operator", operatorIndex, operators.Select(x => x.GetOperatorString()).ToArray());
+            operatorIndex = EditorGUI.Popup(operatorRect, "Operator", operatorIndex, operators.Select(x => x.GetOperatorString()).ToArray());
+            rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             if(typeChangedThisFrame == false) {
                 operatorProp.enumValueIndex = (int)operators[operatorIndex];
             }
 
             // 変数2(or値)
+            Rect valueOrVariableRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
             if(typeChangedThisFrame == false && valueOrVariableNameProp != null) {
-                EditorGUI.PropertyField(rects[3], valueOrVariableNameProp, new GUIContent("Value Or Variable Name"), true);
+                EditorGUI.PropertyField(valueOrVariableRect, valueOrVariableNameProp, new GUIContent("B"), true);
             }
+            rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+            EditorGUI.indentLevel--;
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return 88 + (string.IsNullOrEmpty(label.text) ? 0 : EditorGUIUtility.singleLineHeight);
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+            return EditorGUIUtility.singleLineHeight * 5 + EditorGUIUtility.standardVerticalSpacing * 4;
         }
     }
 

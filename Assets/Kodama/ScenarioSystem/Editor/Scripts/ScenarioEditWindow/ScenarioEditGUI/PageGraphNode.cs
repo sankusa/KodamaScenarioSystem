@@ -34,8 +34,8 @@ namespace Kodama.ScenarioSystem.Editor {
             label.style.marginLeft = 16;
             label.style.marginRight = 16;
             label.BindProperty(_serializedPage.FindProperty("m_Name"));
-            if(page.Scenario.DefaultPage == page) {
-                Label defaultLabel = new Label("<Default>");
+            if(page.ParentScenario.DefaultPage == page) {
+                Label defaultLabel = new Label(Labels.Label_DefaultPage);
                 defaultLabel.style.alignSelf = Align.Center;
                 titleContainer.Insert(0, defaultLabel);
                 titleContainer.style.backgroundColor = CommonEditorResources.Instance.EntryNodeColor;

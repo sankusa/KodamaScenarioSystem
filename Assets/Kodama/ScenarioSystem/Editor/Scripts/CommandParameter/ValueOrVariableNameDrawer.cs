@@ -16,8 +16,8 @@ namespace Kodama.ScenarioSystem.Editor {
             ValueOrVariableName valueOrVariableName = property.GetObject() as ValueOrVariableName;
             Type targetType = valueOrVariableName.TargetType;
             CommandBase command = property.serializedObject.targetObject as CommandBase;
-            ScenarioPage page = command.Page;
-            Scenario scenario = page.Scenario;
+            ScenarioPage page = command.ParentPage;
+            Scenario scenario = page.ParentScenario;
             SerializedProperty variableNameProp = property.FindPropertyRelative("_variableName");
 
             if(!string.IsNullOrEmpty(label.text)) {
@@ -25,6 +25,9 @@ namespace Kodama.ScenarioSystem.Editor {
                 EditorGUI.LabelField(labelRect, label);
                 rect.xMin += EditorGUIUtility.labelWidth + EditorGUIUtility.standardVerticalSpacing;
             }
+
+            int originalIndentLevel = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
 
             if(string.IsNullOrEmpty(variableNameProp.stringValue)) {
                 SerializedProperty valueProp = property.FindPropertyRelative("_value");
@@ -49,6 +52,8 @@ namespace Kodama.ScenarioSystem.Editor {
 
             if(selectedIndex == -1) selectedIndex = 0;
             variableNameProp.stringValue = selectedIndex == 0 ? "" : variableNamesAndEmpty[selectedIndex];
+
+            EditorGUI.indentLevel= originalIndentLevel;
         }
     }
 }

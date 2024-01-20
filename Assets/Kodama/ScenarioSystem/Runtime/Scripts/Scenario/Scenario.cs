@@ -32,7 +32,7 @@ namespace Kodama.ScenarioSystem {
         public ScenarioPage CreatePage() {
             ScenarioPage newPage = CreateInstance<ScenarioPage>();
             newPage.name = ObjectNames.GetUniqueName(_pages.Select(x => x.name).ToArray(), _defaultPageName);
-            newPage.Scenario = this;
+            newPage.ParentScenario = this;
             Undo.RegisterCreatedObjectUndo(newPage, _undoOperationName_CreatePage);
             Undo.RecordObject(this, _undoOperationName_CreatePage);
             AssetDatabase.AddObjectToAsset(newPage, this);

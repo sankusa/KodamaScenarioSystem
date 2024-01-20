@@ -93,6 +93,7 @@ namespace Kodama.ScenarioSystem.Editor {
             bool invalidReorderableListSize = _commandList != null ? (_commandList.count != page.Commands.Count) : false;
             if(_commandList == null || pageChanged || invalidReorderableListSize) {
                 _commandList = new ReorderableList(serializedPage, serializedPage.FindProperty("_commands"), true, false, false, false);
+                _commandList.showDefaultBackground = false;
 
                 _commandList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Commands");
 

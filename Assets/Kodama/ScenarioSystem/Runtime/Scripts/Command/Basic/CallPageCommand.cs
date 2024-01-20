@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -15,29 +16,39 @@ namespace Kodama.ScenarioSystem {
         }
 
         [SerializeField] private CallType _callType;
-        [SerializeField] private ScenarioPage _targetPage;
-        public ScenarioPage TargetPage => _targetPage;
+        [SerializeField] private SiblingPageSelector _target;
+        public ScenarioPage TargetPage => _target.Page;
 
         public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
-                    service.PagePlayProcess.SubsequentPage = _targetPage;
+                    service.PagePlayProcess.SubsequentPage = _target.Page;
                     service.PagePlayProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetPage, cancellationToken);
+                    await ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Page, cancellationToken);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetPage, cancellationToken)
+                    ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Page, cancellationToken)
                         .ForgetAndLogException();
                     break;
             }
         }
 
         public override string GetSummary() {
-            return $"{(_targetPage != null ? _targetPage.name : "")},  {_callType.ToString()}";
+            StringBuilder sb = SharedStringBuilder.Instance;
+            sb.Append(_target.GetSummary());
+            sb.Append(",  ");
+            sb.Append(_callType.ToString());
+            string summary = sb.ToString();
+            sb.Clear();
+            return summary;
+        }
+
+        public override string Validate() {
+            return _target.Validate(this, nameof(_target));
         }
     }
 }

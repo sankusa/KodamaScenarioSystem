@@ -14,24 +14,21 @@ namespace Kodama.ScenarioSystem {
         }
 
         [SerializeField] private CallType _callType;
-        [SerializeField] private Scenario _targetScenario;
-        public Scenario TargetScenario => _targetScenario;
-        [SerializeField] private ScenarioPage _targetPage;
-        public ScenarioPage TargetPage => _targetPage;
+        [SerializeField] private ScenarioAndChildPageSelector _target;
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
-                    service.PagePlayProcess.SubsequentScenario = _targetScenario;
-                    service.PagePlayProcess.SubsequentPage = _targetPage;
+                    service.PagePlayProcess.SubsequentScenario = _target.Scenario;
+                    service.PagePlayProcess.SubsequentPage = _target.Page;
                     service.PagePlayProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetScenario, _targetPage, cancellationToken);
+                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _targetScenario, _targetPage, cancellationToken)
+                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken)
                         .ForgetAndLogException();
                     break;
             }
@@ -39,9 +36,7 @@ namespace Kodama.ScenarioSystem {
 
         public override string GetSummary() {
             StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append(_targetScenario != null ? _targetScenario.name : "");
-            sb.Append(",  ");
-            sb.Append(_targetPage != null ? _targetPage.name : "");
+            sb.Append(_target.GetSummary());
             sb.Append(",  ");
             sb.Append(_callType.ToString());
             string summary = sb.ToString();
@@ -51,8 +46,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string Validate() {
-            if(_targetScenario == null) return "Target scenario is null";
-            return null;
+            return _target.Validate(nameof(_target));
         }
     }
 }

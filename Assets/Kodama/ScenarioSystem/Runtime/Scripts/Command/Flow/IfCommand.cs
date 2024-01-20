@@ -27,7 +27,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string Validate() {
-            return _condition.Validate();
+            return _condition.Validate(this);
         }
     }
 }
