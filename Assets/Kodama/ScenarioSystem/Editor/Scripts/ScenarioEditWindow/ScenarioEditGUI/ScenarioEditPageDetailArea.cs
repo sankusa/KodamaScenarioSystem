@@ -16,7 +16,7 @@ namespace Kodama.ScenarioSystem.Editor {
     internal class ScenarioEditPageDetailArea {
         private ReorderableList _commandList;
         private int _pageInstanceIdOld;
-        private bool _commandParameterChanged = false;
+        private bool _needRebuildReorderableList = false;
 
         private Stack<string> _indentBlockTypeStack = new Stack<string>();
 
@@ -76,10 +76,11 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         // コマンドのパラメータが変更され、サマリの行数に変更があっても
-        // 要素の増減や入れ替えがあるまでReorderableListのElementHeightが更新されないので
-        // その場合は外部からフラグを立ててもらい、ReorderableList自体を作り直す
-        public void OnCommandParameterChanged() {
-            _commandParameterChanged = true;
+        // ReorderableListのElementHeightが更新されないので
+        // サマリ行数の変動を外部で補足してフラグを立ててもらい
+        // ReorderableListのキャッシュを消去して再構築する
+        public void RebuildReorderableList() {
+            _needRebuildReorderableList = true;
         }
 
         public void DrawLayout(Rect rectSize, ScenarioEditGUIStatus guiStatus, Scenario scenario, SerializedObject serializedPage) {
@@ -249,7 +250,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _commandList.displayRemove = false;
             }
 
-            if(_commandParameterChanged) {
+            if(_needRebuildReorderableList) {
                 typeof(ReorderableList).GetField("lastRect", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(_commandList, Rect.zero);
             }
 
@@ -259,7 +260,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _commandList.DoLayoutList();
             EditorGUILayout.EndScrollView();
             
-            _commandParameterChanged = false;
+            _needRebuildReorderableList = false;
             _pageInstanceIdOld = page.GetInstanceID();
         }
     }

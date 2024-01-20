@@ -31,6 +31,9 @@ namespace Kodama.ScenarioSystem.Editor {
 
         private DateTime _pageLastChangedTime;
 
+        private int _commandInstanceIdOld;
+        private int _commandSummaryLineCountOld;
+
         public ScenarioEditGUI(Scenario scenario, VisualElement rootVisualElement) {
             _scenarioHeader = new ScenarioEditScenarioHeaderArea();
             _pageHeader = new ScenarioEditPageHeaderArea();
@@ -83,7 +86,6 @@ namespace Kodama.ScenarioSystem.Editor {
 
                 if(change.changed) {
                     serializedScenario.ApplyModifiedProperties();
-                    _pageDetailArea.OnCommandParameterChanged();
                 }
             }
 
@@ -159,7 +161,26 @@ namespace Kodama.ScenarioSystem.Editor {
                 _detailAreaSplitView.Split();
 
                 _inspectorSplitView.Begin();
+
+                EditorGUI.BeginChangeCheck();
                 _commandInspector.DrawLayout(currentCommandProp);
+                if(EditorGUI.EndChangeCheck()) {
+                    // 同じコマンド＆サマリの行数に変化があったらReorderableListを再構築
+                    int currentCommandInstanceId = 0;
+                    int currentCommandSummaryLineCount = 0;
+                    if(currentCommandProp != null) {
+                        CommandBase currentCommand = currentCommandProp.objectReferenceValue as CommandBase;
+                        currentCommandInstanceId = currentCommand.GetInstanceID();
+                        currentCommandSummaryLineCount = currentCommand.GetSummary().CountLine();
+                        if(currentCommandInstanceId == _commandInstanceIdOld
+                            && currentCommandSummaryLineCount != _commandSummaryLineCountOld) {
+                            _pageDetailArea.RebuildReorderableList();
+                        }
+                    }
+                    
+                    _commandInstanceIdOld = currentCommandInstanceId;
+                    _commandSummaryLineCountOld = currentCommandSummaryLineCount;
+                }
 
                 _inspectorSplitView.Split();
                 using(new EditorGUILayout.VerticalScope()) {
@@ -179,17 +200,8 @@ namespace Kodama.ScenarioSystem.Editor {
             }
 
             if(EditorGUI.EndChangeCheck()) {
-                _currentSerializedPage.ApplyModifiedPropertiesWithoutUndo();
+                _currentSerializedPage.ApplyModifiedProperties();
             }
-
-            // 最後のページ内容更新から微小な時間経過後に更新を反映する
-            // 文字列の長押し入力で重くなることへの対応
-            // if(_pageLastChangedTime != default) {
-            //     if(DateTime.Now - _pageLastChangedTime >= new TimeSpan(0, 0, 0, 0, 150)) {
-            //         _currentSerializedPage.ApplyModifiedProperties();
-            //         _pageLastChangedTime = default;
-            //     }
-            // }
         }
     }
 }
