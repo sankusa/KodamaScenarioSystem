@@ -86,6 +86,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
                 if(change.changed) {
                     serializedScenario.ApplyModifiedProperties();
+                    _pageDetailArea.RebuildReorderableList();
                 }
             }
 
@@ -161,26 +162,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _detailAreaSplitView.Split();
 
                 _inspectorSplitView.Begin();
-
-                EditorGUI.BeginChangeCheck();
                 _commandInspector.DrawLayout(currentCommandProp);
-                if(EditorGUI.EndChangeCheck()) {
-                    // 同じコマンド＆サマリの行数に変化があったらReorderableListを再構築
-                    int currentCommandInstanceId = 0;
-                    int currentCommandSummaryLineCount = 0;
-                    if(currentCommandProp != null) {
-                        CommandBase currentCommand = currentCommandProp.objectReferenceValue as CommandBase;
-                        currentCommandInstanceId = currentCommand.GetInstanceID();
-                        currentCommandSummaryLineCount = currentCommand.GetSummary().CountLine();
-                        if(currentCommandInstanceId == _commandInstanceIdOld
-                            && currentCommandSummaryLineCount != _commandSummaryLineCountOld) {
-                            _pageDetailArea.RebuildReorderableList();
-                        }
-                    }
-                    
-                    _commandInstanceIdOld = currentCommandInstanceId;
-                    _commandSummaryLineCountOld = currentCommandSummaryLineCount;
-                }
 
                 _inspectorSplitView.Split();
                 using(new EditorGUILayout.VerticalScope()) {

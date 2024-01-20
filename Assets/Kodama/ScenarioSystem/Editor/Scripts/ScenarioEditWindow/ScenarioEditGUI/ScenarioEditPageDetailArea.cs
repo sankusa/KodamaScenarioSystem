@@ -99,6 +99,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _commandList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Commands");
 
                 _commandList.drawElementCallback = (rect, index, isActive, isFocused) => {
+                    _commandList.draggable = true;
                     rect = new Rect(rect) {xMax = rect.xMax + 6};
                     // 初期化
                     if(index == 0) {
@@ -243,7 +244,11 @@ namespace Kodama.ScenarioSystem.Editor {
                     guiStatus.CurrentCommandIndex = list.index;
                 };
 
-                _commandList.drawElementBackgroundCallback = (rect, index, isActive, isFocused) => {};
+                _commandList.drawElementBackgroundCallback = (rect, index, isActive, isFocused) => {
+                    // ドラッグ機能を維持したままドラッグハンドルの描画(drawElementBackgroundとdrawElementの間に描画される)をスキップするため
+                    // 一時的にdraggableをfalseにしてdrawElementでtrueに戻す
+                    _commandList.draggable = false;
+                };
 
                 _commandList.footerHeight = 0;
                 _commandList.displayAdd = false;
