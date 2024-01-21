@@ -39,6 +39,7 @@ namespace Kodama.ScenarioSystem.Editor {
             }
             EditorGUI.DrawRect(new Rect(rect.xMin + 2, rect.y, 2, rect.height), waitColor);
         }
+        
         protected override float GetMainViewHeight(CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
             float standardHeight = base.GetMainViewHeight(command, groupSetting, commandSetting);
 
