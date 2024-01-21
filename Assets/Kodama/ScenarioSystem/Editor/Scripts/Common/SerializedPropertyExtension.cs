@@ -29,11 +29,16 @@ namespace Kodama.ScenarioSystem.Editor {
             if(source == null) return null;
 
             Type type = source.GetType();
-            FieldInfo fieldInfo = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if(fieldInfo != null) return fieldInfo.GetValue(source);
 
-            PropertyInfo propertyInfo = type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-            if(propertyInfo != null) return propertyInfo.GetValue(source, null);
+            while(type != null) {
+                FieldInfo fieldInfo = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                if(fieldInfo != null) return fieldInfo.GetValue(source);
+
+                PropertyInfo propertyInfo = type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                if(propertyInfo != null) return propertyInfo.GetValue(source, null);
+
+                type = type.BaseType;
+            }
 
             return null;
         }

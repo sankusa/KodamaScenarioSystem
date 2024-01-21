@@ -14,7 +14,7 @@ namespace Kodama.ScenarioSystem.Editor {
         private const float _standardSpace = 4;
         private static readonly Vector2 _multipleSummaryOffset = new Vector2(10, 2);
 
-        private StringBuilder _sb = new StringBuilder();
+        protected StringBuilder _sb = new StringBuilder();
 
         public override void Draw(Rect rect, CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
             float mainViewHeight = GetMainViewHeight(command, groupSetting, commandSetting);

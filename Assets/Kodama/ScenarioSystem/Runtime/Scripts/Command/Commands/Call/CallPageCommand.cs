@@ -15,6 +15,8 @@ namespace Kodama.ScenarioSystem {
             Async = 2,
         }
 
+        public override bool HideWaitSetting => true;
+        
         [SerializeField] private CallType _callType;
         [SerializeField] private SiblingPageSelector _target;
         public ScenarioPage TargetPage => _target.Page;
