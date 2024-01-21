@@ -43,6 +43,7 @@ namespace Kodama.ScenarioSystem {
         public void DestroyPage(ScenarioPage page) {
             Undo.RecordObject(this, _undoOperationName_DestroyPage);
             Pages.Remove(page);
+            page.RemoveAndDestroyAllCommands();
             Undo.DestroyObjectImmediate(page);
         }
 

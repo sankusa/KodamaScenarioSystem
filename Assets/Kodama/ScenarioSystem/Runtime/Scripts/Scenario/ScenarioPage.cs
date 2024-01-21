@@ -80,6 +80,15 @@ namespace Kodama.ScenarioSystem {
             _commands.RemoveAt(index);
             AssetDatabase.RemoveObjectFromAsset(command);
         }
+
+        public void RemoveAndDestroyAllCommands() {
+            Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
+            List<CommandBase> commands = _commands.ToList();
+            _commands.Clear();
+            for(int i = commands.Count - 1; i >= 0; i--) {
+                Undo.DestroyObjectImmediate(commands[i]);
+            }
+        }
 #endif
 
         public int IndexOf(CommandBase command) {
@@ -124,6 +133,14 @@ namespace Kodama.ScenarioSystem {
                 .Where(x => x != null)
                 .Where(x => IsSiblig(x))
                 .Distinct();
+        }
+
+        public ScenarioPage Copy() {
+            ScenarioPage copiedPage = Instantiate(this);
+            for(int i = 0; i < _commands.Count; i++) {
+                copiedPage._commands[i] = _commands[i].Copy(copiedPage);
+            }
+            return copiedPage;
         }
     }
 }
