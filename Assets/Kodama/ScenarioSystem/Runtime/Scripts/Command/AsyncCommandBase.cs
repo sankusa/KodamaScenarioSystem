@@ -10,8 +10,11 @@ namespace Kodama.ScenarioSystem {
         /// <summary>
         /// 待機するか
         /// </summary>
-        [SerializeField, HideInInspector] private bool _wait = true;
-        public bool Wait => _wait;
+        [SerializeField] private AsyncCommandWaitSetting _waitSetting = new AsyncCommandWaitSetting();
+        public AsyncCommandWaitSetting WaitSetting => _waitSetting;
+
+        public virtual bool HideWaitSetting => false;
+
         /// <summary>
         /// 非同期コマンドの場合は処理内容は空。代わりにExcecuteAsyncを呼び出す。
         /// </summary>

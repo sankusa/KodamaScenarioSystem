@@ -101,12 +101,12 @@ namespace Kodama.ScenarioSystem {
             cancellationToken.ThrowIfCancellationRequested();
 
             if(command is AsyncCommandBase asyncCommand) {
-                if(asyncCommand.Wait) {
+                if(asyncCommand.WaitSetting.Wait) {
                     await asyncCommand.ExecuteAsync(commandService, cancellationToken);
                 }
                 // 待機しない場合
                 else {
-                    UniTask.Create(async () => {
+                    UniTask awaiter = UniTask.Create(async () => {
                         _asyncExecutingCommandCounter++;
                         try {
                             await asyncCommand.ExecuteAsync(commandService, cancellationToken);
@@ -114,8 +114,13 @@ namespace Kodama.ScenarioSystem {
                         finally {
                             _asyncExecutingCommandCounter--;
                         }
-                    })
-                    .ForgetAndLogException(CreateLogExceptionHeader(true, asyncCommand));
+                    });
+                    if(string.IsNullOrEmpty(asyncCommand.WaitSetting.ReturnValueSetTarget.Name)) {
+                        awaiter.ForgetAndLogException(CreateLogExceptionHeader(true, asyncCommand));
+                    }
+                    else {
+                        SetVariableValue(asyncCommand.WaitSetting.ReturnValueSetTarget.Name, awaiter);
+                    }
                 }
             }
             else {
