@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     internal class ScenarioInfoTreeView : TreeView {
         public bool HasAny => rootItem.hasChildren;
         

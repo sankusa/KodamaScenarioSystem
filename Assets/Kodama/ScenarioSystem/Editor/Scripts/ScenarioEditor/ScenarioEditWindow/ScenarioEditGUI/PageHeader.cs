@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
-    internal class ScenarioEditPageHeaderArea {
+    internal class PageHeaderArea {
         public void DrawLayout(SerializedObject serializedPage) {
             EditorGUI.BeginChangeCheck();
             SerializedProperty nameProp = serializedPage.FindProperty("m_Name");

@@ -62,15 +62,23 @@ namespace Kodama.ScenarioSystem {
         public bool RemoveCommand(CommandBase command) {
             Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
             bool ret = _commands.Remove(command);
+            if(ret == false) return false; 
+            AssetDatabase.RemoveObjectFromAsset(command);
+            return true;
+        }
+
+        public bool RemoveAndDestroyCommand(CommandBase command) {
+            bool ret = RemoveCommand(command);
+            if(ret == false) return false;
             Undo.DestroyObjectImmediate(command);
-            return ret;
+            return true;
         }
 
         public void RemoveCommandAt(int index) {
             CommandBase command = _commands[index];
             Undo.RecordObject(this, _undoRedoLabel_RemoveCommand);
             _commands.RemoveAt(index);
-            Undo.DestroyObjectImmediate(command);
+            AssetDatabase.RemoveObjectFromAsset(command);
         }
 #endif
 

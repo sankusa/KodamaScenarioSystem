@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     public static class CommandClipBoard {
         private static List<CommandBase> _commands = new List<CommandBase>();
         public static bool Any => _commands.Any();
@@ -14,8 +14,8 @@ namespace Kodama.ScenarioSystem.Editor {
             _commands.AddRange(commands.Select(x => x.Copy(null)));
         }
 
-        public static List<CommandBase> CopyFromClipBoard(ScenarioPage page) {
-            return _commands.Select(x => x.Copy(page)).ToList();
+        public static List<CommandBase> CopyFromClipBoardWithUndo(ScenarioPage overwriteParentPage) {
+            return _commands.Select(x => x.CopyWithUndo(overwriteParentPage)).ToList();
         }
 
         public static void Clear() {

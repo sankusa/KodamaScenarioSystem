@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     public class ScenarioListWindow : EditorWindow {
 
         private ScenarioListGUI _scenarioListGUI;

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.UIElements;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     internal class ScenarioListGUI {
         private SearchField _searchField;
         private ScenarioInfoTreeView _scenarioInfoTreeView;

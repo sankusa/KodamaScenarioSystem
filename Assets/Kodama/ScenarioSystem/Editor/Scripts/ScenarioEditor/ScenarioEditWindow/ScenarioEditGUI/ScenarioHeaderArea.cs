@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
-    internal class ScenarioEditScenarioHeaderArea {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
+    internal class ScenarioHeaderArea {
         public void DrawLayout(Scenario scenario, SerializedObject serializedObject) {
             using(new EditorGUILayout.HorizontalScope()) {
                 // // ObjectField

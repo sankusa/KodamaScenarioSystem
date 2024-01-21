@@ -6,10 +6,10 @@ using UnityEditorInternal;
 using System;
 using System.Linq;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     
     
-    public class ScenarioEditVariableArea {
+    public class VariableArea {
         private ReorderableList _variableList;
         private Vector2 _scrollPos;
         private VariableDrawer _variableDrawer = new VariableDrawer();

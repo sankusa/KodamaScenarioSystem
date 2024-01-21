@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.Reflection;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     internal class PageGraphView : GraphView {
         private readonly Scenario _scenario;
         private readonly List<PageGraphNode> _nodes = new List<PageGraphNode>();

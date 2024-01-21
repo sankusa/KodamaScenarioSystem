@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
-    internal class ScenarioEditCommandGroupArea {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
+    internal class CommandGroupArea {
         private Vector2 _scrollPos;
         public void DrawLayout(ScenarioEditGUIStatus guiStatus) {
             using var vs = new EditorGUILayout.VerticalScope();

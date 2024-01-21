@@ -6,16 +6,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     internal class ScenarioEditGUI {
-        private ScenarioEditScenarioHeaderArea _scenarioHeader;
-        private ScenarioEditPageHeaderArea _pageHeader;
-        private ScenarioEditPageListArea _pageListArea;
-        private ScenarioEditVariableArea _variableArea;
-        private ScenarioEditPageDetailArea _pageDetailArea;
-        private ScenarioEditCommandInspector _commandInspector;
-        private ScenarioEditCommandGroupArea _commandGroupArea;
-        private ScenarioEditCommandListArea _commandListArea;
+        private ScenarioHeaderArea _scenarioHeader;
+        private PageHeaderArea _pageHeader;
+        private PageListArea _pageListArea;
+        private VariableArea _variableArea;
+        private PageDetailArea _pageDetailArea;
+        private CommandInspector _commandInspector;
+        private CommandGroupArea _commandGroupArea;
+        private CommandListArea _commandListArea;
         private ScenarioEditGUIStatus _status;
 
         private SplitView _pageListSplitView;
@@ -35,14 +35,14 @@ namespace Kodama.ScenarioSystem.Editor {
         private int _commandSummaryLineCountOld;
 
         public ScenarioEditGUI(Scenario scenario, VisualElement rootVisualElement) {
-            _scenarioHeader = new ScenarioEditScenarioHeaderArea();
-            _pageHeader = new ScenarioEditPageHeaderArea();
-            _pageListArea = new ScenarioEditPageListArea();
-            _variableArea = new ScenarioEditVariableArea();
-            _pageDetailArea = new ScenarioEditPageDetailArea();
-            _commandInspector = new ScenarioEditCommandInspector();
-            _commandGroupArea = new ScenarioEditCommandGroupArea();
-            _commandListArea = new ScenarioEditCommandListArea();
+            _scenarioHeader = new ScenarioHeaderArea();
+            _pageHeader = new PageHeaderArea();
+            _pageListArea = new PageListArea();
+            _variableArea = new VariableArea();
+            _pageDetailArea = new PageDetailArea();
+            _commandInspector = new CommandInspector();
+            _commandGroupArea = new CommandGroupArea();
+            _commandListArea = new CommandListArea();
             _pageListSplitView = new SplitView(SplitView.Direction.Horizontal, 0.2f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_pageListSplitView)}", handleColor: new Color(0.15f, 0.15f, 0.15f));
             _leftAreaSplitView = new SplitView(SplitView.Direction.Vertical, 0.5f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_leftAreaSplitView)}", handleColor: new Color(0.15f, 0.15f, 0.15f));
             _detailAreaSplitView = new SplitView(SplitView.Direction.Horizontal, 0.6f, sessionStateKey: $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_detailAreaSplitView)}", handleColor: new Color(0.15f, 0.15f, 0.15f));
@@ -57,7 +57,7 @@ namespace Kodama.ScenarioSystem.Editor {
             rootVisualElement.Add(_pageGraphView);
         }
 
-        public void DrawLayout(Rect windowPositiion, ScenarioEditWindowStatus windowStatus, Scenario scenario, SerializedObject serializedScenario) {
+        public void DrawLayout(Rect windowPositiion, Scenario scenario, SerializedObject serializedScenario) {
             // シナリオ更新
             serializedScenario.Update();
 
@@ -86,7 +86,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
                 if(change.changed) {
                     serializedScenario.ApplyModifiedProperties();
-                    _pageDetailArea.RebuildReorderableList();
+                    _pageDetailArea.ResizedReorderableList();
                 }
             }
 
@@ -126,7 +126,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
             SerializedProperty currentPageCommandsProp = _currentSerializedPage.FindProperty("_commands");
             SerializedProperty currentCommandProp = null;
-            if(_status.CurrentCommandIndex < currentPageCommandsProp.arraySize) {
+            if(0 <= _status.CurrentCommandIndex && _status.CurrentCommandIndex < currentPageCommandsProp.arraySize) {
                 currentCommandProp = currentPageCommandsProp.GetArrayElementAtIndex(_status.CurrentCommandIndex);
                 currentCommandProp.isExpanded = true;
             }
@@ -140,23 +140,13 @@ namespace Kodama.ScenarioSystem.Editor {
                 }
 
                 Rect detailAreaRect = EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-                _pageDetailArea.DrawLayout(new Rect(detailAreaRect) {x = 0, y = 0}, _status, scenario, _currentSerializedPage);
+                _pageDetailArea.DrawLayout(new Rect(detailAreaRect) {x = 0, y = 0}, _status, _currentSerializedPage);
                 EditorGUILayout.EndVertical();
 
                 // コマンドクリップボード操作
                 
                 if(CommandClipBoard.Any) {
                     EditorGUILayout.LabelField($"{CommandClipBoard.Count} Command Copied");
-                    using(new EditorGUILayout.HorizontalScope()) {
-                        if(GUILayout.Button("Add")) {
-                            int insertIndex = _status.CurrentCommandIndex + 1;
-                            _currentPage.InsertCommands(insertIndex, CommandClipBoard.CopyFromClipBoard(_currentPage));
-                            _status.CurrentCommandIndex++;
-                        }
-                        if(GUILayout.Button("Clear")) {
-                            CommandClipBoard.Clear();
-                        }
-                    }
                 }
 
                 _detailAreaSplitView.Split();

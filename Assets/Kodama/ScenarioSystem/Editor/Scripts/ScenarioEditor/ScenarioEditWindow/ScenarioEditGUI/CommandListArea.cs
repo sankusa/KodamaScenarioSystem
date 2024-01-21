@@ -7,8 +7,8 @@ using UnityEditor.IMGUI.Controls;
 using System;
 using Codice.CM.Common.Tree;
 
-namespace Kodama.ScenarioSystem.Editor {
-    internal class ScenarioEditCommandListArea {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
+    internal class CommandListArea {
         private Vector2 _scrollPos;
 
         public void DrawLayout(ScenarioEditGUIStatus guiStatus, SerializedObject serializedPage) {

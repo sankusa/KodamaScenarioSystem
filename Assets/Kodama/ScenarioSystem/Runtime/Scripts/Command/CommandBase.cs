@@ -28,7 +28,7 @@ namespace Kodama.ScenarioSystem {
         public int Index => ParentPage.IndexOf(this);
 
         // CreateInstance以からのインスタンス化は禁止
-        // protected CommandBase() {}
+        protected CommandBase() {}
 
         /// <summary>
         /// コマンド実行
@@ -57,14 +57,26 @@ namespace Kodama.ScenarioSystem {
         public CommandBase Copy() {
             CommandBase copied = Instantiate(this);
             copied.name = name;
-            Undo.RegisterCreatedObjectUndo(copied, copied.GetType().Name + " Copied");
             return copied;
             // return JsonUtility.FromJson(JsonUtility.ToJson(this), GetType()) as CommandBase;
         }
 
-        public CommandBase Copy(ScenarioPage page) {
+        public CommandBase Copy(ScenarioPage newParentPage) {
             CommandBase copied = Copy();
-            copied._parentPage = page;
+            copied._parentPage = newParentPage;
+            return copied;
+        }
+
+        public CommandBase CopyWithUndo() {
+            CommandBase copied = Instantiate(this);
+            copied.name = name;
+            Undo.RegisterCreatedObjectUndo(copied, copied.GetType().Name + " Copied");
+            return copied;
+        }
+
+        public CommandBase CopyWithUndo(ScenarioPage newParentPage) {
+            CommandBase copied = CopyWithUndo();
+            copied._parentPage = newParentPage;
             return copied;
         }
     }

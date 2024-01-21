@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     internal class CommandDropdown : AdvancedDropdown {
         private Action<Type> _onCommandSelected;
         public CommandDropdown(AdvancedDropdownState state, Action<Type> onCommandSelected) : base(state) {

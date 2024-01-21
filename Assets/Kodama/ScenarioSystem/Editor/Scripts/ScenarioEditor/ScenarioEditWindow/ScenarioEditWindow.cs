@@ -9,14 +9,12 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
     internal class ScenarioEditWindow : EditorWindow {
         private Scenario _currentScenario;
         private SerializedObject _serializedObject;
         
         private ScenarioEditGUI _scenarioEditGUI;
-
-        private ScenarioEditWindowStatus _windowStatus;
         
         public static void OpenEditGUI(Scenario scenario) {
             ScenarioEditWindow window = GetWindow<ScenarioEditWindow>("Scenario Edit");
@@ -47,9 +45,14 @@ namespace Kodama.ScenarioSystem.Editor {
         private void Initialize() {
             rootVisualElement.Clear();
 
-            _scenarioEditGUI = new ScenarioEditGUI(_currentScenario, rootVisualElement);
-            _serializedObject = new SerializedObject(_currentScenario);
-            _windowStatus = new ScenarioEditWindowStatus();
+            if(_currentScenario != null) {
+                _scenarioEditGUI = new ScenarioEditGUI(_currentScenario, rootVisualElement);
+                _serializedObject = new SerializedObject(_currentScenario);
+            }
+            else {
+                _scenarioEditGUI = null;
+                _serializedObject = null;
+            }
 
             // VisualElement horizontalLayout = new VisualElement();
             // var flexDirection = horizontalLayout.style.flexDirection;
@@ -91,7 +94,7 @@ namespace Kodama.ScenarioSystem.Editor {
         void OnGUI() {
             if(_currentScenario == null) return;
 
-            _scenarioEditGUI.DrawLayout(position, _windowStatus, _currentScenario, _serializedObject);
+            _scenarioEditGUI.DrawLayout(position, _currentScenario, _serializedObject);
 
             // フィールドに入力した文字を変換確定後、Repaintが走るまで変換候補の表示が残るため
             if(Event.current.type == EventType.KeyUp) {

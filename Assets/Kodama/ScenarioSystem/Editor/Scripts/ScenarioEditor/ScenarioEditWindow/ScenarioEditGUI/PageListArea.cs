@@ -4,8 +4,8 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
-    internal class ScenarioEditPageListArea {
+namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
+    internal class PageListArea {
         private ReorderableList _pageList;
 
         public void DrawLayout(ScenarioEditGUIStatus status, Scenario scenario, SerializedObject serializedObject) {
