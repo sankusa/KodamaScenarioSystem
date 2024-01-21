@@ -128,7 +128,6 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
             SerializedProperty currentCommandProp = null;
             if(0 <= _status.CurrentCommandIndex && _status.CurrentCommandIndex < currentPageCommandsProp.arraySize) {
                 currentCommandProp = currentPageCommandsProp.GetArrayElementAtIndex(_status.CurrentCommandIndex);
-                currentCommandProp.isExpanded = true;
             }
             
             using(new EditorGUILayout.VerticalScope()) {

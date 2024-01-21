@@ -71,7 +71,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
         // サマリ行数の変動を外部で補足してフラグを立ててもらい
         // ReorderableListのキャッシュを消去して再構築する
         public void ResizedReorderableList() {
-            _commandList.ResizeReorderableList();
+            _commandList?.ResizeReorderableList();
         }
 
         public void DrawLayout(Rect rectSize, ScenarioEditGUIStatus guiStatus, SerializedObject serializedPage) {
@@ -81,7 +81,6 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                 _commandList = new PageCommandsReorderableList(serializedPage, _summaryDrawerDic);
                 _scrollPos = Vector2.zero;
             }
-
             _commandList.Index = guiStatus.CurrentCommandIndex;
 
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);

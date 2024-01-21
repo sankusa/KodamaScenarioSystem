@@ -17,14 +17,14 @@ namespace Kodama.ScenarioSystem.Editor {
                 _currentPageIndex = value;
                 SessionState.SetInt(_currentPageIndexSessionStateKey, _currentPageIndex);
                 // ページ変更時はコマンド選択状態はリセット
-                CurrentCommandIndex = 0;
+                CurrentCommandIndex = -1;
             }
         }
 
         /// <summary>
         /// 編集中のコマンド
         /// </summary>
-        private int _currentCommandIndex;
+        private int _currentCommandIndex = -1;
         private static readonly string _currentCommandIndexSessionStateKey = $"{nameof(Kodama)}_{nameof(ScenarioSystem)}_{nameof(_currentCommandIndex)}";
         public int CurrentCommandIndex {
             get => _currentCommandIndex;
