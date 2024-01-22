@@ -27,7 +27,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _valueOrVariableKeyDic[genericTypeArg] = serializableValueOrVariableName;
             }
 
-            _availableTypes = _valueOrVariableKeyDic.Keys.ToList();
+            _availableTypes = _variableKeyDic.Keys.Where(x => _valueOrVariableKeyDic.ContainsKey(x)).ToList();
             _variableTypeNames = _availableTypes.Select(x => TypeNameUtil.ConvertToPrimitiveTypeName(x.Name)).ToArray();
         }
 
