@@ -101,7 +101,7 @@ namespace Kodama.ScenarioSystem {
             cancellationToken.ThrowIfCancellationRequested();
 
             if(command is AsyncCommandBase asyncCommand) {
-                if(asyncCommand.WaitSetting.Wait) {
+                if(asyncCommand.AsyncCommandSetting.Wait) {
                     await asyncCommand.ExecuteAsync(commandService, cancellationToken);
                 }
                 // 待機しない場合
@@ -115,11 +115,11 @@ namespace Kodama.ScenarioSystem {
                             _asyncExecutingCommandCounter--;
                         }
                     });
-                    if(asyncCommand.WaitSetting.SetUniTaskTo.IsEmpty()) {
+                    if(asyncCommand.AsyncCommandSetting.SetUniTaskTo.IsEmpty()) {
                         awaiter.ForgetAndLogException(CreateLogExceptionHeader(true, asyncCommand));
                     }
                     else {
-                        FindVariable<UniTask>(asyncCommand.WaitSetting.SetUniTaskTo.Id).Value = awaiter;
+                        FindVariable<UniTask>(asyncCommand.AsyncCommandSetting.SetUniTaskTo.Id).Value = awaiter;
                     }
                 }
             }

@@ -10,8 +10,8 @@ namespace Kodama.ScenarioSystem {
         /// <summary>
         /// 待機するか
         /// </summary>
-        [SerializeField] private AsyncCommandWaitSetting _waitSetting = new AsyncCommandWaitSetting();
-        public AsyncCommandWaitSetting WaitSetting => _waitSetting;
+        [SerializeField] private AsyncCommandSetting _asyncCommandSetting = new AsyncCommandSetting();
+        public AsyncCommandSetting AsyncCommandSetting => _asyncCommandSetting;
 
         /// <summary>
         /// 非同期コマンドの場合は処理内容は空。代わりにExcecuteAsyncを呼び出す。
@@ -29,7 +29,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string Validate() {
-            return _waitSetting.Validate(this);
+            return _asyncCommandSetting.Validate(this);
         }
     }
 }

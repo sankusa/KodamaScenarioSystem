@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public class AsyncCommandWaitSetting {
+    public class AsyncCommandSetting {
         [SerializeField] private bool _wait = true;
         public bool Wait => _wait;
         [SerializeField] private UniTaskVariableKey _setUniTaskTo;

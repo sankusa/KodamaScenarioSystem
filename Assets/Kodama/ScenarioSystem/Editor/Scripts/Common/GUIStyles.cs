@@ -16,6 +16,7 @@ namespace Kodama.ScenarioSystem.Editor {
         public static GUIStyle BorderedButton {get;}
         public static GUIStyle ClearButton {get;}
         public static GUIStyle CommandListElementStyle {get;}
+        public static GUIStyle NodeBox {get;}
 
         static GUIStyles() {
             SummaryLabel = new GUIStyle(EditorStyles.label) {
@@ -52,6 +53,7 @@ namespace Kodama.ScenarioSystem.Editor {
             CommandListElementStyle = new GUIStyle("GroupBox") {
                 margin = new RectOffset(0, 0, 0, 0)
             };
+            NodeBox = new GUIStyle("TE NodeBox");
         }
     }
 }

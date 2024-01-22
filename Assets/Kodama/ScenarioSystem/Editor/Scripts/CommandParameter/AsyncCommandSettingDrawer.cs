@@ -4,19 +4,21 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
-    [CustomPropertyDrawer(typeof(AsyncCommandWaitSetting), true)]
-    public class AsyncCommandWaitSettingDrawer : PropertyDrawer {
+    [CustomPropertyDrawer(typeof(AsyncCommandSetting), true)]
+    public class AsyncCommandSettingDrawer : PropertyDrawer {
         public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
             SerializedProperty waitProp = property.FindPropertyRelative("_wait");
             SerializedProperty returnValueSetTargetProp = property.FindPropertyRelative("_setUniTaskTo");
-            AsyncCommandWaitSetting setting = property.GetObject() as AsyncCommandWaitSetting;
+            AsyncCommandSetting setting = property.GetObject() as AsyncCommandSetting;
 
             rect.yMax -= 6;
-            GUI.Box(new Rect(rect) {xMin = rect.xMin - 4, xMax = rect.xMax + 4}, "", GUIStyles.LeanGroupBox);
+            using (new BackgroundColorScope(new Color(1, 1, 1, 0.5f))) {
+                GUI.Box(new Rect(rect) {xMin = rect.xMin - 4, xMax = rect.xMax + 4}, "", GUIStyles.NodeBox);
+            }
 
             Rect labelRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
             rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            EditorGUI.LabelField(labelRect, "Wait Setting", EditorStyles.boldLabel);
+            EditorGUI.LabelField(labelRect, nameof(AsyncCommandSetting), EditorStyles.boldLabel);
 
             EditorGUI.indentLevel++;
 
