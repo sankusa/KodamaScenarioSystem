@@ -38,14 +38,10 @@ namespace Kodama.ScenarioSystem {
 
             if(targetVariable == null) return Labels.Label_MissingReference_Red;
 
-            StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append("<i>[");
-            sb.Append(targetVariable.Name);
-            sb.Append("]</i>");
-            string summary = sb.ToString();
-            sb.Clear();
-
-            return summary;
+            SharedStringBuilder.Append("<i>[");
+            SharedStringBuilder.Append(targetVariable.Name);
+            SharedStringBuilder.Append("]</i>");
+            return SharedStringBuilder.Output();
         }
 
         public override string Validate(CommandBase parentCommand, bool warnEmpty = true, string name = null) {

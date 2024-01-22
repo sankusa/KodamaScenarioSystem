@@ -10,14 +10,10 @@ namespace Kodama.ScenarioSystem {
         public string Label => _label;
 
         public override string GetSummary() {
-            StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append("<b>");
-            sb.Append(_label);
-            sb.Append("</b>");
-            string summary = sb.ToString();
-            sb.Clear();
-
-            return summary;
+            SharedStringBuilder.Append("<b>");
+            SharedStringBuilder.Append(_label);
+            SharedStringBuilder.Append("</b>");
+            return SharedStringBuilder.Output();
         }
     }
 }

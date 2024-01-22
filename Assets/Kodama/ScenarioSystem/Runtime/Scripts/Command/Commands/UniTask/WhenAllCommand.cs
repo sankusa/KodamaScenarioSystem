@@ -15,33 +15,21 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            StringBuilder sb = SharedStringBuilder.Instance;
             _unitaskVariableKeys
                 .ForEach(x => {
-                    sb.Append(x.GetSummary(this));
-                    sb.Append("  ");
+                    SharedStringBuilder.Append(x.GetSummary(this));
+                    SharedStringBuilder.Append("  ");
                 });
-            string summary = sb.ToString();
-            sb.Clear();
-
-            return summary;
+            return SharedStringBuilder.Output();
         }
 
         public override string Validate() {
-            StringBuilder sb = SharedStringBuilder.Instance;
             _unitaskVariableKeys
                 .ForEach(x => {
-                    string ret = x.Validate(this);
-                    if(string.IsNullOrEmpty(ret) == false && sb.Length > 0) sb.Append("\n");
-                    sb.Append(ret);
+                    SharedStringBuilder.AppendAsNewLine(x.Validate(this));
                 });
-            string baseErrorMessage = base.Validate();
-            if(string.IsNullOrEmpty(baseErrorMessage) == false && sb.Length > 0) sb.Append("\n");
-            sb.Append(baseErrorMessage);
-            string errorMessage = sb.ToString();
-            sb.Clear();
-
-            return errorMessage;
+            SharedStringBuilder.AppendAsNewLine(base.Validate());
+            return SharedStringBuilder.Output();
         }
     }
 }

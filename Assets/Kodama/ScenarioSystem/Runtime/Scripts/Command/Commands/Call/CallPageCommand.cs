@@ -38,28 +38,16 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append(_target.GetSummary());
-            sb.Append(",  ");
-            sb.Append(_callType.ToString());
-            string summary = sb.ToString();
-            sb.Clear();
-            return summary;
+            SharedStringBuilder.Append(_target.GetSummary());
+            SharedStringBuilder.Append(",  ");
+            SharedStringBuilder.Append(_callType.ToString());
+            return SharedStringBuilder.Output();
         }
 
         public override string Validate() {
-            string baseErrorMessage = base.Validate();
-            string newLine = string.IsNullOrEmpty(baseErrorMessage) ? "" : "\n" ;
-            string targetErrorMessage = _target.Validate(this, nameof(_target));
-
-            StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append(baseErrorMessage);
-            sb.Append(newLine);
-            sb.Append(targetErrorMessage);
-            string errorMessage = sb.ToString();
-            sb.Clear();
-
-            return errorMessage;
+            SharedStringBuilder.AppendAsNewLine(base.Validate());
+            SharedStringBuilder.AppendAsNewLine(_target.Validate(this, nameof(_target)));
+            return SharedStringBuilder.Output();
         }
     }
 }

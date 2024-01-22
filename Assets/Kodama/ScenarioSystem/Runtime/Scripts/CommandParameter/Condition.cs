@@ -81,31 +81,18 @@ namespace Kodama.ScenarioSystem {
         }
 
         public string GetSummary(CommandBase parentCommand) {
-            StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append(_variableKey.GetSummary(parentCommand));
-            sb.Append("  ");
-            sb.Append(_operator.GetOperatorString());
-            sb.Append("  ");
-            sb.Append(_valueOrVariableKey.GetSummary(parentCommand));
-            string summary = sb.ToString();
-            sb.Clear();
-
-            return summary;
+            SharedStringBuilder.Append(_variableKey.GetSummary(parentCommand));
+            SharedStringBuilder.Append("  ");
+            SharedStringBuilder.Append(_operator.GetOperatorString());
+            SharedStringBuilder.Append("  ");
+            SharedStringBuilder.Append(_valueOrVariableKey.GetSummary(parentCommand));
+            return SharedStringBuilder.Output();
         }
 
         public string Validate(CommandBase parentCommand) {
-            StringBuilder sb = SharedStringBuilder.Instance;
-            string variableKeyErrorMessage = _variableKey.Validate(parentCommand);
-            string valueOrVariableKeyErrorMessage = _valueOrVariableKey.Validate(parentCommand);
-            sb.Append(variableKeyErrorMessage);
-            if(string.IsNullOrEmpty(variableKeyErrorMessage) == false && string.IsNullOrEmpty(valueOrVariableKeyErrorMessage) == false) {
-                sb.Append("\n");
-            }
-            sb.Append(valueOrVariableKeyErrorMessage);
-            string errorMessage = sb.ToString();
-            sb.Clear();
-
-            return errorMessage;
+            SharedStringBuilder.AppendAsNewLine(_variableKey.Validate(parentCommand));
+            SharedStringBuilder.AppendAsNewLine(_valueOrVariableKey.Validate(parentCommand));
+            return SharedStringBuilder.Output();
         }
     }
 }

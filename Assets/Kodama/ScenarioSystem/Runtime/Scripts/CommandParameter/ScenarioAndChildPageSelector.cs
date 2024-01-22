@@ -13,14 +13,10 @@ namespace Kodama.ScenarioSystem {
         public ScenarioPage Page => _page;
 
         public string GetSummary() {
-            StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append(_scenario != null ? _scenario.name : Labels.Label_Null_Red);
-            sb.Append(",  ");
-            sb.Append(_page != null ? _page.name : Labels.Label_DefaultPage_Dark);
-            string summary = sb.ToString();
-            sb.Clear();
-
-            return summary;
+            SharedStringBuilder.Append(_scenario != null ? _scenario.name : Labels.Label_Null_Red);
+            SharedStringBuilder.Append(",  ");
+            SharedStringBuilder.Append(_page != null ? _page.name : Labels.Label_DefaultPage_Dark);
+            return SharedStringBuilder.Output();
         }
 
         public string Validate(string label) {
