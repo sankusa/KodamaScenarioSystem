@@ -9,7 +9,11 @@ namespace Kodama.ScenarioSystem {
     public class AsyncCommandWaitSetting {
         [SerializeField] private bool _wait = true;
         public bool Wait => _wait;
-        [SerializeField] private UniTaskVariableName _returnValueSetTarget;
-        public UniTaskVariableName ReturnValueSetTarget => _returnValueSetTarget;
+        [SerializeField] private UniTaskVariableKey _setUniTaskTo;
+        public UniTaskVariableKey SetUniTaskTo => _setUniTaskTo;
+
+        public string Validate(CommandBase parentCommand) {
+            return _setUniTaskTo.Validate(parentCommand, false, "SetUniTaskTo");
+        }
     }
 }

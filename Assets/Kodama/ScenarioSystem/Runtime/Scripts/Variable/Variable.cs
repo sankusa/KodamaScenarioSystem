@@ -8,15 +8,23 @@ namespace Kodama.ScenarioSystem {
     public class Variable<T> : VariableBase {
         public const string VariableName_Value = nameof(_value);
         
+        [SerializeField] private string _id;
+        public override string Id => _id;
+
         [SerializeField] private string _name;
         public override string Name {
             get => _name;
             set => _name = value;
         }
+        
         [SerializeField] private T _value;
         public T Value {
             get => _value;
             set => _value = value;
+        }
+
+        public Variable() {
+            _id = Guid.NewGuid().ToString("N");
         }
 
         public override object GetValueAsObject() {

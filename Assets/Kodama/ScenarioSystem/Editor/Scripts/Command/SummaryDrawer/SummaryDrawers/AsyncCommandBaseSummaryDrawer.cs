@@ -8,7 +8,7 @@ namespace Kodama.ScenarioSystem.Editor {
     public class AsyncCommandBaseSummaryDrawer : CommandBaseSummaryDrawer {
         protected override void DrawMainView(Rect rect, CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
             AsyncCommandBase asyncCommand = command as AsyncCommandBase;
-            if(asyncCommand.WaitSetting.Wait == false && string.IsNullOrEmpty(asyncCommand.WaitSetting.ReturnValueSetTarget.Name) == false) {
+            if(asyncCommand.WaitSetting.Wait == false && asyncCommand.WaitSetting.SetUniTaskTo.IsEmpty() == false) {
                 Rect mainViewRect = new Rect(rect) {yMax = rect.yMax - EditorGUIUtility.singleLineHeight};
                 base.DrawMainView(mainViewRect, command, groupSetting, commandSetting);
 
@@ -18,7 +18,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 _sb.Append("    <color=#");
                 _sb.Append(ColorUtil.ToHtmlStringRGBA(textBaseColor));
                 _sb.Append(">Set UniTask -> ");
-                _sb.Append(asyncCommand.WaitSetting.ReturnValueSetTarget.GetSummary());
+                _sb.Append(asyncCommand.WaitSetting.SetUniTaskTo.GetSummary(command));
                 _sb.Append("</color>");
                 string summary = _sb.ToString();
                 _sb.Clear();
@@ -44,7 +44,7 @@ namespace Kodama.ScenarioSystem.Editor {
             float standardHeight = base.GetMainViewHeight(command, groupSetting, commandSetting);
 
             AsyncCommandBase asyncCommand = command as AsyncCommandBase;
-            if(asyncCommand.WaitSetting.Wait == false && string.IsNullOrEmpty(asyncCommand.WaitSetting.ReturnValueSetTarget.Name) == false) {
+            if(asyncCommand.WaitSetting.Wait == false && asyncCommand.WaitSetting.SetUniTaskTo.IsEmpty() == false) {
                 return standardHeight + EditorGUIUtility.singleLineHeight;
             }
             return standardHeight;

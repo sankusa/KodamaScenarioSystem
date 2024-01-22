@@ -39,7 +39,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string GetSummary() {
-            return _condition.GetSummary();
+            return _condition.GetSummary(this);
         }
 
         public override string Validate() {

@@ -32,24 +32,24 @@ namespace Kodama.ScenarioSystem {
         void JumpToBlockEnd(IBlockStart startBlock);
 
         /// <summary>
-        /// 指定した型、名前の変数の値を取得
+        /// VariableKeyをキーにして変数を取得
         /// </summary>
-        T GetVariableValue<T>(string variableName);
+        Variable<T> FindVariable<T>(VariableKey<T> variableKey);
 
         /// <summary>
-        /// 指定した型、名前の変数の値を取得
+        /// VariableKeyをキーにして変数を取得
         /// </summary>
-        object GetVariableValue(Type variableType, string variableName);
+        VariableBase FindVariable(VariableKey variableKey);
 
         /// <summary>
-        /// 指定した型、名前の変数の値を設定
+        /// 型とIdをキーに変数を取得
         /// </summary>
-        void SetVariableValue<T>(string variableName, T value);
+        Variable<T> FindVariable<T>(string id);
 
         /// <summary>
-        /// 指定した型、名前の変数の値を設定
+        /// 型とIdをキーに変数を取得
         /// </summary>
-        void SetVariableValue(Type variableType, string variableName, object value);
+        VariableBase FindVariable(Type targetType, string id);
 
         /// <summary>
         /// ブロックを表すインスタンスをプッシュ

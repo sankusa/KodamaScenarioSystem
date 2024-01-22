@@ -7,11 +7,8 @@ namespace Kodama.ScenarioSystem.Editor {
     [CustomPropertyDrawer(typeof(AsyncCommandWaitSetting), true)]
     public class AsyncCommandWaitSettingDrawer : PropertyDrawer {
         public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
-            AsyncCommandBase asyncCommand = property.serializedObject.targetObject as AsyncCommandBase;
-            if(asyncCommand.HideWaitSetting) return;
-
             SerializedProperty waitProp = property.FindPropertyRelative("_wait");
-            SerializedProperty returnValueSetTargetProp = property.FindPropertyRelative("_returnValueSetTarget");
+            SerializedProperty returnValueSetTargetProp = property.FindPropertyRelative("_setUniTaskTo");
             AsyncCommandWaitSetting setting = property.GetObject() as AsyncCommandWaitSetting;
 
             rect.yMax -= 6;
@@ -25,8 +22,8 @@ namespace Kodama.ScenarioSystem.Editor {
 
             if(setting.Wait == true) {
                 EditorGUI.PropertyField(rect, waitProp);
-                SerializedProperty variableNameProp = returnValueSetTargetProp.FindPropertyRelative("_name");
-                variableNameProp.stringValue = "";
+                SerializedProperty variableIdProp = returnValueSetTargetProp.FindPropertyRelative("_id");
+                variableIdProp.stringValue = "";
             }
             else {
                 Rect waitRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
@@ -41,9 +38,6 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            AsyncCommandBase asyncCommand = property.serializedObject.targetObject as AsyncCommandBase;
-            if(asyncCommand.HideWaitSetting) return 0;
-
             SerializedProperty waitProp = property.FindPropertyRelative("_wait");
             return EditorGUIUtility.singleLineHeight * 2
                 + EditorGUIUtility.standardVerticalSpacing * 2

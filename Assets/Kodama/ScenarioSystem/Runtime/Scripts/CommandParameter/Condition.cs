@@ -43,15 +43,15 @@ namespace Kodama.ScenarioSystem {
             CompareOperator.NotEqualTo,
         };
 
-        [SerializeReference] private VariableName _variableName;
-        public VariableName VariableName {
-            get => _variableName;
-            set => _variableName = value;
+        [SerializeReference] private VariableKey _variableKey;
+        public VariableKey VariableKey {
+            get => _variableKey;
+            set => _variableKey = value;
         }
-        [SerializeReference] private ValueOrVariableName _valueOrVariableName;
-        public ValueOrVariableName ValueOrVariableName {
-            get => _valueOrVariableName;
-            set => _valueOrVariableName = value;
+        [SerializeReference] private ValueOrVariableKey _valueOrVariableKey;
+        public ValueOrVariableKey ValueOrVariableKey {
+            get => _valueOrVariableKey;
+            set => _valueOrVariableKey = value;
         }
         [SerializeField] private CompareOperator _operator = CompareOperator.EqualTo;
         public CompareOperator Operator {
@@ -60,15 +60,15 @@ namespace Kodama.ScenarioSystem {
         }
 
         public Condition() {
-            _variableName = new IntVariableName();
-            _valueOrVariableName = new IntValueOrVariableName();
+            _variableKey = new IntVariableKey();
+            _valueOrVariableKey = new IntValueOrVariableKey();
         }
 
         public bool Evaluate(IPagePlayProcess process) {
-            object value1 = process.GetVariableValue(_variableName.TargetType, _variableName.Name);
-            object value2 = string.IsNullOrEmpty(_valueOrVariableName.VariableName)
-                ? _valueOrVariableName.GetValueAsObject()
-                : process.GetVariableValue(_valueOrVariableName.TargetType, _valueOrVariableName.VariableName);
+            object value1 = process.FindVariable(_variableKey.TargetType, _variableKey.Id).GetValueAsObject();
+            object value2 = _valueOrVariableKey.HasKey()
+                ? _valueOrVariableKey.GetValueAsObject()
+                : process.FindVariable(_valueOrVariableKey.VariableKey).GetValueAsObject();
 
             if(_operator == CompareOperator.EqualTo) return value1.Equals(value2);
             else if(_operator == CompareOperator.NotEqualTo) return !value1.Equals(value2);
@@ -80,13 +80,13 @@ namespace Kodama.ScenarioSystem {
             return false;
         }
 
-        public string GetSummary() {
+        public string GetSummary(CommandBase parentCommand) {
             StringBuilder sb = SharedStringBuilder.Instance;
-            sb.Append(_variableName.GetSummary());
+            sb.Append(_variableKey.GetSummary(parentCommand));
             sb.Append("  ");
             sb.Append(_operator.GetOperatorString());
             sb.Append("  ");
-            sb.Append(_valueOrVariableName.GetSummary());
+            sb.Append(_valueOrVariableKey.GetSummary(parentCommand));
             string summary = sb.ToString();
             sb.Clear();
 
@@ -95,13 +95,13 @@ namespace Kodama.ScenarioSystem {
 
         public string Validate(CommandBase parentCommand) {
             StringBuilder sb = SharedStringBuilder.Instance;
-            string variableNameErrorMessage = _variableName.Validate(parentCommand);
-            string valueOrVariableNameErrorMessage = _valueOrVariableName.Validate(parentCommand);
-            sb.Append(variableNameErrorMessage);
-            if(string.IsNullOrEmpty(variableNameErrorMessage) == false && string.IsNullOrEmpty(valueOrVariableNameErrorMessage) == false) {
+            string variableKeyErrorMessage = _variableKey.Validate(parentCommand);
+            string valueOrVariableKeyErrorMessage = _valueOrVariableKey.Validate(parentCommand);
+            sb.Append(variableKeyErrorMessage);
+            if(string.IsNullOrEmpty(variableKeyErrorMessage) == false && string.IsNullOrEmpty(valueOrVariableKeyErrorMessage) == false) {
                 sb.Append("\n");
             }
-            sb.Append(valueOrVariableNameErrorMessage);
+            sb.Append(valueOrVariableKeyErrorMessage);
             string errorMessage = sb.ToString();
             sb.Clear();
 

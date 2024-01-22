@@ -115,11 +115,11 @@ namespace Kodama.ScenarioSystem {
                             _asyncExecutingCommandCounter--;
                         }
                     });
-                    if(string.IsNullOrEmpty(asyncCommand.WaitSetting.ReturnValueSetTarget.Name)) {
+                    if(asyncCommand.WaitSetting.SetUniTaskTo.IsEmpty()) {
                         awaiter.ForgetAndLogException(CreateLogExceptionHeader(true, asyncCommand));
                     }
                     else {
-                        SetVariableValue(asyncCommand.WaitSetting.ReturnValueSetTarget.Name, awaiter);
+                        FindVariable<UniTask>(asyncCommand.WaitSetting.SetUniTaskTo.Id).Value = awaiter;
                     }
                 }
             }
@@ -170,50 +170,36 @@ namespace Kodama.ScenarioSystem {
 #endregion
 
 #region Variable
-        public T GetVariableValue<T>(string variableName) {
-            var castedVariables = _scenarioProcess.Variables.OfType<Variable<T>>();
-            if(castedVariables.Count() == 0) {
-                Debug.LogError($"{typeof(T).Name} variable not found.");
-            }
-            var variable = castedVariables.Where(x => x.Name == variableName).FirstOrDefault();
-            if(variable == null) {
-                Debug.LogError($"variable (name = {variableName}) not found.");
-            }
-            return variable.Value;
-        }
-        public object GetVariableValue(Type variableType, string variableName) {
-            var variables = _scenarioProcess.Variables.Where(x => x.TargetType == variableType);
-            if(variables.Count() == 0) {
-                Debug.LogError($"{variableType.Name} variable not found.");
-            }
-            var variable = variables.Where(x => x.Name == variableName).FirstOrDefault();
-            if(variable == null) {
-                Debug.LogError($"variable (name = {variableName}) not found.");
-            }
-            return variable.GetValueAsObject();
+        public Variable<T> FindVariable<T>(VariableKey<T> variableKey) {
+            return FindVariable<T>(variableKey.Id);
         }
 
-        public void SetVariableValue<T>(string variableName, T value) {
-            var castedVariables = _scenarioProcess.Variables.OfType<Variable<T>>();
-            if(castedVariables.Count() == 0) {
-                Debug.LogError($"{typeof(T).Name} variable not found.");
+        public Variable<T> FindVariable<T>(string id) {
+            var targetTypeVariables = _scenarioProcess.Variables.OfType<Variable<T>>();
+            if(targetTypeVariables.Count() == 0) {
+                Debug.LogError($"{typeof(T).Name} variable doesn't exist.");
             }
-            var variable = castedVariables.Where(x => x.Name == variableName).FirstOrDefault();
-            if(variable == null) {
-                Debug.LogError($"variable (name = {variableName}) not found.");
+            var targetVariable = targetTypeVariables.FirstOrDefault(x => x.Id == id);
+            if(targetVariable == null) {
+                Debug.LogError($"variable not found.");
             }
-            variable.Value = value;
+            return targetVariable;
         }
-        public void SetVariableValue(Type variableType, string variableName, object value) {
-            var variables = _scenarioProcess.Variables.Where(x => x.TargetType == variableType);
-            if(variables.Count() == 0) {
-                Debug.LogError($"{variableType.Name} variable not found.");
+
+        public VariableBase FindVariable(VariableKey variableKey) {
+            return FindVariable(variableKey.TargetType, variableKey.Id);
+        }
+
+        public VariableBase FindVariable(Type targetType, string id) {
+            var targetTypeVariables = _scenarioProcess.Variables.Where(x => x.TargetType == targetType);
+            if(targetTypeVariables.Count() == 0) {
+                Debug.LogError($"{targetType.Name} variable doesn't exist.");
             }
-            var variable = variables.Where(x => x.Name == variableName).FirstOrDefault();
-            if(variable == null) {
-                Debug.LogError($"variable (name = {variableName}) not found.");
+            var targetVariable = targetTypeVariables.FirstOrDefault(x => x.Id == id);
+            if(targetVariable == null) {
+                Debug.LogError($"variable not found.");
             }
-            variable.SetValueAsObject(value);
+            return targetVariable;
         }
 #endregion
 

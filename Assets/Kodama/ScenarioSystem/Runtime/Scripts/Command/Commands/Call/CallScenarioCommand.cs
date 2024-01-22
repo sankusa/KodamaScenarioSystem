@@ -13,8 +13,6 @@ namespace Kodama.ScenarioSystem {
             Async = 2,
         }
 
-        public override bool HideWaitSetting => true;
-
         [SerializeField] private CallType _callType;
         [SerializeField] private ScenarioAndChildPageSelector _target;
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
@@ -48,7 +46,18 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string Validate() {
-            return _target.Validate(nameof(_target));
+            string baseErrorMessage = base.Validate();
+            string newLine = string.IsNullOrEmpty(baseErrorMessage) ? "" : "\n" ;
+            string targetErrorMessage = _target.Validate(nameof(_target));
+
+            StringBuilder sb = SharedStringBuilder.Instance;
+            sb.Append(baseErrorMessage);
+            sb.Append(newLine);
+            sb.Append(targetErrorMessage);
+            string errorMessage = sb.ToString();
+            sb.Clear();
+
+            return errorMessage;
         }
     }
 }

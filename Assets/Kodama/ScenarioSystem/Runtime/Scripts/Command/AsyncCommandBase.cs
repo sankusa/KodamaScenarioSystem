@@ -13,8 +13,6 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private AsyncCommandWaitSetting _waitSetting = new AsyncCommandWaitSetting();
         public AsyncCommandWaitSetting WaitSetting => _waitSetting;
 
-        public virtual bool HideWaitSetting => false;
-
         /// <summary>
         /// 非同期コマンドの場合は処理内容は空。代わりにExcecuteAsyncを呼び出す。
         /// </summary>
@@ -28,6 +26,10 @@ namespace Kodama.ScenarioSystem {
         /// <returns></returns>
         public virtual async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             await UniTask.CompletedTask;
+        }
+
+        public override string Validate() {
+            return _waitSetting.Validate(this);
         }
     }
 }

@@ -11,32 +11,32 @@ namespace Kodama.ScenarioSystem.Editor {
     public class ConditionDrawer : PropertyDrawer {
         private static List<Type> _availableTypes;
         private static string[] _variableTypeNames;
-        private static Dictionary<Type, Type> _variableNameDic = new Dictionary<Type, Type>();
-        private static Dictionary<Type, Type> _valueOrVariableNameDic = new Dictionary<Type, Type>();
+        private static Dictionary<Type, Type> _variableKeyDic = new Dictionary<Type, Type>();
+        private static Dictionary<Type, Type> _valueOrVariableKeyDic = new Dictionary<Type, Type>();
 
         static ConditionDrawer() {
-            IEnumerable<Type> serializableVariableNames = TypeCache.GetTypesDerivedFrom<VariableName>().Where(x => x.IsAbstract == false && x.IsGenericType == false);
+            IEnumerable<Type> serializableVariableNames = TypeCache.GetTypesDerivedFrom<VariableKey>().Where(x => x.IsAbstract == false && x.IsGenericType == false);
             foreach(Type serializableVariableName in serializableVariableNames) {
                 Type genericTypeArg = serializableVariableName.BaseType.GenericTypeArguments[0];
-                _variableNameDic[genericTypeArg] = serializableVariableName;
+                _variableKeyDic[genericTypeArg] = serializableVariableName;
             }
 
-            IEnumerable<Type> serializableValueOrVariableNames = TypeCache.GetTypesDerivedFrom<ValueOrVariableName>().Where(x => x.IsAbstract == false && x.IsGenericType == false);
+            IEnumerable<Type> serializableValueOrVariableNames = TypeCache.GetTypesDerivedFrom<ValueOrVariableKey>().Where(x => x.IsAbstract == false && x.IsGenericType == false);
             foreach(Type serializableValueOrVariableName in serializableValueOrVariableNames) {
                 Type genericTypeArg = serializableValueOrVariableName.BaseType.GenericTypeArguments[0];
-                _valueOrVariableNameDic[genericTypeArg] = serializableValueOrVariableName;
+                _valueOrVariableKeyDic[genericTypeArg] = serializableValueOrVariableName;
             }
 
-            _availableTypes = _valueOrVariableNameDic.Keys.ToList();
+            _availableTypes = _valueOrVariableKeyDic.Keys.ToList();
             _variableTypeNames = _availableTypes.Select(x => TypeNameUtil.ConvertToPrimitiveTypeName(x.Name)).ToArray();
         }
 
         public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
-            SerializedProperty variableNameProp = property.FindPropertyRelative("_variableName");
+            SerializedProperty variableKeyProp = property.FindPropertyRelative("_variableKey");
             SerializedProperty operatorProp = property.FindPropertyRelative("_operator");
-            SerializedProperty valueOrVariableNameProp = property.FindPropertyRelative("_valueOrVariableName");
+            SerializedProperty valueOrVariableKeyProp = property.FindPropertyRelative("_valueOrVariableKey");
             Condition condition = property.GetObject() as Condition;
-            Type targetType = condition.VariableName.TargetType;
+            Type targetType = condition.VariableKey.TargetType;
             CommandBase command = property.serializedObject.targetObject as CommandBase;
 
             // 型変更時の各値の更新とSerializedPropertyを通した値の更新が同フレームで行われた場合に
@@ -56,17 +56,17 @@ namespace Kodama.ScenarioSystem.Editor {
             if(newTypeIndex != typeIndex) {
                 targetType = _availableTypes[newTypeIndex];
                 Undo.RecordObject(command, "Condition Type Chenged");
-                condition.VariableName = Activator.CreateInstance(_variableNameDic[targetType]) as VariableName;
-                condition.ValueOrVariableName = Activator.CreateInstance(_valueOrVariableNameDic[targetType]) as ValueOrVariableName;
+                condition.VariableKey = Activator.CreateInstance(_variableKeyDic[targetType]) as VariableKey;
+                condition.ValueOrVariableKey = Activator.CreateInstance(_valueOrVariableKeyDic[targetType]) as ValueOrVariableKey;
                 condition.Operator = Condition.CompareOperator.EqualTo;
                 typeChangedThisFrame = true;
             }
             rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             // 変数1
-            Rect variableNameRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
-            if(typeChangedThisFrame == false && variableNameProp != null) {
-                EditorGUI.PropertyField(variableNameRect, variableNameProp, new GUIContent("A"), true);
+            Rect variableTypeRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
+            if(typeChangedThisFrame == false && variableKeyProp != null) {
+                EditorGUI.PropertyField(variableTypeRect, variableKeyProp, true);
             }
             rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             
@@ -90,8 +90,8 @@ namespace Kodama.ScenarioSystem.Editor {
 
             // 変数2(or値)
             Rect valueOrVariableRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
-            if(typeChangedThisFrame == false && valueOrVariableNameProp != null) {
-                EditorGUI.PropertyField(valueOrVariableRect, valueOrVariableNameProp, new GUIContent("B"), true);
+            if(typeChangedThisFrame == false && valueOrVariableKeyProp != null) {
+                EditorGUI.PropertyField(valueOrVariableRect, valueOrVariableKeyProp, true);
             }
             rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 

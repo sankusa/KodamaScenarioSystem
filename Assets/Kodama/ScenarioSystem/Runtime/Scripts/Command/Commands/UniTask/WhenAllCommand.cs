@@ -7,18 +7,18 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     public class WhenAllCommand : AsyncCommandBase {
-        [SerializeField] private List<VariableName<UniTask>> _unitaskVariableNames;
+        [SerializeField] private List<VariableKey<UniTask>> _unitaskVariableKeys;
 
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
-            IEnumerable<UniTask> uniTasks = _unitaskVariableNames.Select(x => service.PagePlayProcess.GetVariableValue<UniTask>(x.Name));
+            IEnumerable<UniTask> uniTasks = _unitaskVariableKeys.Select(x => service.PagePlayProcess.FindVariable<UniTask>(x.Id).Value);
             await UniTask.WhenAll(uniTasks);
         }
 
         public override string GetSummary() {
             StringBuilder sb = SharedStringBuilder.Instance;
-            _unitaskVariableNames
+            _unitaskVariableKeys
                 .ForEach(x => {
-                    sb.Append(x.GetSummary());
+                    sb.Append(x.GetSummary(this));
                     sb.Append("  ");
                 });
             string summary = sb.ToString();
@@ -29,14 +29,15 @@ namespace Kodama.ScenarioSystem {
 
         public override string Validate() {
             StringBuilder sb = SharedStringBuilder.Instance;
-            _unitaskVariableNames
+            _unitaskVariableKeys
                 .ForEach(x => {
-                    string ret = x.Validate(this, true);
+                    string ret = x.Validate(this);
+                    if(string.IsNullOrEmpty(ret) == false && sb.Length > 0) sb.Append("\n");
                     sb.Append(ret);
-                    if(string.IsNullOrEmpty(ret) == false) {
-                        sb.Append("  ");
-                    }
                 });
+            string baseErrorMessage = base.Validate();
+            if(string.IsNullOrEmpty(baseErrorMessage) == false && sb.Length > 0) sb.Append("\n");
+            sb.Append(baseErrorMessage);
             string errorMessage = sb.ToString();
             sb.Clear();
 
