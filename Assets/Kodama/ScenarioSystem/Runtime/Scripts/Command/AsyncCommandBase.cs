@@ -28,8 +28,14 @@ namespace Kodama.ScenarioSystem {
             await UniTask.CompletedTask;
         }
 
-        public override string Validate() {
-            return _asyncCommandSetting.Validate(this);
+        public sealed override string Validate() {
+            SharedStringBuilder.Append(_asyncCommandSetting.Validate(this, nameof(AsyncCommandSetting)));
+            SharedStringBuilder.AppendAsNewLine(ValidateAsyncCommand());
+            return SharedStringBuilder.Output();
+        }
+
+        public virtual string ValidateAsyncCommand() {
+            return null;
         }
     }
 }

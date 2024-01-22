@@ -18,7 +18,7 @@ namespace Kodama.ScenarioSystem {
 
         public abstract Type TargetType {get;}
         public abstract string GetSummary(CommandBase parentCommand);
-        public abstract string Validate(CommandBase parentCommand, string name = null);
+        public abstract string Validate(CommandBase parentCommand, string label = null);
     }
 
     [Serializable]
@@ -38,9 +38,9 @@ namespace Kodama.ScenarioSystem {
             return _variableKey.GetSummary(parentCommand, false);
         }
 
-        public override string Validate(CommandBase parentCommand, string name = null) {
-            if(string.IsNullOrEmpty(name)) name = nameof(ValueOrVariableKey);
-            return _variableKey.Validate(parentCommand, false, name);
+        public override string Validate(CommandBase parentCommand, string label = null) {
+            if(string.IsNullOrEmpty(label)) label = nameof(ValueOrVariableKey);
+            return _variableKey.Validate(parentCommand, false, label + " : " + nameof(VariableKey));
         }
     }
 }

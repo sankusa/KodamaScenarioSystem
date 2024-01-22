@@ -23,12 +23,11 @@ namespace Kodama.ScenarioSystem {
             return SharedStringBuilder.Output();
         }
 
-        public override string Validate() {
+        public override string ValidateAsyncCommand() {
             _unitaskVariableKeys
                 .ForEach(x => {
-                    SharedStringBuilder.AppendAsNewLine(x.Validate(this));
+                    SharedStringBuilder.AppendAsNewLine(x.Validate(this, label: "UniTaskVariableKeys"));
                 });
-            SharedStringBuilder.AppendAsNewLine(base.Validate());
             return SharedStringBuilder.Output();
         }
     }

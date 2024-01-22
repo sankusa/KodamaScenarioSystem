@@ -16,7 +16,7 @@ namespace Kodama.ScenarioSystem {
         public bool IsEmpty() => string.IsNullOrEmpty(_id);
 
         public abstract string GetSummary(CommandBase parentCommand, bool warnEmpty = true);
-        public abstract string Validate(CommandBase parentCommand, bool warnEmpty = true, string name = null);
+        public abstract string Validate(CommandBase parentCommand, bool warnEmpty = true, string label = null);
     }
 
     [Serializable]
@@ -44,12 +44,12 @@ namespace Kodama.ScenarioSystem {
             return SharedStringBuilder.Output();
         }
 
-        public override string Validate(CommandBase parentCommand, bool warnEmpty = true, string name = null) {
-            if(string.IsNullOrEmpty(name)) name = nameof(VariableKey);
+        public override string Validate(CommandBase parentCommand, bool warnEmpty = true, string label = null) {
+            if(string.IsNullOrEmpty(label)) label = nameof(VariableKey);
             if(string.IsNullOrEmpty(_id)) {
-                if(warnEmpty) return name + " is empty";
+                if(warnEmpty) return label + " is empty";
             } else if(parentCommand.GetAvailableVariableDefines<T>().FirstOrDefault(x => x.Id == _id) == null) {
-                return name + " missing reference";
+                return label + " missing reference";
             }
             return "";
         }

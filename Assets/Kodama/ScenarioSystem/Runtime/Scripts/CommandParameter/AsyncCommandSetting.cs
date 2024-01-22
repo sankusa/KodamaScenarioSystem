@@ -12,8 +12,8 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private UniTaskVariableKey _setUniTaskTo;
         public UniTaskVariableKey SetUniTaskTo => _setUniTaskTo;
 
-        public string Validate(CommandBase parentCommand) {
-            return _setUniTaskTo.Validate(parentCommand, false, "SetUniTaskTo");
+        public string Validate(CommandBase parentCommand, string label) {
+            return _setUniTaskTo.Validate(parentCommand, false, label + " : SetUniTaskTo");
         }
     }
 }

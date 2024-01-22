@@ -89,9 +89,11 @@ namespace Kodama.ScenarioSystem {
             return SharedStringBuilder.Output();
         }
 
-        public string Validate(CommandBase parentCommand) {
-            SharedStringBuilder.AppendAsNewLine(_variableKey.Validate(parentCommand));
-            SharedStringBuilder.AppendAsNewLine(_valueOrVariableKey.Validate(parentCommand));
+        public string Validate(CommandBase parentCommand, string label = null) {
+            if(string.IsNullOrEmpty(label)) label = nameof(Condition);
+            label += " : ";
+            SharedStringBuilder.AppendAsNewLine(_variableKey.Validate(parentCommand, label: label + nameof(VariableKey)));
+            SharedStringBuilder.AppendAsNewLine(_valueOrVariableKey.Validate(parentCommand, label: label + nameof(ValueOrVariableKey)));
             return SharedStringBuilder.Output();
         }
     }

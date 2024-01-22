@@ -13,8 +13,8 @@ namespace Kodama.ScenarioSystem {
             Async = 2,
         }
 
-        [SerializeField] private CallType _callType;
         [SerializeField] private ScenarioAndChildPageSelector _target;
+        [SerializeField] private CallType _callType;
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
@@ -41,10 +41,8 @@ namespace Kodama.ScenarioSystem {
             return SharedStringBuilder.Output();
         }
 
-        public override string Validate() {
-            SharedStringBuilder.AppendAsNewLine(base.Validate());
-            SharedStringBuilder.AppendAsNewLine(_target.Validate(nameof(_target)));
-            return SharedStringBuilder.Output();
+        public override string ValidateAsyncCommand() {
+            return _target.Validate("Target");
         }
     }
 }

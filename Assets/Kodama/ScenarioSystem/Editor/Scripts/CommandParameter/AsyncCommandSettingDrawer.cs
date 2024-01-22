@@ -13,7 +13,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
             rect.yMax -= 6;
             using (new BackgroundColorScope(new Color(1, 1, 1, 0.5f))) {
-                GUI.Box(new Rect(rect) {xMin = rect.xMin - 4, xMax = rect.xMax + 4}, "", GUIStyles.NodeBox);
+                GUI.Box(new Rect(rect) {xMin = rect.xMin - 4, xMax = rect.xMax + 4}, "", GUIStyles.AsyncCommandSettingBox);
             }
 
             Rect labelRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
