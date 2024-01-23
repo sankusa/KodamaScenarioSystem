@@ -21,10 +21,10 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                     }
                 }
 
-                if(GUILayout.Button("Scenario List", GUIStyles.BorderedButton, GUILayout.Width(100), GUILayout.Height(23))) {
+                if(GUILayout.Button("Scenarios", GUIStyles.BorderedButton, GUILayout.Width(64), GUILayout.Height(23))) {
                     ScenarioListWindow.Open();
                 }
-                if(GUILayout.Button("Select Scenario", GUIStyles.BorderedButton, GUILayout.Height(23), GUILayout.Width(100))) {
+                if(GUILayout.Button("Select", GUIStyles.BorderedButton, GUILayout.Width(64), GUILayout.Height(23))) {
                     Selection.activeObject = scenario;
                 }
                 

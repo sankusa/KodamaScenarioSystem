@@ -11,40 +11,37 @@ namespace Kodama.ScenarioSystem.Editor {
             SerializedProperty returnValueSetTargetProp = property.FindPropertyRelative("_setUniTaskTo");
             AsyncCommandSetting setting = property.GetObject() as AsyncCommandSetting;
 
-            rect.yMax -= 6;
-            using (new BackgroundColorScope(new Color(1, 1, 1, 0.5f))) {
-                GUI.Box(new Rect(rect) {xMin = rect.xMin - 4, xMax = rect.xMax + 4}, "", GUIStyles.AsyncCommandSettingBox);
+            property.isExpanded = HeaderFoldOut.DrawFoldoutGroupFrame(new Rect(rect.x, rect.y, rect.width, rect.height), label.text, property.isExpanded);
+
+            if(property.isExpanded) {
+                rect.yMin += HeaderFoldOut.HeaderHeight + EditorGUIUtility.standardVerticalSpacing;
+
+                EditorGUI.indentLevel++;
+
+                if(setting.Wait == true) {
+                    EditorGUI.PropertyField(rect, waitProp);
+                    SerializedProperty variableIdProp = returnValueSetTargetProp.FindPropertyRelative("_id");
+                    variableIdProp.stringValue = "";
+                }
+                else {
+                    Rect waitRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
+                    rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    Rect returnValueTargetRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
+
+                    EditorGUI.PropertyField(waitRect, waitProp);
+                    EditorGUI.PropertyField(returnValueTargetRect, returnValueSetTargetProp, new GUIContent("Set UniTask To"));
+                }
+
+                EditorGUI.indentLevel--;
             }
-
-            Rect labelRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
-            rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            EditorGUI.LabelField(labelRect, nameof(AsyncCommandSetting), EditorStyles.boldLabel);
-
-            EditorGUI.indentLevel++;
-
-            if(setting.Wait == true) {
-                EditorGUI.PropertyField(rect, waitProp);
-                SerializedProperty variableIdProp = returnValueSetTargetProp.FindPropertyRelative("_id");
-                variableIdProp.stringValue = "";
-            }
-            else {
-                Rect waitRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
-                rect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                Rect returnValueTargetRect = new Rect(rect) {height = EditorGUIUtility.singleLineHeight};
-
-                EditorGUI.PropertyField(waitRect, waitProp);
-                EditorGUI.PropertyField(returnValueTargetRect, returnValueSetTargetProp, new GUIContent("Set UniTask To"));
-            }
-
-            EditorGUI.indentLevel--;
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+            if(property.isExpanded == false) return HeaderFoldOut.HeaderHeight;
             SerializedProperty waitProp = property.FindPropertyRelative("_wait");
-            return EditorGUIUtility.singleLineHeight * 2
-                + EditorGUIUtility.standardVerticalSpacing * 2
-                + (waitProp.boolValue == false ? EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing : 0)
-                + 6;
+            return HeaderFoldOut.HeaderHeight + EditorGUIUtility.standardVerticalSpacing
+                + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing
+                + (waitProp.boolValue == false ? EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing : 0);
         }
     }
 }

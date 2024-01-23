@@ -38,15 +38,18 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
         private List<CommandBase> _selections = new List<CommandBase>();
         private Dictionary<Type, CommandSummaryDrawerBase> _summaryDrawerDic;
 
+        private int _backgroundControlId;
+
         public PageCommandsReorderableList(SerializedObject serializedPage, Dictionary<Type, CommandSummaryDrawerBase> summaryDrawerDic) {
             _serializedPage = serializedPage;
             _page = serializedPage.targetObject as ScenarioPage;
             _summaryDrawerDic = summaryDrawerDic;
             RegenerateReorderableList();
+            _backgroundControlId = EditorGUIUtility.GetControlID(FocusType.Passive);
         }
 
-        public void DrawLayout(Rect rectSize, Vector2 scrollPos) {
-            _rectSize = rectSize;
+        public void DrawLayout(Rect rect, Vector2 scrollPos) {
+            _rectSize = new Rect(rect) {x = 0, y = 0};
             _scrollPos = scrollPos;
 
             // コマンド追加系操作ののUndo時、ReorderableListに要素数の減少が反映されず、
@@ -75,8 +78,13 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
 
             _commandList.DoLayoutList();
 
-            // 要素0の場合はフォーカスされていることにしないとペーストできない
-            if(_page.Commands.Count == 0) _isFocused = true;
+            if(Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition)) {
+                EditorGUIUtility.hotControl = _backgroundControlId;
+            }
+
+            // 要素がフォーカスされていなくても背景がフォーカスされていればフォーカスされている扱いとする
+            if(_isFocused == false && EditorGUIUtility.hotControl == _backgroundControlId) _isFocused = true;
+
             // コピー&ペースト関連処理
             if(_isFocused && Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.C) {
                 CopySelections();

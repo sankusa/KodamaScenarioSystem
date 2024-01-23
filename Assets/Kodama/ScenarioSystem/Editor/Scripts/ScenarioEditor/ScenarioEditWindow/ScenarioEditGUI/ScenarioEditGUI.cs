@@ -139,7 +139,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                 }
 
                 Rect detailAreaRect = EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-                _pageDetailArea.DrawLayout(new Rect(detailAreaRect) {x = 0, y = 0}, _status, _currentSerializedPage);
+                _pageDetailArea.DrawLayout(detailAreaRect, _status, _currentSerializedPage);
                 EditorGUILayout.EndVertical();
 
                 // コマンドクリップボード操作

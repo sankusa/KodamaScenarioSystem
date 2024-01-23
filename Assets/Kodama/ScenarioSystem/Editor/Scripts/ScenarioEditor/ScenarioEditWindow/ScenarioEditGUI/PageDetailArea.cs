@@ -74,7 +74,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
             _commandList?.ResizeReorderableList();
         }
 
-        public void DrawLayout(Rect rectSize, ScenarioEditGUIStatus guiStatus, SerializedObject serializedPage) {
+        public void DrawLayout(Rect rect, ScenarioEditGUIStatus guiStatus, SerializedObject serializedPage) {
             ScenarioPage page = serializedPage.targetObject as ScenarioPage;
             bool pageChanged = _pageInstanceIdOld != page.GetInstanceID();
             if(pageChanged || _commandList == null) {
@@ -84,7 +84,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
             _commandList.Index = guiStatus.CurrentCommandIndex;
 
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
-            _commandList.DrawLayout(rectSize, _scrollPos);
+            _commandList.DrawLayout(rect, _scrollPos);
             EditorGUILayout.EndScrollView();
             
             guiStatus.CurrentCommandIndex = _commandList.Index;

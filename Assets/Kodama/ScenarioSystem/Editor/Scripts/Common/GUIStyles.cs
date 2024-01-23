@@ -53,7 +53,7 @@ namespace Kodama.ScenarioSystem.Editor {
             CommandListElementStyle = new GUIStyle("GroupBox") {
                 margin = new RectOffset(0, 0, 0, 0)
             };
-            AsyncCommandSettingBox = new GUIStyle("flow node 0");
+            AsyncCommandSettingBox = new GUIStyle("ShurikenModuleTitle");
         }
     }
 }
