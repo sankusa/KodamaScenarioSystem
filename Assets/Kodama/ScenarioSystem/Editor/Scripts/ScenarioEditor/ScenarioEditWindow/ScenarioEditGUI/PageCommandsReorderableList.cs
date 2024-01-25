@@ -80,6 +80,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
 
             if(Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition)) {
                 EditorGUIUtility.hotControl = _backgroundControlId;
+                EditorGUIUtility.keyboardControl = _backgroundControlId;
             }
 
             // 要素がフォーカスされていなくても背景がフォーカスされていればフォーカスされている扱いとする

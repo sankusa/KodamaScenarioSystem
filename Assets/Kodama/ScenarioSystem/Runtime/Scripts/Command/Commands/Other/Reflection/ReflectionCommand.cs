@@ -5,16 +5,16 @@ using UnityEngine;
 using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
+using System.Reflection;
+using System.Linq;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
     public class ReflectionCommand : AsyncCommandBase {
-        [SerializeField] private string commandname;
-        [SerializeReference] List<object> args = new List<object>();
-
+        [SerializeField] private ReflectionMethodInvokeData _invokeData;
         public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
-            Debug.Log(GetType().BaseType);
-            await Task.CompletedTask;
+            _invokeData.Invoke(service);
+            await UniTask.CompletedTask;
         }
     }
 }

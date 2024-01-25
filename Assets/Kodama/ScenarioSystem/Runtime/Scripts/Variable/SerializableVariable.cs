@@ -10,9 +10,6 @@ namespace Kodama.ScenarioSystem {
     public class BoolVariable : Variable<bool> {}
 
     [Serializable]
-    public class ByteVariable : Variable<byte> {}
-
-    [Serializable]
     public class DoubleVariable : Variable<double> {}
 
     [Serializable]

@@ -23,6 +23,17 @@ namespace Kodama.ScenarioSystem {
             return t;
         }
 
+        public object Resolve(Type type) {
+            object obj;
+            if(_componentBinding != null) {
+                obj = _componentBinding.Components.FirstOrDefault(x => type.IsAssignableFrom(x.GetType()));
+                if(obj != null) return obj;
+            }
+            obj = GlobalComponentBinding.AllComponents.FirstOrDefault(x => type.IsAssignableFrom(x.GetType()));
+            if(obj != null) return obj;
+            return obj;
+        }
+
         public IEnumerable<T> ResolveAll<T>() {
             IEnumerable<T> tAll = Enumerable.Empty<T>();
             if(_componentBinding != null) {

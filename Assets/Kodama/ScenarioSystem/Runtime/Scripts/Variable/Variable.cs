@@ -38,7 +38,7 @@ namespace Kodama.ScenarioSystem {
         public override Type TargetType => typeof(T);
 
         internal override VariableBase Copy() {
-            return new Variable<T>(){_name = this.Name, _value = this.Value};
+            return new Variable<T>(){_id = this.Id, _name = this.Name, _value = this.Value};
         }
     }
 }
