@@ -273,9 +273,23 @@ namespace Kodama.ScenarioSystem.Editor {
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             ReflectionMethodInvokeData invokeData = property.GetObject() as ReflectionMethodInvokeData;
+            float singleLineHeightWithSpace = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             float height = 0;
-            height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 4;
-            if(invokeData.MethodType == MethodType.Instance) height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
+            height += singleLineHeightWithSpace;
+            if(string.IsNullOrEmpty(invokeData.TypeId.AssemblyName) == false) {
+                height += singleLineHeightWithSpace;
+            }
+            else {
+                return height;
+            }
+            if(string.IsNullOrEmpty(invokeData.TypeId.TypeFullName) == false) {
+                height += singleLineHeightWithSpace * 2;
+            }
+            else {
+                return height;
+            }
+
+            if(invokeData.MethodType == MethodType.Instance) height += singleLineHeightWithSpace;
             if(string.IsNullOrEmpty(invokeData.MethodData.MethodName) == false) {
                 height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 3;
                 foreach(MethodArgData argData in invokeData.MethodData.ArgData) {
