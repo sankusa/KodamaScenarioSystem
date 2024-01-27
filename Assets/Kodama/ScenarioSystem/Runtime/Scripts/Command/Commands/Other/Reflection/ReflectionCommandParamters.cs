@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
@@ -27,7 +28,7 @@ namespace Kodama.ScenarioSystem {
             set => _methodData = value;
         }
 
-        public object Invoke(ICommandService service) {
+        public async UniTask Invoke(ICommandService service, CancellationToken cancellationToken) {
             Type targetType = _typeId.ResolveType();
             Type[] argTypes = _methodData.ArgData.Select(x => x.TypeId.ResolveType()).ToArray();
             object[] args = new object[argTypes.Length];
@@ -50,6 +51,7 @@ namespace Kodama.ScenarioSystem {
                 }
             }
 
+            object returnValue = null;
             if(_methodType == MethodType.Instance) {
                 object targetIstance = null;
                 if(_instanceResolveWay == TargetInstanceResolveWay.FromServiceLocater) {
@@ -62,7 +64,7 @@ namespace Kodama.ScenarioSystem {
                     argTypes,
                     null
                 );
-                return methodInfo.Invoke(targetIstance, args);
+                returnValue = methodInfo.Invoke(targetIstance, args);
             }
             else if(_methodType == MethodType.Static) {
                 MethodInfo methodInfo = targetType.GetMethod(
@@ -72,9 +74,21 @@ namespace Kodama.ScenarioSystem {
                     argTypes,
                     null
                 );
-                return methodInfo.Invoke(null, args);
+                returnValue = methodInfo.Invoke(null, args);
             }
-            return null;
+
+            if(_methodData.ReturnValueHandling == ReturnValueHandling.SetToVariable) {
+                service.PagePlayProcess.FindVariable(
+                    _methodData.ReturnTypeId.ResolveType(),
+                    _methodData.ReturnValueReceiveVariableId
+                )
+                .SetValueAsObject(returnValue);
+            }
+            else if(_methodData.ReturnValueHandling == ReturnValueHandling.SetToVariable) {
+                service.ServiceLocator.Bind(returnValue);
+            }
+
+            await UniTask.CompletedTask;
         }
     }
 
@@ -130,6 +144,19 @@ namespace Kodama.ScenarioSystem {
 
         [SerializeField] private TypeId _returnTypeId;
         public TypeId ReturnTypeId => _returnTypeId;
+
+        [SerializeField] private ReturnValueHandling _returnValueHandling;
+        public ReturnValueHandling ReturnValueHandling {
+            get => _returnValueHandling;
+            set => _returnValueHandling = value;
+        }
+
+        [SerializeField] private string _returnValueReceiveVariableId;
+        public string ReturnValueReceiveVariableId {
+            get => _returnValueReceiveVariableId;
+            set => _returnValueReceiveVariableId = value;
+        }
+
 
         public MethodData(MethodInfo methodInfo, ValueStringConverterBundle converters) {
             _methodName = methodInfo.Name;
@@ -194,5 +221,11 @@ namespace Kodama.ScenarioSystem {
             }
             _variableId = "";
         }
+    }
+
+    public enum ReturnValueHandling {
+        Ignore,
+        SetToVariable,
+        BindToServiceLocater,
     }
 }

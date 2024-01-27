@@ -185,9 +185,9 @@ namespace Kodama.ScenarioSystem.Editor {
                             GUIContent.none,
                             data.ResolveWay,
                             x => {
-                                if(converter == null && (MethodArgResolveWay)x == MethodArgResolveWay.Value) return false;
-                                else if(_allowedVariableTypes.Contains(argType) == false && (MethodArgResolveWay)x == MethodArgResolveWay.Variable) return false;
-                                else if(parameterInfo.HasDefaultValue == false && (MethodArgResolveWay)x == MethodArgResolveWay.DefaultValue) return false;
+                                if((MethodArgResolveWay)x == MethodArgResolveWay.Value && converter == null) return false;
+                                else if((MethodArgResolveWay)x == MethodArgResolveWay.Variable && _allowedVariableTypes.Contains(argType) == false) return false;
+                                else if((MethodArgResolveWay)x == MethodArgResolveWay.DefaultValue && parameterInfo.HasDefaultValue == false) return false;
                                 return true;
                             }
                         );
@@ -224,6 +224,44 @@ namespace Kodama.ScenarioSystem.Editor {
                         }
                     }
                 }
+
+                Rect returnValueLabelRect = CutSingleLineRect(ref position);
+                EditorGUI.LabelField(returnValueLabelRect, "Return Value (" + TypeNameUtil.ConvertToPrimitiveTypeName(methodInfo.ReturnType.Name) + ")");
+
+                Rect returnValueHandlingEditRect = CutSingleLineRect(ref position);
+                List<Rect> returnValueHandlingEditRects = RectUtil.DivideRectHorizontal(returnValueHandlingEditRect, new RectUtil.LayoutLength[] {new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1)});
+                ReturnValueHandling newReturnValueHandling =
+                    (ReturnValueHandling) EditorGUI.EnumPopup(
+                        returnValueHandlingEditRects[0],
+                        new GUIContent(),
+                        invokeData.MethodData.ReturnValueHandling,
+                        x => {
+                            if((ReturnValueHandling)x == ReturnValueHandling.SetToVariable && _allowedVariableTypes.Contains(methodInfo.ReturnType) == false) return false;
+                            else if((ReturnValueHandling)x == ReturnValueHandling.BindToServiceLocater && methodInfo.ReturnType == typeof(void)) return false;
+                            return true;
+                        }
+                    );
+
+                if(newReturnValueHandling != invokeData.MethodData.ReturnValueHandling) {
+                    Undo.RecordObject(property.serializedObject.targetObject, "ReflectionMethodInvokeData changed");
+                    invokeData.MethodData.ReturnValueHandling = newReturnValueHandling;
+                }
+
+                if(invokeData.MethodData.ReturnValueHandling == ReturnValueHandling.SetToVariable) {
+                    IEnumerable<VariableBase> variables = command.GetAvailableVariableDefines(methodInfo.ReturnType).ToArray();
+                    string[] variableNames = variables.Select(x => x.Name).ToArray();
+                    string[] variableIds = variables.Select(x => x.Id).ToArray();
+                    int variableIdIndex = Array.IndexOf(variableIds, invokeData.MethodData.ReturnValueReceiveVariableId);
+                    variableIdIndex = EditorGUI.Popup(returnValueHandlingEditRects[1], variableIdIndex, variableNames);
+                    string newVariableId = "";
+                    if(variableIdIndex > -1) {
+                        newVariableId = variableIds[variableIdIndex];
+                    }
+                    if(newVariableId != invokeData.MethodData.ReturnValueReceiveVariableId) {
+                        Undo.RecordObject(property.serializedObject.targetObject, "ReflectionMethodInvokeData changed");
+                        invokeData.MethodData.ReturnValueReceiveVariableId = newVariableId;
+                    }
+                }
             }
         }
 
@@ -234,7 +272,17 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 5;
+            ReflectionMethodInvokeData invokeData = property.GetObject() as ReflectionMethodInvokeData;
+            float height = 0;
+            height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 4;
+            if(invokeData.MethodType == MethodType.Instance) height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
+            if(string.IsNullOrEmpty(invokeData.MethodData.MethodName) == false) {
+                height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 3;
+                foreach(MethodArgData argData in invokeData.MethodData.ArgData) {
+                    height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
+                }
+            }
+            return height;
         }
     }
 }

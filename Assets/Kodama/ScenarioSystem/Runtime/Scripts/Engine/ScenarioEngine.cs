@@ -14,10 +14,8 @@ namespace Kodama.ScenarioSystem {
 
         // 参照解決機能
         [SerializeField] private ComponentBinding _componentBinding;
-        private ServiceLocator _serviceLocator;
 
         void Awake() {
-            _serviceLocator = new ServiceLocator(_componentBinding);
             // PlayableScenarioを準備
             foreach(Scenario scenario in _scenarios) {
                 PlayableScenarioManager.Instance.GetOrCreatePlayableScenario(scenario, this);
@@ -50,7 +48,8 @@ namespace Kodama.ScenarioSystem {
 
             PlayableScenario playable = PlayableScenarioManager.Instance.GetOrCreatePlayableScenario(scenario, tmpReferenceSource);
 
-            await ProcessManager.PlayNewProcessAsync(playable.Scenario, null, _serviceLocator,
+            ServiceLocator serviceLocator = new ServiceLocator(_componentBinding);
+            await ProcessManager.PlayNewProcessAsync(playable.Scenario, null, serviceLocator,
                 () => PlayableScenarioManager.Instance.ReleasePlayableScenario(tmpReferenceSource),
                 linkedToken
             );
@@ -73,7 +72,8 @@ namespace Kodama.ScenarioSystem {
 
             linkedToken.ThrowIfCancellationRequested();
 
-            await ProcessManager.PlayNewProcessAsync(scenarioName, null, _serviceLocator, onProcessFinished, linkedToken);
+            ServiceLocator serviceLocator = new ServiceLocator(_componentBinding);
+            await ProcessManager.PlayNewProcessAsync(scenarioName, null, serviceLocator, onProcessFinished, linkedToken);
         }
             
         /// <summary>

@@ -13,8 +13,7 @@ namespace Kodama.ScenarioSystem {
     public class ReflectionCommand : AsyncCommandBase {
         [SerializeField] private ReflectionMethodInvokeData _invokeData;
         public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
-            _invokeData.Invoke(service);
-            await UniTask.CompletedTask;
+            await _invokeData.Invoke(service, cancellationToken);
         }
     }
 }
