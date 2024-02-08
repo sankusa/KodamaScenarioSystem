@@ -107,16 +107,26 @@ namespace Kodama.ScenarioSystem {
 
         public string TypeName => TypeFullName.Split('.').Last();
 
+        private Type _typeCache = null;
+
         public TypeId(Type type) {
             _assemblyName = type.Assembly.GetName().Name;
             _typeFullName = type.FullName;
         }
 
         public Type ResolveType() {
-            return AppDomain.CurrentDomain.
+            if(_typeCache != null) {
+                if((_typeCache.Assembly.GetName().Name == _assemblyName && _typeCache.FullName == _typeFullName) == false) {
+                    _typeCache = null;
+                }
+            }
+            if(_typeCache == null) {
+                _typeCache = AppDomain.CurrentDomain.
                 GetAssemblies()
                 .First(x => x.GetName().Name == _assemblyName)
                 .GetType(_typeFullName);
+            }
+            return _typeCache;
         }
 
         public void Clear() {
