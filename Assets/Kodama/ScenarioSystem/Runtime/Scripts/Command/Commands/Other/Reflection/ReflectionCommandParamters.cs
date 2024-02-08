@@ -28,6 +28,8 @@ namespace Kodama.ScenarioSystem {
             set => _methodData = value;
         }
 
+        [SerializeField, TextArea] private string _summary = "{t} : {r} {m} \n ({a0} = {v0})";
+
         public async UniTask Invoke(ICommandService service, CancellationToken cancellationToken) {
             Type targetType = _typeId.ResolveType();
             Type[] argTypes = _methodData.ArgData.Select(x => x.TypeId.ResolveType()).ToArray();
@@ -89,6 +91,109 @@ namespace Kodama.ScenarioSystem {
             }
 
             await UniTask.CompletedTask;
+        }
+
+                // サマリ生成
+        public string CreateSummary(CommandBase command) {
+            string ret = _summary;
+            if(string.IsNullOrEmpty(_typeId.TypeFullName) == false) {
+                ret = ret.Replace("{t}", _typeId.ResolveType().Name);
+            }
+            if(string.IsNullOrEmpty(_methodData.MethodName) == false) {
+                ret = ret.Replace("{m}", _methodData.MethodName);
+                ret = ret.Replace("{r}", TypeNameUtil.ConvertToPrimitiveTypeName(_methodData.ReturnTypeId.ResolveType().Name));
+            }
+            // {0}→0番目の引数の内容で置換、{引数名}→対象の引数の内容で置換
+            for(int i = 0; i < _methodData.ArgData.Count; i++) {
+                string value = "";
+                MethodArgData argData = _methodData.ArgData[i];
+                if(argData.ResolveWay == MethodArgResolveWay.Null) {
+                    value = "Null";
+                }
+                else if(argData.ResolveWay == MethodArgResolveWay.Value) {
+                    value = argData.ValueString;
+                }
+                else if(argData.ResolveWay == MethodArgResolveWay.Variable) {
+                    VariableBase variableDefine = command.GetAvailableVariableDefines(argData.TypeId.ResolveType()).FirstOrDefault(x => x.Id == argData.VaribaleId);
+                    if(variableDefine == null) {
+                        value = "";
+                    }
+                    else {
+                        value = $"<i>{variableDefine.Name}</i>";
+                    }
+                }
+                else if(argData.ResolveWay == MethodArgResolveWay.FromServiceLocater) {
+                    value = "Resolve";
+                }
+                else if(argData.ResolveWay == MethodArgResolveWay.FromServiceLocater) {
+                    value = "DefaultArgValue";
+                }
+                ret = ret.Replace("{a" + i + "}", argData.ArgName);
+                ret = ret.Replace("{v" + i + "}", value);
+            }
+            // [文字列]:[A][文字列がAの場合、置換する値]:[B][...]
+            // 値によってサマリを切り替える場合に使用
+            while(true) {
+                int state = 0;
+                int start = 0;
+                int end = 0;
+                string oldWord = "";
+                string tmpKeyWord = "";
+                string tmpNewWord = "";
+                List<string> keyWords= new List<string>();
+                List<string> newWords= new List<string>();
+                string newWord = "";
+                for(int i = 0; i < ret.Length; i++) {
+                    if(state == 0) {
+                        if(ret[i] == '[') {
+                            start = i;
+                            state = 1;
+                        }
+                    } else if(state == 1) {
+                        if(ret[i] == ']') state = 2;
+                        else oldWord += ret[i];
+                    } else if(state == 2) {
+                        if(ret[i] == ':') state = 3;
+                        else break;
+                    } else if(state == 3) {
+                        if(ret[i] == '[') state = 4;
+                        else break;
+                    } else if(state == 4) {
+                        if(ret[i] == ']') state = 5;
+                        else tmpKeyWord += ret[i];
+                    } else if(state == 5) {
+                        if(ret[i] == '[') state = 6;
+                        else break;
+                    } else if(state == 6) {
+                        if(ret[i] == ']') {
+                            state = 7;
+                            end = i;
+                            keyWords.Add(tmpKeyWord);
+                            newWords.Add(tmpNewWord);
+                            tmpKeyWord = "";
+                            tmpNewWord = "";
+                        }
+                        else tmpNewWord += ret[i];
+                    } else if(state == 7) {
+                        if(ret[i] == ':') {
+                            state = 3;
+                        } else break;
+                    }
+                }
+
+                if(state == 7) {
+                    for(int i = 0; i < keyWords.Count; i++) {
+                        if(oldWord == keyWords[i]) {
+                            newWord = newWords[i];
+                            break;
+                        }
+                    }
+                    ret = ret.Replace(ret.Substring(start, end - start + 1), newWord);
+                } else {
+                    break;
+                }
+            }
+            return ret;
         }
     }
 

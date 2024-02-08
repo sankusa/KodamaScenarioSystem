@@ -38,6 +38,10 @@ namespace Kodama.ScenarioSystem.Editor {
             _allowedVariableTypes = TypeCache.GetTypesDerivedFrom<VariableBase>().Where(t => !t.IsGenericType).Select(x => x.BaseType.GenericTypeArguments[0]).ToArray();
         }
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+            OnGUIMain(ref position, property, label);
+            OnGUISummary(position, property);
+        }
+        private void OnGUIMain(ref Rect position, SerializedProperty property, GUIContent label) {
             CommandBase command = property.serializedObject.targetObject as CommandBase;
             ReflectionMethodInvokeData invokeData = property.GetObject() as ReflectionMethodInvokeData;
 
@@ -240,6 +244,10 @@ namespace Kodama.ScenarioSystem.Editor {
             }
         }
 
+        private void OnGUISummary(Rect position, SerializedProperty property) {
+            EditorGUI.PropertyField(position, property.FindPropertyRelative("_summary"));
+        }
+
         private void UpdateAssemblies() {
             _assemblies = AppDomain.CurrentDomain.GetAssemblies().OrderBy(x => x.GetName().Name).ToArray();
             _assemblyPopupOptions = _assemblies.Select(x => x.GetName().Name.Replace(".", "/")).ToArray();
@@ -260,10 +268,14 @@ namespace Kodama.ScenarioSystem.Editor {
 
         private void UpdateMethods(Type type, MethodType methodType) {
             if(methodType == MethodType.Instance) {
-                _methodInfos = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                _methodInfos = type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => x.IsGenericMethod == false && x.ContainsGenericParameters == false)
+                    .ToArray();
             }
             else if(methodType == MethodType.Static) {
-                _methodInfos = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+                _methodInfos = type.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                    .Where(x => x.IsGenericMethod == false && x.ContainsGenericParameters == false)
+                    .ToArray();
             }
             _methodMenuLabels = _methodInfos.Select(CreateMethodLabel)
                 .ToArray();
@@ -316,23 +328,19 @@ namespace Kodama.ScenarioSystem.Editor {
             if(string.IsNullOrEmpty(invokeData.TypeId.AssemblyName) == false) {
                 height += singleLineHeightWithSpace;
             }
-            else {
-                return height;
-            }
             if(string.IsNullOrEmpty(invokeData.TypeId.TypeFullName) == false) {
                 height += singleLineHeightWithSpace * 2;
-            }
-            else {
-                return height;
-            }
-
-            if(invokeData.MethodType == MethodType.Instance) height += singleLineHeightWithSpace;
-            if(string.IsNullOrEmpty(invokeData.MethodData.MethodName) == false) {
-                height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 2;
-                foreach(MethodArgData argData in invokeData.MethodData.ArgData) {
-                    height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
+                if(invokeData.MethodType == MethodType.Instance) height += singleLineHeightWithSpace;
+                if(string.IsNullOrEmpty(invokeData.MethodData.MethodName) == false) {
+                    height += singleLineHeightWithSpace * 2;
+                    foreach(MethodArgData argData in invokeData.MethodData.ArgData) {
+                        height += singleLineHeightWithSpace;
+                    }
                 }
             }
+
+            SerializedProperty summaryProp = property.FindPropertyRelative("_summary");
+            height += EditorGUI.GetPropertyHeight(summaryProp);
             return height;
         }
     }

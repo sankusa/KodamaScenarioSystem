@@ -17,12 +17,14 @@ namespace Kodama.ScenarioSystem.Editor {
         [Header("Display Style")]
         [SerializeField] private Texture2D _icon;
         [SerializeField] private Color _iconColor;
+        [SerializeField] private bool _drawDisplayName = true;
         [SerializeField] private SummaryPosition _summaryPosition;
 
         public MonoScript CommandScript => _commandScript;
         public string DisplayName => _displayName;
         public Texture2D Icon => _icon;
         public Color IconColor => _iconColor;
+        public bool DrawDisplayName => _drawDisplayName;
         public SummaryPosition SummaryPosition => _summaryPosition;
     }
 }
