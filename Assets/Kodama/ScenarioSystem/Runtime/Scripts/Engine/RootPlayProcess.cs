@@ -31,10 +31,5 @@ namespace Kodama.ScenarioSystem {
                 }
             }
         }
-
-        public ScenarioPlayProcess CreateScenarioProcess(string scenarioName) {
-            Scenario scenario = PlayableScenarioManager.Instance.FindPlayableByName(scenarioName).Scenario;
-            return CreateScenarioProcess(scenario);
-        }
     }
 }

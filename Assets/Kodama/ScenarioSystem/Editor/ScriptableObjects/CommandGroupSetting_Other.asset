@@ -18,7 +18,8 @@ MonoBehaviour:
   _captionColor: {r: 0, g: 0, b: 0, a: 0}
   _commandSettings:
   - _commandScript: {fileID: 11500000, guid: 022ed8013487608408fc9a738226e6d6, type: 3}
-    _displayName: R
+    _displayName: Reflection
     _icon: {fileID: 0}
     _iconColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
+    _drawDisplayName: 0
     _summaryPosition: 0

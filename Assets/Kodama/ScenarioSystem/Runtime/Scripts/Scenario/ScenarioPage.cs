@@ -127,12 +127,11 @@ namespace Kodama.ScenarioSystem {
         }
 
         public IEnumerable<ScenarioPage> GetReferencingSiblingPages() {
-            return Commands
-                .Where(x => x is CallPageCommand)
-                .Select(x => (x as CallPageCommand).TargetPage)
-                .Where(x => x != null)
-                .Where(x => IsSiblig(x))
-                .Distinct();
+            foreach(CommandBase command in _commands) {
+                foreach(ScenarioPage page in command.GetReferencingSiblingPages()) {
+                    yield return page;
+                }
+            }
         }
 
         public ScenarioPage Copy() {

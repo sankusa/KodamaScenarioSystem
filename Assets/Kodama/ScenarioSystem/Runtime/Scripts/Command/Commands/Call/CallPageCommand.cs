@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -47,6 +48,10 @@ namespace Kodama.ScenarioSystem {
 
         public override string ValidateAsyncCommand() {
             return _target.Validate(this, "Target");
+        }
+
+        public override FlexibleEnumerable<ScenarioPage> GetReferencingSiblingPages() {
+            return new FlexibleEnumerable<ScenarioPage>(_target.Page);
         }
     }
 }

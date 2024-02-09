@@ -44,5 +44,9 @@ namespace Kodama.ScenarioSystem {
         public override string ValidateAsyncCommand() {
             return _target.Validate("Target");
         }
+
+        public override FlexibleEnumerable<Scenario> GetReferencingScenarios() {
+            return new FlexibleEnumerable<Scenario>(_target.Scenario);
+        }
     }
 }

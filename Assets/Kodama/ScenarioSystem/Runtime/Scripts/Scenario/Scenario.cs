@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,6 +19,20 @@ namespace Kodama.ScenarioSystem {
         [SerializeReference] private List<VariableBase> _variables;
         public IList<VariableBase> Variables => _variables;
 
+        // Preload
+        private static int _preloadingScenarioCount = 0;
+        public static int PreloadingScenarioCount => _preloadingScenarioCount;
+
+        public enum PreloadState {
+            Unpreloaded,
+            Preloading,
+            Preloaded,
+        }
+        private PreloadState _preloadState = PreloadState.Unpreloaded;
+        public PreloadState CurrentPreloadState => _preloadState;
+        private CancellationTokenSource _preloadCts = new CancellationTokenSource();
+        private List<object> _preloadKeys = new List<object>();
+
 #if UNITY_EDITOR
         private const string _defaultPageName = "New Page";
         private const string _undoOperationName_CreatePage = "Create Page";
@@ -28,7 +44,89 @@ namespace Kodama.ScenarioSystem {
             get => _graphPosition;
             set => _graphPosition = value;
         }
-        
+#endif
+
+        // Preload
+        public async UniTask PreloadResourcesAsync(object preloadKey) {
+            _preloadingScenarioCount++;
+
+            try {
+                CancellationToken cancellationToken = _preloadCts.Token;
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // 2回目以降はキーのみ追加してリターン
+                _preloadKeys.Add(preloadKey);
+                if(_preloadState != PreloadState.Unpreloaded) return;
+
+                _preloadState = PreloadState.Preloading;
+                
+                for(int i = 0; i < _pages.Count; i++) {
+                    for(int j = 0; j < _pages[i].Commands.Count; j++) {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        if(_pages[i].Commands[j] is IPreloadable preloadable)
+                        await preloadable.PreloadAsync();
+                    }
+                }
+
+                foreach(Scenario scenario in GetReferencingScenario()) {
+                    await scenario.PreloadResourcesAsync(preloadKey);
+                }
+                
+                _preloadState = PreloadState.Preloaded;
+            }
+            finally {
+                _preloadingScenarioCount--;
+            }
+        }
+
+        public void PreloadResourcesAsyncWithReleaseOnError(object preloadKey) {
+            PreloadResourcesAsync(preloadKey).Forget(e => {
+                Debug.LogError(e);
+                ReleaseResources(preloadKey);
+            });
+        }
+
+        public void ReleaseResources(object preloadKey) {
+            _preloadKeys.Remove(preloadKey);
+            foreach(Scenario scenario in GetReferencingScenario()) {
+                scenario.ReleaseResources(preloadKey);
+            }
+            if(_preloadKeys.Count != 0) return;
+            ForceReleaseResources();
+        }
+
+        public void ForceReleaseResources() {
+            _preloadCts.Cancel();
+            _preloadCts = new CancellationTokenSource();
+
+            for(int i = 0; i < _pages.Count; i++) {
+                for(int j = 0; j < _pages[i].Commands.Count; j++) {
+                    if(_pages[i].Commands[j] is IPreloadable preloadable)
+                    preloadable.Release();
+                }
+            }
+
+            _preloadKeys.Clear();
+
+            _preloadState = PreloadState.Unpreloaded;
+        }
+
+        public IEnumerable<Scenario> GetReferencingScenario() {
+            foreach(ScenarioPage page in _pages) {
+                for(int i = 0; i < page.Commands.Count; i++) {
+                    
+                    foreach(Scenario scenario in page.Commands[i].GetReferencingScenarios()) {
+                        yield return scenario;
+                    }
+                }
+            }
+        }
+
+        void OnDestroy() {
+            ForceReleaseResources();
+        }
+
+#if UNITY_EDITOR
         public ScenarioPage CreatePage() {
             ScenarioPage newPage = CreateInstance<ScenarioPage>();
             newPage.name = ObjectNames.GetUniqueName(_pages.Select(x => x.name).ToArray(), _defaultPageName);
@@ -62,9 +160,5 @@ namespace Kodama.ScenarioSystem {
             _pages.Insert(0, page);
         }
 #endif
-
-        public ScenarioPage FindPageByName(string pageName) {
-            return _pages.Find(x => x.name == pageName);
-        }
     }
 }

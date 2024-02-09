@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Threading;
 using System;
 using Cysharp.Threading.Tasks;
+using UnityEngine.Assertions;
 
 namespace Kodama.ScenarioSystem {
     public class ScenarioEngine : MonoBehaviour {
@@ -18,18 +19,18 @@ namespace Kodama.ScenarioSystem {
         void Awake() {
             // PlayableScenarioを準備
             foreach(Scenario scenario in _scenarios) {
-                PlayableScenarioManager.Instance.GetOrCreatePlayableScenario(scenario, this);
+                scenario.PreloadResourcesAsyncWithReleaseOnError(this);
             }
             // 自動再生
             if(_playFirstScenarioOnAwake && _scenarios.Count > 0) {
-                Play(_scenarios[0].name);
+                Play(_scenarios[0]);
             }
         }
 
         void OnDestroy() {
             // PlayableScenarioを解放
             foreach(Scenario scenario in _scenarios) {
-                PlayableScenarioManager.Instance.ReleasePlayableScenario(this);
+                scenario.ReleaseResources(this);
             }
         }
 
@@ -44,13 +45,13 @@ namespace Kodama.ScenarioSystem {
 
             linkedToken.ThrowIfCancellationRequested();
 
-            var tmpReferenceSource = new LightReferenceSource();
+            var tmpPreloadKey = new TemporaryPreloadKey();
 
-            PlayableScenario playable = PlayableScenarioManager.Instance.GetOrCreatePlayableScenario(scenario, tmpReferenceSource);
+            scenario.PreloadResourcesAsyncWithReleaseOnError(tmpPreloadKey);
 
             ServiceLocator serviceLocator = new ServiceLocator(_componentBinding);
-            await ProcessManager.PlayNewProcessAsync(playable.Scenario, null, serviceLocator,
-                () => PlayableScenarioManager.Instance.ReleasePlayableScenario(tmpReferenceSource),
+            await ProcessManager.PlayNewProcessAsync(scenario, null, serviceLocator,
+                () => scenario.ReleaseResources(tmpPreloadKey),
                 linkedToken
             );
         }
@@ -72,8 +73,11 @@ namespace Kodama.ScenarioSystem {
 
             linkedToken.ThrowIfCancellationRequested();
 
+            Scenario scenario = _scenarios.Find(x => x.name == scenarioName);
+            Assert.IsNotNull(scenario);
+
             ServiceLocator serviceLocator = new ServiceLocator(_componentBinding);
-            await ProcessManager.PlayNewProcessAsync(scenarioName, null, serviceLocator, onProcessFinished, linkedToken);
+            await ProcessManager.PlayNewProcessAsync(scenario, null, serviceLocator, onProcessFinished, linkedToken);
         }
             
         /// <summary>

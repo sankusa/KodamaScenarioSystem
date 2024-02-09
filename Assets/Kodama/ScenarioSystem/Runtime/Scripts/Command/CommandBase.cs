@@ -69,6 +69,14 @@ namespace Kodama.ScenarioSystem {
             return ParentPage.ParentScenario.Variables.Where(x => x.TargetType == type);
         }
 
+        public virtual FlexibleEnumerable<Scenario> GetReferencingScenarios() {
+            return new FlexibleEnumerable<Scenario>();
+        }
+
+        public virtual FlexibleEnumerable<ScenarioPage> GetReferencingSiblingPages() {
+            return new FlexibleEnumerable<ScenarioPage>();
+        }
+
         public string LogCaption => $"<b><i>{GetType().Name}</i></b>    ";
         public string LogHeader => $"{LogCaption}<b>Scenario</b>[ {ParentPage.ParentScenario.name} ]    <b>Page</b>[ {ParentPage.name} ]    <b>Index</b>[ {Index.ToString()} ]";
 
