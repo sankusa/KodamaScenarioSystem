@@ -34,7 +34,7 @@ namespace Kodama.ScenarioSystem {
         public override Type TargetType => typeof(T);
 
         public override string GetSummary(CommandBase parentCommand) {
-            if(_variableKey.IsEmpty()) return _value.ToString();
+            if(_variableKey.IsEmpty()) return _value?.ToString();
             return _variableKey.GetSummary(parentCommand, false);
         }
 
