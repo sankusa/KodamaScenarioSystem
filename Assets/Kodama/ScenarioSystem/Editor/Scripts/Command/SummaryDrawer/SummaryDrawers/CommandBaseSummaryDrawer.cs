@@ -72,7 +72,7 @@ namespace Kodama.ScenarioSystem.Editor {
         }
 
         protected virtual bool WillDrawLabel(CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {
-            return commandSetting.DrawDisplayName;
+            return commandSetting.HideDisplayName == false;
         }
 
         protected virtual void DrawLabel(Rect rect, CommandBase command, CommandGroupSetting groupSetting, CommandSetting commandSetting) {

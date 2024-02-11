@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6867bbb7ac8e2b4f841c72334c6fd57, type: 3}
   m_Name: CommandGroupSetting_Other
   m_EditorClassIdentifier: 
-  _priority: -1
+  _priority: 0
   _displayName: Other
   _color: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
   _captionColor: {r: 0, g: 0, b: 0, a: 0}
@@ -21,5 +21,5 @@ MonoBehaviour:
     _displayName: Reflection
     _icon: {fileID: 0}
     _iconColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
-    _drawDisplayName: 0
+    _hideDisplayName: 1
     _summaryPosition: 0

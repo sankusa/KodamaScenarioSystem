@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public class Variable<T> : VariableBase {
+    public abstract class Variable<T> : VariableBase {
         public const string VariableName_Value = nameof(_value);
         
         [SerializeField] private string _id;
@@ -17,7 +17,7 @@ namespace Kodama.ScenarioSystem {
             set => _name = value;
         }
         
-        [SerializeField] private T _value;
+        [SerializeField] protected T _value;
         public T Value {
             get => _value;
             set => _value = value;
@@ -37,8 +37,24 @@ namespace Kodama.ScenarioSystem {
 
         public override Type TargetType => typeof(T);
 
+        // 演算
+        public sealed override void Negate(object value) => Negate((T)value);
+        public virtual void Negate(T value) => throw new InvalidOperationException();
+        public sealed override void Add(object value) => Add((T)value);
+        public virtual void Add(T value) => throw new InvalidOperationException();
+        public sealed override void Subtract(object value) => Subtract((T)value);
+        public virtual void Subtract(T value) => throw new InvalidOperationException();
+        public sealed override void Multiply(object value) => Multiply((T)value);
+        public virtual void Multiply(T value) => throw new InvalidOperationException();
+        public sealed override void Divide(object value) => Divide((T)value);
+        public virtual void Divide(T value) => throw new InvalidOperationException();
+        public sealed override void Remind(object value) => Remind((T)value);
+        public virtual void Remind(T value) => throw new InvalidOperationException();
+
         internal override VariableBase Copy() {
-            return new Variable<T>(){_id = this.Id, _name = this.Name, _value = this.Value};
+            Variable<T> copied = (Variable<T>)JsonUtility.FromJson(JsonUtility.ToJson(this), GetType());
+            copied._value = this.Value; // シリアライズ不可な型の考慮
+            return copied;
         }
     }
 }
