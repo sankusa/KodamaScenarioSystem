@@ -1,55 +1,54 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
 
+// Auto Generated Script
 namespace Kodama.ScenarioSystem {
-    // Primitive
+    
     [Serializable]
-    public class BoolVariableKey : VariableKey<bool> {}
+    public class UniTaskVariableKey : VariableKey<Cysharp.Threading.Tasks.UniTask>{}
 
     [Serializable]
-    public class DoubleVariableKey : VariableKey<double> {}
+    public class BoolVariableKey : VariableKey<System.Boolean>{}
 
     [Serializable]
-    public class FloatVariableKey : VariableKey<float> {}
+    public class ByteVariableKey : VariableKey<System.Byte>{}
 
     [Serializable]
-    public class IntVariableKey : VariableKey<int> {}
+    public class DoubleVariableKey : VariableKey<System.Double>{}
 
     [Serializable]
-    public class LongVariableKey : VariableKey<long> {}
+    public class IntVariableKey : VariableKey<System.Int32>{}
 
     [Serializable]
-    public class StringVariableKey : VariableKey<string> {}
-
-    // Unity
-    [Serializable]
-    public class AnimationCurveVariableKey : VariableKey<AnimationCurve> {}
+    public class LongVariableKey : VariableKey<System.Int64>{}
 
     [Serializable]
-    public class BoundsVariableKey : VariableKey<Bounds> {}
+    public class FloatVariableKey : VariableKey<System.Single>{}
 
     [Serializable]
-    public class ColorVariableKey : VariableKey<Color> {}
+    public class StringVariableKey : VariableKey<System.String>{}
 
     [Serializable]
-    public class QuaternionVariableKey : VariableKey<Quaternion> {}
+    public class AnimationCurveVariableKey : VariableKey<UnityEngine.AnimationCurve>{}
 
     [Serializable]
-    public class RectVariableKey : VariableKey<Rect> {}
+    public class BoundsVariableKey : VariableKey<UnityEngine.Bounds>{}
 
     [Serializable]
-    public class Vector2VariableKey : VariableKey<Vector2> {}
+    public class ColorVariableKey : VariableKey<UnityEngine.Color>{}
 
     [Serializable]
-    public class Vector3VariableKey : VariableKey<Vector3> {}
+    public class QuaternionVariableKey : VariableKey<UnityEngine.Quaternion>{}
 
     [Serializable]
-    public class Vector4VariableKey : VariableKey<Vector4> {}
+    public class RectVariableKey : VariableKey<UnityEngine.Rect>{}
 
-    // UniTask
     [Serializable]
-    public class UniTaskVariableKey : VariableKey<UniTask> {}
+    public class Vector2VariableKey : VariableKey<UnityEngine.Vector2>{}
+
+    [Serializable]
+    public class Vector3VariableKey : VariableKey<UnityEngine.Vector3>{}
+
+    [Serializable]
+    public class Vector4VariableKey : VariableKey<UnityEngine.Vector4>{}
+
 }

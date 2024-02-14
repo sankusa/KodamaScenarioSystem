@@ -98,6 +98,9 @@ namespace Kodama.ScenarioSystem {
         public override void Add(string value) => _value += value;
     }
 
+    [Serializable]
+    public class ByteVariable : Variable<byte> {}
+
     // Unity
     [Serializable]
     public class AnimationCurveVariable : Variable<AnimationCurve> {}

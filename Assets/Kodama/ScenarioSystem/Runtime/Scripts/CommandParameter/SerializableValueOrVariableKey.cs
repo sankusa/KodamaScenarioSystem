@@ -1,55 +1,54 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
 
+// Auto Generated Script
 namespace Kodama.ScenarioSystem {
-    // Primitive
+    
     [Serializable]
-    public class BoolValueOrVariableKey : ValueOrVariableKey<bool> {}
+    public class UniTaskValueOrVariableKey : ValueOrVariableKey<Cysharp.Threading.Tasks.UniTask>{}
 
     [Serializable]
-    public class DoubleValueOrVariableKey : ValueOrVariableKey<double> {}
+    public class BoolValueOrVariableKey : ValueOrVariableKey<System.Boolean>{}
 
     [Serializable]
-    public class FloatValueOrVariableKey : ValueOrVariableKey<float> {}
+    public class ByteValueOrVariableKey : ValueOrVariableKey<System.Byte>{}
 
     [Serializable]
-    public class IntValueOrVariableKey : ValueOrVariableKey<int> {}
+    public class DoubleValueOrVariableKey : ValueOrVariableKey<System.Double>{}
 
     [Serializable]
-    public class LongValueOrVariableKey : ValueOrVariableKey<long> {}
+    public class IntValueOrVariableKey : ValueOrVariableKey<System.Int32>{}
 
     [Serializable]
-    public class StringValueOrVariableKey : ValueOrVariableKey<string> {}
-
-    // Unity
-    [Serializable]
-    public class AnimationCurveValueOrVariableKey : ValueOrVariableKey<AnimationCurve> {}
+    public class LongValueOrVariableKey : ValueOrVariableKey<System.Int64>{}
 
     [Serializable]
-    public class BoundsValueOrVariableKey : ValueOrVariableKey<Bounds> {}
+    public class FloatValueOrVariableKey : ValueOrVariableKey<System.Single>{}
 
     [Serializable]
-    public class ColorValueOrVariableKey : ValueOrVariableKey<Color> {}
+    public class StringValueOrVariableKey : ValueOrVariableKey<System.String>{}
 
     [Serializable]
-    public class QuaternionValueOrVariableKey : ValueOrVariableKey<Quaternion> {}
+    public class AnimationCurveValueOrVariableKey : ValueOrVariableKey<UnityEngine.AnimationCurve>{}
 
     [Serializable]
-    public class RectValueOrVariableKey : ValueOrVariableKey<Rect> {}
+    public class BoundsValueOrVariableKey : ValueOrVariableKey<UnityEngine.Bounds>{}
 
     [Serializable]
-    public class Vector2ValueOrVariableKey : ValueOrVariableKey<Vector2> {}
+    public class ColorValueOrVariableKey : ValueOrVariableKey<UnityEngine.Color>{}
 
     [Serializable]
-    public class Vector3ValueOrVariableKey : ValueOrVariableKey<Vector3> {}
+    public class QuaternionValueOrVariableKey : ValueOrVariableKey<UnityEngine.Quaternion>{}
 
     [Serializable]
-    public class Vector4ValueOrVariableKey : ValueOrVariableKey<Vector4> {}
+    public class RectValueOrVariableKey : ValueOrVariableKey<UnityEngine.Rect>{}
 
-    // UniTask
     [Serializable]
-    public class UniTaskValueOrVariableKey : ValueOrVariableKey<UniTask> {}
+    public class Vector2ValueOrVariableKey : ValueOrVariableKey<UnityEngine.Vector2>{}
+
+    [Serializable]
+    public class Vector3ValueOrVariableKey : ValueOrVariableKey<UnityEngine.Vector3>{}
+
+    [Serializable]
+    public class Vector4ValueOrVariableKey : ValueOrVariableKey<UnityEngine.Vector4>{}
+
 }

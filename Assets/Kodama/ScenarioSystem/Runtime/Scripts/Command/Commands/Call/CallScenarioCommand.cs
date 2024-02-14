@@ -15,6 +15,7 @@ namespace Kodama.ScenarioSystem {
 
         [SerializeField] private ScenarioAndChildPageSelector _target;
         [SerializeField] private CallType _callType;
+        [SerializeReference] private List<CallArg> _scenarioArgs;
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:

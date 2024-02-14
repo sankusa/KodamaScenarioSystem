@@ -60,8 +60,8 @@ namespace Kodama.ScenarioSystem {
         }
 
         public Condition() {
-            _variableKey = new IntVariableKey();
-            _valueOrVariableKey = new IntValueOrVariableKey();
+            // _variableKey = new IntVariableKey();
+            // _valueOrVariableKey = new IntValueOrVariableKey();
         }
 
         public bool Evaluate(IPagePlayProcess process) {
