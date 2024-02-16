@@ -22,18 +22,18 @@ namespace Kodama.ScenarioSystem {
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
-                    service.PagePlayProcess.SubsequentScenario = _target.Scenario;
-                    service.PagePlayProcess.SubsequentPage = _target.Page;
-                    service.PagePlayProcess.SubsequentScenarioCallArgs = _scenarioArgs;
-                    service.PagePlayProcess.JumpToEndIndex();
+                    service.PageProcess.SubsequentScenario = _target.Scenario;
+                    service.PageProcess.SubsequentPage = _target.Page;
+                    service.PageProcess.SubsequentScenarioCallArgs = _scenarioArgs;
+                    service.PageProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken, _scenarioArgs);
+                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PageProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken, _scenarioArgs);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken, _scenarioArgs)
+                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PageProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken, _scenarioArgs)
                         .ForgetAndLogException();
                     break;
             }
@@ -53,7 +53,7 @@ namespace Kodama.ScenarioSystem {
             }
             else {
                 for(int i = 0; i < _scenarioArgs.Count; i++) {
-                    if(_target.Scenario.Variables.FirstOrDefault(x => x.TargetType == _scenarioArgs[i].TargetType && x.Id == _scenarioArgs[i].VariableId) == null) {
+                    if(_target.Scenario.Variables.FirstOrDefault(x => x.IsMatch(_scenarioArgs[i].TargetType, _scenarioArgs[i].VariableId)) == null) {
                         SharedStringBuilder.AppendAsNewLine("ScenarioArgs[");
                         SharedStringBuilder.Append(i.ToString());
                         SharedStringBuilder.Append("] Missing Reference");

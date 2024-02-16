@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private List<VariableKey<UniTask>> _unitaskVariableKeys;
 
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
-            IEnumerable<UniTask> uniTasks = _unitaskVariableKeys.Select(x => service.PagePlayProcess.FindVariable<UniTask>(x.Id).Value);
+            IEnumerable<UniTask> uniTasks = _unitaskVariableKeys.Select(x => service.PageProcess.FindVariable<UniTask>(x.Id).Value);
             await UniTask.WhenAll(uniTasks);
         }
 

@@ -11,6 +11,8 @@ namespace Kodama.ScenarioSystem {
         public override bool IsValidArthmeticOperator(AssignOperator assignOperator) {
             return assignOperator == AssignOperator.Negate;
         }
+
+        public override void Negate(IVariableValueHolder<bool> value) => _value = !value.Value;
     }
 
     [Serializable]
@@ -24,12 +26,12 @@ namespace Kodama.ScenarioSystem {
                 || assignOperator == AssignOperator.Remind;
         }
 
-        public override void Negate(double value) => _value = -value;
-        public override void Add(double value) => _value += value;
-        public override void Subtract(double value) => _value -= value;
-        public override void Multiply(double value) => _value *= value;
-        public override void Divide(double value) => _value /= value;
-        public override void Remind(double value) => _value %= value;
+        public override void Negate(IVariableValueHolder<double> value) => _value = -value.Value;
+        public override void Add(IVariableValueHolder<double> value) => _value += value.Value;
+        public override void Subtract(IVariableValueHolder<double> value) => _value -= value.Value;
+        public override void Multiply(IVariableValueHolder<double> value) => _value *= value.Value;
+        public override void Divide(IVariableValueHolder<double> value) => _value /= value.Value;
+        public override void Remind(IVariableValueHolder<double> value) => _value %= value.Value;
     }
 
     [Serializable]
@@ -43,12 +45,12 @@ namespace Kodama.ScenarioSystem {
                 || assignOperator == AssignOperator.Remind;
         }
 
-        public override void Negate(float value) => _value = -value;
-        public override void Add(float value) => _value += value;
-        public override void Subtract(float value) => _value -= value;
-        public override void Multiply(float value) => _value *= value;
-        public override void Divide(float value) => _value /= value;
-        public override void Remind(float value) => _value %= value;
+        public override void Negate(IVariableValueHolder<float> value) => _value = -value.Value;
+        public override void Add(IVariableValueHolder<float> value) => _value += value.Value;
+        public override void Subtract(IVariableValueHolder<float> value) => _value -= value.Value;
+        public override void Multiply(IVariableValueHolder<float> value) => _value *= value.Value;
+        public override void Divide(IVariableValueHolder<float> value) => _value /= value.Value;
+        public override void Remind(IVariableValueHolder<float> value) => _value %= value.Value;
     }
 
     [Serializable]
@@ -62,12 +64,12 @@ namespace Kodama.ScenarioSystem {
                 || assignOperator == AssignOperator.Remind;
         }
 
-        public override void Negate(int value) => _value = -value;
-        public override void Add(int value) => _value += value;
-        public override void Subtract(int value) => _value -= value;
-        public override void Multiply(int value) => _value *= value;
-        public override void Divide(int value) => _value /= value;
-        public override void Remind(int value) => _value %= value;
+        public override void Negate(IVariableValueHolder<int> value) => _value = -value.Value;
+        public override void Add(IVariableValueHolder<int> value) => _value += value.Value;
+        public override void Subtract(IVariableValueHolder<int> value) => _value -= value.Value;
+        public override void Multiply(IVariableValueHolder<int> value) => _value *= value.Value;
+        public override void Divide(IVariableValueHolder<int> value) => _value /= value.Value;
+        public override void Remind(IVariableValueHolder<int> value) => _value %= value.Value;
     }
 
     [Serializable]
@@ -81,12 +83,12 @@ namespace Kodama.ScenarioSystem {
                 || assignOperator == AssignOperator.Remind;
         }
 
-        public override void Negate(long value) => _value = -value;
-        public override void Add(long value) => _value += value;
-        public override void Subtract(long value) => _value -= value;
-        public override void Multiply(long value) => _value *= value;
-        public override void Divide(long value) => _value /= value;
-        public override void Remind(long value) => _value %= value;
+        public override void Negate(IVariableValueHolder<long> value) => _value = -value.Value;
+        public override void Add(IVariableValueHolder<long> value) => _value += value.Value;
+        public override void Subtract(IVariableValueHolder<long> value) => _value -= value.Value;
+        public override void Multiply(IVariableValueHolder<long> value) => _value *= value.Value;
+        public override void Divide(IVariableValueHolder<long> value) => _value /= value.Value;
+        public override void Remind(IVariableValueHolder<long> value) => _value %= value.Value;
     }
 
     [Serializable]
@@ -95,7 +97,7 @@ namespace Kodama.ScenarioSystem {
             return assignOperator == AssignOperator.Add;
         }
 
-        public override void Add(string value) => _value += value;
+        public override void Add(IVariableValueHolder<string> value) => _value += value.Value;
     }
 
     [Serializable]
@@ -131,11 +133,11 @@ namespace Kodama.ScenarioSystem {
                 || assignOperator == AssignOperator.Divide;
         }
 
-        public override void Negate(Vector2 value) => _value = -value;
-        public override void Add(Vector2 value) => _value += value;
-        public override void Subtract(Vector2 value) => _value -= value;
-        public override void Multiply(Vector2 value) => _value *= value;
-        public override void Divide(Vector2 value) => _value /= value;
+        public override void Negate(IVariableValueHolder<Vector2> value) => _value = -value.Value;
+        public override void Add(IVariableValueHolder<Vector2> value) => _value += value.Value;
+        public override void Subtract(IVariableValueHolder<Vector2> value) => _value -= value.Value;
+        public override void Multiply(IVariableValueHolder<Vector2> value) => _value *= value.Value;
+        public override void Divide(IVariableValueHolder<Vector2> value) => _value /= value.Value;
     }
 
     [Serializable]
@@ -148,11 +150,11 @@ namespace Kodama.ScenarioSystem {
                 || assignOperator == AssignOperator.Divide;
         }
 
-        public override void Negate(Vector3 value) => _value = -value;
-        public override void Add(Vector3 value) => _value += value;
-        public override void Subtract(Vector3 value) => _value -= value;
-        public override void Multiply(Vector3 value) => _value.Scale(value);
-        public override void Divide(Vector3 value) => _value.Scale(new Vector3(1 / value.x, 1 / value.y, 1 / value.z));
+        public override void Negate(IVariableValueHolder<Vector3> value) => _value = -value.Value;
+        public override void Add(IVariableValueHolder<Vector3> value) => _value += value.Value;
+        public override void Subtract(IVariableValueHolder<Vector3> value) => _value -= value.Value;
+        public override void Multiply(IVariableValueHolder<Vector3> value) => _value.Scale(value.Value);
+        public override void Divide(IVariableValueHolder<Vector3> value) => _value.Scale(new Vector3(1 / value.Value.x, 1 / value.Value.y, 1 / value.Value.z));
     }
 
     [Serializable]
@@ -165,11 +167,11 @@ namespace Kodama.ScenarioSystem {
                 || assignOperator == AssignOperator.Divide;
         }
 
-        public override void Negate(Vector4 value) => _value = -value;
-        public override void Add(Vector4 value) => _value += value;
-        public override void Subtract(Vector4 value) => _value -= value;
-        public override void Multiply(Vector4 value) => _value.Scale(value);
-        public override void Divide(Vector4 value) => _value.Scale(new Vector4(1 / value.x, 1 / value.y, 1 / value.z, 1 / value.w));
+        public override void Negate(IVariableValueHolder<Vector4> value) => _value = -value.Value;
+        public override void Add(IVariableValueHolder<Vector4> value) => _value += value.Value;
+        public override void Subtract(IVariableValueHolder<Vector4> value) => _value -= value.Value;
+        public override void Multiply(IVariableValueHolder<Vector4> value) => _value.Scale(value.Value);
+        public override void Divide(IVariableValueHolder<Vector4> value) => _value.Scale(new Vector4(1 / value.Value.x, 1 / value.Value.y, 1 / value.Value.z, 1 / value.Value.w));
     }
 
     // UniTask

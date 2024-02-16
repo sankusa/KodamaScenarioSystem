@@ -7,7 +7,7 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private VariableSetter _variableSetter;
 
         public override void Execute(ICommandService service) {
-            _variableSetter.Set(service.PagePlayProcess);
+            _variableSetter.Set(service.PageProcess);
         }
 
         public override string GetSummary() {

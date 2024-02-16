@@ -46,18 +46,18 @@ namespace Kodama.ScenarioSystem {
         public override Type TargetType => typeof(T);
 
         // 演算
-        public sealed override void Negate(object value) => Negate((T)value);
-        public virtual void Negate(T value) => throw new InvalidOperationException();
-        public sealed override void Add(object value) => Add((T)value);
-        public virtual void Add(T value) => throw new InvalidOperationException();
-        public sealed override void Subtract(object value) => Subtract((T)value);
-        public virtual void Subtract(T value) => throw new InvalidOperationException();
-        public sealed override void Multiply(object value) => Multiply((T)value);
-        public virtual void Multiply(T value) => throw new InvalidOperationException();
-        public sealed override void Divide(object value) => Divide((T)value);
-        public virtual void Divide(T value) => throw new InvalidOperationException();
-        public sealed override void Remind(object value) => Remind((T)value);
-        public virtual void Remind(T value) => throw new InvalidOperationException();
+        public sealed override void Negate(IVariableValueHolder value) => Negate(value as IVariableValueHolder<T>);
+        public virtual void Negate(IVariableValueHolder<T> value) => throw new InvalidOperationException();
+        public sealed override void Add(IVariableValueHolder value) => Add(value as IVariableValueHolder<T>);
+        public virtual void Add(IVariableValueHolder<T> value) => throw new InvalidOperationException();
+        public sealed override void Subtract(IVariableValueHolder value) => Subtract(value as IVariableValueHolder<T>);
+        public virtual void Subtract(IVariableValueHolder<T> value) => throw new InvalidOperationException();
+        public sealed override void Multiply(IVariableValueHolder value) => Multiply(value as IVariableValueHolder<T>);
+        public virtual void Multiply(IVariableValueHolder<T> value) => throw new InvalidOperationException();
+        public sealed override void Divide(IVariableValueHolder value) => Divide(value as IVariableValueHolder<T>);
+        public virtual void Divide(IVariableValueHolder<T> value) => throw new InvalidOperationException();
+        public sealed override void Remind(IVariableValueHolder value) => Remind(value as IVariableValueHolder<T>);
+        public virtual void Remind(IVariableValueHolder<T> value) => throw new InvalidOperationException();
 
         internal override VariableBase Copy() {
             Variable<T> copied = (Variable<T>)JsonUtility.FromJson(JsonUtility.ToJson(this), GetType());

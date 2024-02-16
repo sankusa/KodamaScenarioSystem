@@ -24,16 +24,16 @@ namespace Kodama.ScenarioSystem {
         public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
-                    service.PagePlayProcess.SubsequentPage = _target.Page;
-                    service.PagePlayProcess.JumpToEndIndex();
+                    service.PageProcess.SubsequentPage = _target.Page;
+                    service.PageProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Page, cancellationToken);
+                    await ProcessManager.PlayPageInSameScenarioProcessAsync(service.PageProcess as PagePlayProcess, _target.Page, cancellationToken);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayPageInSameScenarioProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Page, cancellationToken)
+                    ProcessManager.PlayPageInSameScenarioProcessAsync(service.PageProcess as PagePlayProcess, _target.Page, cancellationToken)
                         .ForgetAndLogException();
                     break;
             }

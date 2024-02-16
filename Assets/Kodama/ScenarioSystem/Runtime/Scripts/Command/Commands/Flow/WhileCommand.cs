@@ -10,20 +10,20 @@ namespace Kodama.ScenarioSystem {
 
         public override void Execute(ICommandService service) {
             WhileBlock whileBlock;
-            if(service.PagePlayProcess.PeekBlock() is WhileBlock wb && wb.WhileCommand == this) {
-                whileBlock = service.PagePlayProcess.PeekBlock() as WhileBlock;
+            if(service.PageProcess.PeekBlock() is WhileBlock wb && wb.WhileCommand == this) {
+                whileBlock = service.PageProcess.PeekBlock() as WhileBlock;
             }
             else {
                 whileBlock = new WhileBlock(this);
-                service.PagePlayProcess.SetUpAndPushBlock(this, whileBlock);
+                service.PageProcess.SetUpAndPushBlock(this, whileBlock);
             }
             
             // 評価
-            bool result = _condition.Evaluate(service.PagePlayProcess);
+            bool result = _condition.Evaluate(service.PageProcess);
 
             // Trueなら続行、FalseならBlockEndまで飛ぶ
             if(result == false) {
-                service.PagePlayProcess.JumpToIndex(whileBlock.EndIndex + 1);
+                service.PageProcess.JumpToIndex(whileBlock.EndIndex + 1);
             }
         }
 

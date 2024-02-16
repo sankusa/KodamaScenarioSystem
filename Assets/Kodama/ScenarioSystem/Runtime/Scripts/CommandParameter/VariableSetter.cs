@@ -29,14 +29,9 @@ namespace Kodama.ScenarioSystem {
 
         public void Set(IPagePlayProcess process) {
             VariableBase variable = process.FindVariable(_variableKey);
-            object value;
-            if(_valueOrVariableKey.HasKey()) {
-                value = process.FindVariable(_valueOrVariableKey.VariableKey).GetValueAsObject();
-            }
-            else {
-                value = _valueOrVariableKey.GetValueAsObject();
-            }
-            if(_operator == AssignOperator.Assign) variable.SetValueAsObject(value);
+            IVariableValueHolder value = _valueOrVariableKey.ResolveValueAsVariableValueHolder(process);
+
+            if(_operator == AssignOperator.Assign) variable.SetValue(value);
             else if(_operator == AssignOperator.Negate) variable.Negate(value);
             else if(_operator == AssignOperator.Add) variable.Add(value);
             else if(_operator == AssignOperator.Subtract) variable.Subtract(value);

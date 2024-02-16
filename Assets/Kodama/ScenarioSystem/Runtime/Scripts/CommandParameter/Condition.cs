@@ -66,9 +66,7 @@ namespace Kodama.ScenarioSystem {
 
         public bool Evaluate(IPagePlayProcess process) {
             object value1 = process.FindVariable(_variableKey.TargetType, _variableKey.Id).GetValueAsObject();
-            object value2 = _valueOrVariableKey.HasKey()
-                ? process.FindVariable(_valueOrVariableKey.VariableKey).GetValueAsObject()
-                : _valueOrVariableKey.GetValueAsObject();
+            object value2 = _valueOrVariableKey.ResolveValueAsObject(process);
 
             if(_operator == CompareOperator.EqualTo) return value1.Equals(value2);
             else if(_operator == CompareOperator.NotEqualTo) return !value1.Equals(value2);

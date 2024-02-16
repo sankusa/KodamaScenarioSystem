@@ -19,12 +19,12 @@ namespace Kodama.ScenarioSystem {
         }
         // 演算
         public virtual bool IsValidArthmeticOperator(AssignOperator assignOperator) => false;
-        public abstract void Negate(object value);
-        public abstract void Add(object value);
-        public abstract void Subtract(object value);
-        public abstract void Multiply(object value);
-        public abstract void Divide(object value);
-        public abstract void Remind(object value);
+        public abstract void Negate(IVariableValueHolder value);
+        public abstract void Add(IVariableValueHolder value);
+        public abstract void Subtract(IVariableValueHolder value);
+        public abstract void Multiply(IVariableValueHolder value);
+        public abstract void Divide(IVariableValueHolder value);
+        public abstract void Remind(IVariableValueHolder value);
 
         internal abstract VariableBase Copy();
     }

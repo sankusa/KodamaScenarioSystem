@@ -36,7 +36,7 @@ namespace Kodama.ScenarioSystem {
         }
 
         internal static async UniTask PlayScenarioInSameRootProcessAsync(PagePlayProcess pageProcess, Scenario scenario, ScenarioPage page, CancellationToken cancellationToken, IReadOnlyList<ICallArg> args = null) {
-            PagePlayProcess newPageProcess = pageProcess.ScenarioProcess.RootProcess.CreateScenarioProcess(scenario, args).CreatePageProcess(page == null ? scenario.DefaultPage : page);
+            PagePlayProcess newPageProcess = pageProcess.ScenarioProcess.RootProcess.CreateScenarioProcess(scenario, args).CreatePageProcess(page);
             await CorePlayLoopAsync(newPageProcess, cancellationToken);
         }
 

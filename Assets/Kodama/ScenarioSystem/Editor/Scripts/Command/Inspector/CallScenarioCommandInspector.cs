@@ -41,7 +41,7 @@ namespace Kodama.ScenarioSystem.Editor {
                         Type targetType = variable.GetType().BaseType.GenericTypeArguments[0];
                         string variableId = variable.Id;
                         // 追加済みの引数は飛ばす
-                        if(scenarioArgs.Find(x => x.TargetType == variable.TargetType && x.VariableId == variable.Id) != null) continue;
+                        if(scenarioArgs.Find(x => variable.IsMatch(targetType, variableId)) != null) continue;
 
                         addCallArgMenu.AddItem(
                             new GUIContent(variable.Name),
@@ -69,7 +69,7 @@ namespace Kodama.ScenarioSystem.Editor {
                     CallArg callArg = scenarioArgs[index];
                     Scenario targetScenario = command.Target.Scenario;
                     if(targetScenario != null) {
-                        VariableBase targetVariable = targetScenario.Variables.FirstOrDefault(x => x.TargetType == callArg.TargetType && x.Id == callArg.VariableId);
+                        VariableBase targetVariable = targetScenario.Variables.FirstOrDefault(x => x.IsMatch(callArg.TargetType, callArg.VariableId));
                         if(targetVariable != null) {
                             EditorGUI.LabelField(rects[0],  TypeNameUtil.ConvertToPrimitiveTypeName(targetVariable.TargetType.Name));
                             EditorGUI.BeginDisabledGroup(true);

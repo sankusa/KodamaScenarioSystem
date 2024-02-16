@@ -7,8 +7,8 @@ namespace Kodama.ScenarioSystem {
         public string BlockType => "While";
         
         public override void Execute(ICommandService service) {
-            if(service.PagePlayProcess.PeekBlock() is WhileBlock whileBlock) {
-                service.PagePlayProcess.JumpToIndex(whileBlock.StartIndex);
+            if(service.PageProcess.PeekBlock() is WhileBlock whileBlock) {
+                service.PageProcess.JumpToIndex(whileBlock.StartIndex);
             }
         }
     }

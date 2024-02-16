@@ -43,7 +43,7 @@ namespace Kodama.ScenarioSystem {
                     args[i] = ValueStringConverterBundle.Instance.FindConverter(argTypes[i]).StringToValue(argData.ValueString);
                 }
                 else if(argData.ResolveWay == MethodArgResolveWay.Variable) {
-                    args[i] = service.PagePlayProcess.FindVariable(argTypes[i], argData.VaribaleId).GetValueAsObject();
+                    args[i] = service.PageProcess.FindVariable(argTypes[i], argData.VaribaleId).GetValueAsObject();
                 }
                 else if(argData.ResolveWay == MethodArgResolveWay.FromServiceLocater) {
                     args[i] = service.ServiceLocator.Resolve(argTypes[i]);
@@ -80,7 +80,7 @@ namespace Kodama.ScenarioSystem {
             }
 
             if(_methodData.ReturnValueHandling == ReturnValueHandling.SetToVariable) {
-                service.PagePlayProcess.FindVariable(
+                service.PageProcess.FindVariable(
                     _methodData.ReturnTypeId.ResolveType(),
                     _methodData.ReturnValueReceiveVariableId
                 )
@@ -114,7 +114,7 @@ namespace Kodama.ScenarioSystem {
                     value = argData.ValueString;
                 }
                 else if(argData.ResolveWay == MethodArgResolveWay.Variable) {
-                    VariableBase variableDefine = command.GetAvailableVariableDefines(argData.TypeId.ResolveType()).FirstOrDefault(x => x.Id == argData.VaribaleId);
+                    VariableBase variableDefine = command.GetAvailableVariableDefines().FirstOrDefault(x => x.IsMatch(argData.TypeId.ResolveType(), argData.VaribaleId));
                     if(variableDefine == null) {
                         value = "";
                     }

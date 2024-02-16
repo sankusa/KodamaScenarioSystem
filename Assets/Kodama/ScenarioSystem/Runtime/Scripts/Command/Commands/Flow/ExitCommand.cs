@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem {
     public class ExitCommand : CommandBase {
         public override void Execute(ICommandService service) {
-            service.PagePlayProcess.JumpToEndIndex();
+            service.PageProcess.JumpToEndIndex();
         }
     }
 }

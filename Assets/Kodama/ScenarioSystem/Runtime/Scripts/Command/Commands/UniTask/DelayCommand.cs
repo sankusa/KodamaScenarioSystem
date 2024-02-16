@@ -10,7 +10,7 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private FloatValueOrVariableKey _seconds;
 
         public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
-            float seconds = _seconds.HasKey() ? (service.PagePlayProcess.FindVariable(_seconds.VariableKey) as FloatVariable).Value : _seconds.Value;
+            float seconds = _seconds.ResolveValue(service.PageProcess);
             await UniTask.Delay((int)(seconds * 1000), cancellationToken: cancellationToken);
         }
 

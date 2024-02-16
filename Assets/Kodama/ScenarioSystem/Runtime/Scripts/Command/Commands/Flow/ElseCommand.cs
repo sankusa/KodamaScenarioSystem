@@ -7,11 +7,11 @@ namespace Kodama.ScenarioSystem {
         public string BlockType => "If";
 
         public override void Execute(ICommandService service) {
-            if(service.PagePlayProcess.PeekBlock() is IfBlock) {
-                IfBlock ifBlock = service.PagePlayProcess.PopBlock() as IfBlock;
-                service.PagePlayProcess.SetUpAndPushBlock(this, ifBlock);
+            if(service.PageProcess.PeekBlock() is IfBlock) {
+                IfBlock ifBlock = service.PageProcess.PopBlock() as IfBlock;
+                service.PageProcess.SetUpAndPushBlock(this, ifBlock);
                 if(ifBlock.EvaluationFinished) {
-                    service.PagePlayProcess.JumpToIndex(ifBlock.EndIndex);
+                    service.PageProcess.JumpToIndex(ifBlock.EndIndex);
                 }
                 else {
                     ifBlock.EvaluationFinished = true;
@@ -20,7 +20,7 @@ namespace Kodama.ScenarioSystem {
             // Else以前に対応するIfやElseIfが存在していない場合、評価結果=Trueとして扱う。
             else {
                 IfBlock ifBlock = new IfBlock(){EvaluationFinished = true};
-                service.PagePlayProcess.SetUpAndPushBlock(this, ifBlock);
+                service.PageProcess.SetUpAndPushBlock(this, ifBlock);
             }
         }
     }

@@ -15,7 +15,7 @@ namespace Kodama.ScenarioSystem {
             for(i = 0; i < ParentPage.Commands.Count; i++) {
                 if(ParentPage.Commands[i] is LabelCommand labelCommand && labelCommand.Label == _targetLabel) break;
             }
-            service.PagePlayProcess.JumpToIndex(i);
+            service.PageProcess.JumpToIndex(i);
         }
 
         public override string GetSummary() {
