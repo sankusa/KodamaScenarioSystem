@@ -7,6 +7,7 @@ namespace Kodama.ScenarioSystem {
     public interface IPagePlayProcess {
         ScenarioPage SubsequentPage {set;}
         Scenario SubsequentScenario {set;}
+        IReadOnlyList<ICallArg> SubsequentScenarioCallArgs {set;}
         bool SwitchRootProcessOnPlaySubsequentScenario {set;}
         Action OnNewRootProcessFinished {set;}
         /// <summary>

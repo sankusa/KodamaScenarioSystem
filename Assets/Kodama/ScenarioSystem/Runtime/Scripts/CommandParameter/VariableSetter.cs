@@ -23,8 +23,8 @@ namespace Kodama.ScenarioSystem {
         }
 
         public VariableSetter() {
-            // _variableKey = new IntVariableKey();
-            // _valueOrVariableKey = new IntValueOrVariableKey();
+            _variableKey = new IntVariableKey();
+            _valueOrVariableKey = new IntValueOrVariableKey();
         }
 
         public void Set(IPagePlayProcess process) {

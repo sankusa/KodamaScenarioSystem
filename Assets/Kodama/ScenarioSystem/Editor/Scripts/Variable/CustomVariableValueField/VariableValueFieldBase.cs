@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
     public abstract class VariableValueFieldBase {
-        public virtual void Draw(Rect rect, Scenario scenario, VariableBase variable) {}
+        public virtual void Draw(Rect rect, ScriptableObject objectForUndo, IVariableValueHolder variableValueHolder) {}
         public virtual float GetHeight() => EditorGUIUtility.singleLineHeight;
     }
 }

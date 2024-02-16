@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
+    public interface IVariableValueHolder<T> : IVariableValueHolder {
+        T Value {get; set;}
+    }
     [Serializable]
-    public abstract class Variable<T> : VariableBase {
+    public abstract class Variable<T> : VariableBase, IVariableValueHolder<T> {
         public const string VariableName_Value = nameof(_value);
         
         [SerializeField] private string _id;
@@ -33,6 +36,11 @@ namespace Kodama.ScenarioSystem {
 
         public override void SetValueAsObject(object obj) {
             _value = (T)obj;
+        }
+
+        public override void SetValue(IVariableValueHolder valueHolder) {
+            IVariableValueHolder<T> genericValueHolder = valueHolder as IVariableValueHolder<T>;
+            _value = genericValueHolder.Value;
         }
 
         public override Type TargetType => typeof(T);

@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using System;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -20,7 +22,7 @@ namespace Kodama.ScenarioSystem {
         public IList<VariableBase> Variables => _variables;
 
         // Preload
-        private static int _preloadingScenarioCount = 0;
+        [NonSerialized] private static int _preloadingScenarioCount = 0;
         public static int PreloadingScenarioCount => _preloadingScenarioCount;
 
         public enum PreloadState {
@@ -28,10 +30,11 @@ namespace Kodama.ScenarioSystem {
             Preloading,
             Preloaded,
         }
-        private PreloadState _preloadState = PreloadState.Unpreloaded;
+        
+        [NonSerialized] private PreloadState _preloadState = PreloadState.Unpreloaded;
         public PreloadState CurrentPreloadState => _preloadState;
         private CancellationTokenSource _preloadCts = new CancellationTokenSource();
-        private List<object> _preloadKeys = new List<object>();
+        [NonSerialized] private List<object> _preloadKeys = new List<object>();
 
 #if UNITY_EDITOR
         private const string _defaultPageName = "New Page";
@@ -87,6 +90,9 @@ namespace Kodama.ScenarioSystem {
         }
 
         public void ReleaseResources(object preloadKey) {
+            // 早期リターン+循環参照時の無限ループをブロック
+            if(_preloadKeys.Contains(preloadKey) == false) return;
+
             _preloadKeys.Remove(preloadKey);
             foreach(Scenario scenario in GetReferencingScenario()) {
                 scenario.ReleaseResources(preloadKey);
@@ -96,6 +102,8 @@ namespace Kodama.ScenarioSystem {
         }
 
         public void ForceReleaseResources() {
+            if(_preloadState == PreloadState.Unpreloaded) return;
+
             _preloadCts.Cancel();
             _preloadCts = new CancellationTokenSource();
 

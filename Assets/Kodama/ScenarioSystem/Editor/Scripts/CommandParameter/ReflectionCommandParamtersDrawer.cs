@@ -163,7 +163,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 int parameterInfoIndex = 0;
                 foreach(MethodArgData data in invokeData.MethodData.ArgData) {
                     Rect dataRect = CutSingleLineRect(ref position);
-                    List<Rect> dataRects = RectUtil.DivideRectHorizontal(dataRect, _argRowWidths, 0, 0);
+                    Rect[] dataRects = RectUtil.DivideRectHorizontal(dataRect, _argRowWidths, 0, 0);
 
                     Type argType = data.TypeId.ResolveType();
                     ValueStringConverterBase converter = _converters.FindConverter(argType);
@@ -216,7 +216,7 @@ namespace Kodama.ScenarioSystem.Editor {
                 EditorGUI.LabelField(returnValueLabelRect, "Return Value (" + TypeNameUtil.ConvertToPrimitiveTypeName(methodInfo.ReturnType.Name) + ")");
 
                 Rect returnValueHandlingEditRect = CutSingleLineRect(ref position);
-                List<Rect> returnValueHandlingEditRects = RectUtil.DivideRectHorizontal(returnValueHandlingEditRect, new RectUtil.LayoutLength[] {new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1)});
+                Rect[] returnValueHandlingEditRects = RectUtil.DivideRectHorizontal(returnValueHandlingEditRect, new RectUtil.LayoutLength[] {new RectUtil.LayoutLength(1), new RectUtil.LayoutLength(1)});
                 ReturnValueHandling newReturnValueHandling =
                     (ReturnValueHandling) EditorGUI.EnumPopup(
                         returnValueHandlingEditRects[0],

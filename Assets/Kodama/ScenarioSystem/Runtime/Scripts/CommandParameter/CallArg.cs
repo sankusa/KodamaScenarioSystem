@@ -6,9 +6,12 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public abstract class CallArg {
+    public abstract class CallArg : ICallArg {
         [SerializeField] protected string _variableId;
-        public string VariableId => _variableId;
+        public string VariableId {
+            get => _variableId;
+            set => _variableId = value;
+        }
 
         public abstract Type TargetType {get;}
 
@@ -17,11 +20,14 @@ namespace Kodama.ScenarioSystem {
     }
 
     [Serializable]
-    public abstract class CallArg<T> : CallArg {
+    public abstract class CallArg<T> : CallArg, ICallArg<T> {
         public override Type TargetType => typeof(T);
 
         [SerializeField] protected T _value;
-        public T Value => _value;
+        public T Value {
+            get => _value;
+            set => _value = value;
+        }
 
         public override string GetSummary(CommandBase parentCommand) {
             if(_variableId == "") {

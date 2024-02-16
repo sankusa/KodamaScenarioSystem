@@ -7,9 +7,8 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     [CustomVariableValueField(typeof(int))]
     public class IntVariableValueField : VariableValueField<int> {
-        protected override int Field(Rect rect, VariableBase variableBase) {
-            var variable = variableBase as IntVariable;
-            return EditorGUI.IntField(rect, variable.Value);
+        protected override int Field(Rect rect, IVariableValueHolder<int> variableValueHolder) {
+            return EditorGUI.IntField(rect, variableValueHolder.Value);
         }
     }
 }

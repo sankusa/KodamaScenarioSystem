@@ -4,13 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
+    public interface IVariableValueHolder {}
+
     [Serializable]
-    public abstract class VariableBase {
+    public abstract class VariableBase : IVariableValueHolder {
         public abstract string Id {get;}
         public abstract string Name {get;set;}
         public abstract object GetValueAsObject();
         public abstract void SetValueAsObject(object obj);
+        public abstract void SetValue(IVariableValueHolder valueHolder);
         public abstract Type TargetType {get;}
+        public bool IsMatch(Type targetType, string id) {
+            return TargetType == targetType && Id == id;
+        }
         // 演算
         public virtual bool IsValidArthmeticOperator(AssignOperator assignOperator) => false;
         public abstract void Negate(object value);

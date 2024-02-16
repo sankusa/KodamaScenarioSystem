@@ -8,9 +8,8 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     [CustomVariableValueField(typeof(long))]
     public class LongVariableValueField : VariableValueField<long> {
-        protected override long Field(Rect rect, VariableBase variableBase) {
-            var variable = variableBase as LongVariable;
-            return EditorGUI.LongField(rect, variable.Value);
+        protected override long Field(Rect rect, IVariableValueHolder<long> variableValueHolder) {
+            return EditorGUI.LongField(rect, variableValueHolder.Value);
         }
     }
 }

@@ -8,9 +8,8 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     [CustomVariableValueField(typeof(float))]
     public class FloatVariableValueField : VariableValueField<float> {
-        protected override float Field(Rect rect, VariableBase variableBase) {
-            var variable = variableBase as FloatVariable;
-            return EditorGUI.FloatField(rect, variable.Value);
+        protected override float Field(Rect rect, IVariableValueHolder<float> variableValueHolder) {
+            return EditorGUI.FloatField(rect, variableValueHolder.Value);
         }
     }
 }

@@ -21,14 +21,28 @@ namespace Kodama.ScenarioSystem {
 
         private Action<ScenarioPlayProcess> _onAllPageProcessFinished;
 
-        public ScenarioPlayProcess(RootPlayProcess rootProcess, Scenario scenario, Action<ScenarioPlayProcess> onAllPageProcessFinished) {
+        public ScenarioPlayProcess(RootPlayProcess rootProcess, Scenario scenario, Action<ScenarioPlayProcess> onAllPageProcessFinished, IReadOnlyList<ICallArg> args = null) {
             _rootProcess = rootProcess;
             _scenario = scenario;
             _variables = Scenario?.Variables.Select(x => x.Copy()).ToList();
             _onAllPageProcessFinished = onAllPageProcessFinished;
+
+            if(args != null) {
+                for(int i = 0; i < args.Count; i++) {
+                    ICallArg arg = args[i];
+                    VariableBase variable = _variables.Find(x => x.IsMatch(arg.TargetType, arg.VariableId));
+                    if(variable == null) {
+                        Debug.LogWarning($"Args[{i}]({arg.TargetType.Name})'s target variable not found");
+                    }
+                    else {
+                        variable.SetValue(arg);
+                    }
+                }
+            }
         }
 
         public PagePlayProcess CreatePageProcess(ScenarioPage page) {
+            if(page == null) page = _scenario.DefaultPage;
             PagePlayProcess pageProcess = new PagePlayProcess(this, page, OnPageProcessFinished);
             _unfinishedPageProcesses.Add(pageProcess);
             return pageProcess;

@@ -27,6 +27,7 @@ namespace Kodama.ScenarioSystem {
         // 後続処理情報
         public ScenarioPage SubsequentPage {get; set;}
         public Scenario SubsequentScenario {get; set;}
+        public IReadOnlyList<ICallArg> SubsequentScenarioCallArgs {get; set;}
         public bool SwitchRootProcessOnPlaySubsequentScenario {get; set;}
         public Action OnNewRootProcessFinished {get; set;}
 

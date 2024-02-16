@@ -7,9 +7,8 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     [CustomVariableValueField(typeof(Rect))]
     public class RectVariableValueField : VariableValueField<Rect> {
-        protected override Rect Field(Rect rect, VariableBase variableBase) {
-            var variable = variableBase as RectVariable;
-            return EditorGUI.RectField(rect, variable.Value);
+        protected override Rect Field(Rect rect, IVariableValueHolder<Rect> variableValueHolder) {
+            return EditorGUI.RectField(rect, variableValueHolder.Value);
         }
 
         public override float GetHeight() {

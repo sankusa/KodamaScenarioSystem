@@ -19,8 +19,8 @@ namespace Kodama.ScenarioSystem {
             _onAllScenarioProcessFinished = onAllScenarioProcessFinished;
         }
 
-        public ScenarioPlayProcess CreateScenarioProcess(Scenario scenario) {
-            ScenarioPlayProcess scenarioProcess = new ScenarioPlayProcess(this, scenario, OnScenarioProcessFinished);
+        public ScenarioPlayProcess CreateScenarioProcess(Scenario scenario, IReadOnlyList<ICallArg> args = null) {
+            ScenarioPlayProcess scenarioProcess = new ScenarioPlayProcess(this, scenario, OnScenarioProcessFinished, args);
             _unfinishedScenarioProcesses.Add(scenarioProcess);
             return scenarioProcess;
 

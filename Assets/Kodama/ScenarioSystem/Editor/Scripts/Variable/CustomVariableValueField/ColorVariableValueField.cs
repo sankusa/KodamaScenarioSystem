@@ -8,9 +8,8 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem.Editor {
     [CustomVariableValueField(typeof(Color))]
     public class ColorVariableValueField : VariableValueField<Color> {
-        protected override Color Field(Rect rect, VariableBase variableBase) {
-            var variable = variableBase as ColorVariable;
-            return EditorGUI.ColorField(rect, variable.Value);
+        protected override Color Field(Rect rect, IVariableValueHolder<Color> variableValueHolder) {
+            return EditorGUI.ColorField(rect, variableValueHolder.Value);
         }
     }
 }

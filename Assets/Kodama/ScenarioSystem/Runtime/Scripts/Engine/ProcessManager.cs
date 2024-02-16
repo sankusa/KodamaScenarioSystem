@@ -35,8 +35,8 @@ namespace Kodama.ScenarioSystem {
             await CorePlayLoopAsync(newPageProcess, cancellationToken);
         }
 
-        internal static async UniTask PlayScenarioInSameRootProcessAsync(PagePlayProcess pageProcess, Scenario scenario, ScenarioPage page, CancellationToken cancellationToken) {
-            PagePlayProcess newPageProcess = pageProcess.ScenarioProcess.RootProcess.CreateScenarioProcess(scenario).CreatePageProcess(page);
+        internal static async UniTask PlayScenarioInSameRootProcessAsync(PagePlayProcess pageProcess, Scenario scenario, ScenarioPage page, CancellationToken cancellationToken, IReadOnlyList<ICallArg> args = null) {
+            PagePlayProcess newPageProcess = pageProcess.ScenarioProcess.RootProcess.CreateScenarioProcess(scenario, args).CreatePageProcess(page == null ? scenario.DefaultPage : page);
             await CorePlayLoopAsync(newPageProcess, cancellationToken);
         }
 
@@ -70,7 +70,7 @@ namespace Kodama.ScenarioSystem {
                 // シナリオが指定されていたら、ルートプロセスから新規にシナリオプロセスを生やす
                 if(pageProcess.SubsequentScenario != null) {
                     Scenario subsequentScenario = pageProcess.SubsequentScenario;
-                    scenarioProcess = rootProcess.CreateScenarioProcess(subsequentScenario);
+                    scenarioProcess = rootProcess.CreateScenarioProcess(subsequentScenario, pageProcess.SubsequentScenarioCallArgs);
 
                     // ページの指定が無ければデフォルトを設定
                     if(pageProcess.SubsequentPage == null) {

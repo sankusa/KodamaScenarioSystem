@@ -5,17 +5,16 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem.Editor {
     public abstract class VariableValueField<T> : VariableValueFieldBase {
-        public sealed override void Draw(Rect rect, Scenario scenario, VariableBase variableBase) {
+        public sealed override void Draw(Rect rect, ScriptableObject objectForUndo, IVariableValueHolder variableValueHolder) {
+            IVariableValueHolder<T> genericVariableValueHolder = variableValueHolder as IVariableValueHolder<T>;
             EditorGUI.BeginChangeCheck();
-            T value = Field(rect, variableBase);
+            T value = Field(rect, genericVariableValueHolder);
             if(EditorGUI.EndChangeCheck()) {
-                Undo.RecordObject(scenario, $"{TypeNameUtil.ConvertToPrimitiveTypeName(value.GetType().Name)} Variable Value Change");
-                Variable<T> variable = variableBase as Variable<T>;
-                variable.Value = value;
-                EditorUtility.SetDirty(scenario);
+                Undo.RecordObject(objectForUndo, $"{TypeNameUtil.ConvertToPrimitiveTypeName(value.GetType().Name)} Variable Value Change");
+                genericVariableValueHolder.Value = value;
             }
         }
 
-        protected abstract T Field(Rect rect, VariableBase variableBase);
+        protected abstract T Field(Rect rect, IVariableValueHolder<T> variableValueHolder);
     }
 }

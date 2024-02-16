@@ -58,7 +58,7 @@ namespace Kodama.ScenarioSystem.Editor {
         /// <param name="leftMargin"></param>
         /// <param name="rightMargin"></param>
         /// <returns></returns>
-        public static List<Rect> DivideRectHorizontal(
+        public static Rect[] DivideRectHorizontal(
             Rect rect,
             LayoutLength[] widthList,
             float leftMargin = 0,
@@ -71,15 +71,15 @@ namespace Kodama.ScenarioSystem.Editor {
 
             // Rect生成
             float currentRectXMin = rect.x;
-            List<Rect> rects = new List<Rect>();
+            Rect[] rects = new Rect[widthList.Length];
             for(int i = 0; i < widthList.Length; i++) {
                 if(widthList[i].LayoutType == LayoutType.Fixed) {
-                    rects.Add(new Rect(currentRectXMin + leftMargin, rect.y, widthList[i].Length - leftMargin - rightMargin, rect.height));
+                    rects[i] = new Rect(currentRectXMin + leftMargin, rect.y, widthList[i].Length - leftMargin - rightMargin, rect.height);
                     currentRectXMin += widthList[i].Length;
                 }
                 else if(widthList[i].LayoutType == LayoutType.Expand) {
                     float fixedWidth = expandSpace * widthList[i].Length / expandWidthTotal;
-                    rects.Add(new Rect(currentRectXMin + leftMargin, rect.y, fixedWidth - leftMargin - rightMargin, rect.height));
+                    rects[i] = new Rect(currentRectXMin + leftMargin, rect.y, fixedWidth - leftMargin - rightMargin, rect.height);
                     currentRectXMin += fixedWidth;
                 }
             }

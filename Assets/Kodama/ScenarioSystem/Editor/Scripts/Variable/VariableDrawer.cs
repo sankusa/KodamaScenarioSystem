@@ -31,7 +31,7 @@ namespace Kodama.ScenarioSystem.Editor {
             string typeName = TypeNameUtil.ConvertToPrimitiveTypeName(valueFieldInfo.FieldType.Name);
 
             // 各要素の描画範囲
-            List<Rect> rects = RectUtil.DivideRectHorizontal(rect, _rectLengths);
+            Rect[] rects = RectUtil.DivideRectHorizontal(rect, _rectLengths);
             rects[0] = new Rect(rects[0].x, rects[0].y, rects[0].width, EditorGUIUtility.singleLineHeight);
             rects[1] = new Rect(rects[1].x, rects[1].y, rects[1].width - 4, EditorGUIUtility.singleLineHeight);
 

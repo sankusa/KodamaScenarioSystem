@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -14,22 +15,25 @@ namespace Kodama.ScenarioSystem {
         }
 
         [SerializeField] private ScenarioAndChildPageSelector _target;
+        public ScenarioAndChildPageSelector Target => _target;
         [SerializeField] private CallType _callType;
         [SerializeReference] private List<CallArg> _scenarioArgs;
+        public List<CallArg> ScenarioArgs => _scenarioArgs;
         public async override UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
             switch (_callType) {
                 case CallType.Jump:
                     service.PagePlayProcess.SubsequentScenario = _target.Scenario;
                     service.PagePlayProcess.SubsequentPage = _target.Page;
+                    service.PagePlayProcess.SubsequentScenarioCallArgs = _scenarioArgs;
                     service.PagePlayProcess.JumpToEndIndex();
                     break;
 
                 case CallType.Await:
-                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken);
+                    await ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken, _scenarioArgs);
                     break;
 
                 case CallType.Async:
-                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken)
+                    ProcessManager.PlayScenarioInSameRootProcessAsync(service.PagePlayProcess as PagePlayProcess, _target.Scenario, _target.Page, cancellationToken, _scenarioArgs)
                         .ForgetAndLogException();
                     break;
             }
@@ -43,7 +47,20 @@ namespace Kodama.ScenarioSystem {
         }
 
         public override string ValidateAsyncCommand() {
-            return _target.Validate("Target");
+            SharedStringBuilder.Append(_target.Validate("Target"));
+            if(_scenarioArgs.Count > 0 && _target.Scenario == null) {
+                SharedStringBuilder.AppendAsNewLine("ScenarioArgs : MissingReference");
+            }
+            else {
+                for(int i = 0; i < _scenarioArgs.Count; i++) {
+                    if(_target.Scenario.Variables.FirstOrDefault(x => x.TargetType == _scenarioArgs[i].TargetType && x.Id == _scenarioArgs[i].VariableId) == null) {
+                        SharedStringBuilder.AppendAsNewLine("ScenarioArgs[");
+                        SharedStringBuilder.Append(i.ToString());
+                        SharedStringBuilder.Append("] Missing Reference");
+                    }
+                }
+            }
+            return SharedStringBuilder.Output();
         }
 
         public override FlexibleEnumerable<Scenario> GetReferencingScenarios() {

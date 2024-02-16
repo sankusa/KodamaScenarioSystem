@@ -7,14 +7,15 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     public class DelayCommand : AsyncCommandBase {
-        [SerializeField, Min(0)] private float _seconds;
+        [SerializeField] private FloatValueOrVariableKey _seconds;
 
         public override async UniTask ExecuteAsync(ICommandService service, CancellationToken cancellationToken) {
-            await UniTask.Delay((int)(_seconds * 1000), cancellationToken: cancellationToken);
+            float seconds = _seconds.HasKey() ? (service.PagePlayProcess.FindVariable(_seconds.VariableKey) as FloatVariable).Value : _seconds.Value;
+            await UniTask.Delay((int)(seconds * 1000), cancellationToken: cancellationToken);
         }
 
         public override string GetSummary() {
-            return _seconds.ToString() + " s";
+            return _seconds.GetSummary(this) + " seconds";
         }
     }
 }
