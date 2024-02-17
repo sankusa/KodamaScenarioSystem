@@ -41,7 +41,31 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                             .FieldType
                             .Name;
                         typeName = TypeNameUtil.ConvertToPrimitiveTypeName(typeName);
-                        menu.AddItem(new GUIContent(typeName), false, () => scenario.Variables.Add((VariableBase)Activator.CreateInstance(t)));
+                        menu.AddItem(
+                            new GUIContent(typeName),
+                            false,
+                            () => {
+                                VariableBase variable = (VariableBase)Activator.CreateInstance(t);
+                                int defaultVariableNameIndex = 0;
+                                while (true) {
+                                    if(defaultVariableNameIndex == 0) {
+                                        if(scenario.Variables.FirstOrDefault(x => x.Name == VariableBase.DefaultName) == null) {
+                                            variable.Name = VariableBase.DefaultName;
+                                            break;
+                                        }
+                                    }
+                                    else {
+                                        string indexString = defaultVariableNameIndex.ToString();
+                                        if(scenario.Variables.FirstOrDefault(x => x.Name == VariableBase.DefaultName + indexString) == null) {
+                                            variable.Name = VariableBase.DefaultName + indexString;
+                                            break;
+                                        }
+                                    }
+                                    defaultVariableNameIndex++;
+                                }
+                                scenario.Variables.Add(variable);
+                            }
+                        );
                     }
                     menu.DropDown(buttonRect);
                 };

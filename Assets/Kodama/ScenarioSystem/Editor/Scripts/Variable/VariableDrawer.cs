@@ -39,8 +39,8 @@ namespace Kodama.ScenarioSystem.Editor {
             EditorGUI.LabelField(rects[0], typeName);
 
             EditorGUI.BeginChangeCheck();
-            string variableName = EditorGUI.TextField(rects[1], variable.Name);
-            if(EditorGUI.EndChangeCheck()) {
+            string variableName = EditorGUI.DelayedTextField(rects[1], variable.Name);
+            if(EditorGUI.EndChangeCheck() && scenario.Variables.FirstOrDefault(x => x.Name == variableName) == null) {
                 Undo.RecordObject(scenario, "Change Variable Name");
                 variable.Name = variableName;
                 EditorUtility.SetDirty(scenario);

@@ -42,7 +42,7 @@ namespace Kodama.ScenarioSystem.Editor {
 
                 // シリアライズ不可能な型
                 if(_customValueDrawerDic.ContainsKey(targetType)) {
-                    _customValueDrawerDic[targetType].Draw(RectUtil.Margin(valueFieldRect, bottomMargin: 2), command, valueOrVariableKey);
+                    _customValueDrawerDic[targetType].Draw(RectUtil.Margin(valueFieldRect), command, valueOrVariableKey);
                 }
                 else if(valueProp == null) {
                     EditorGUI.LabelField(valueFieldRect, "Default");

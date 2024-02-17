@@ -8,6 +8,7 @@ namespace Kodama.ScenarioSystem {
 
     [Serializable]
     public abstract class VariableBase : IVariableValueHolder {
+        public const string DefaultName = "V";
         public abstract string Id {get;}
         public abstract string Name {get;set;}
         public abstract object GetValueAsObject();
