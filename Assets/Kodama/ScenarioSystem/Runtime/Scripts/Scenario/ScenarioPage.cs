@@ -23,6 +23,8 @@ namespace Kodama.ScenarioSystem {
         [SerializeField] private List<CommandBase> _commands = new List<CommandBase>();
         public IReadOnlyList<CommandBase> Commands => _commands;
 
+        public int Index => _parentScenario.Pages.IndexOf(this);
+
 #if UNITY_EDITOR
         /// <summary>
         /// For Graph View

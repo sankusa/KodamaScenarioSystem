@@ -32,8 +32,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
             this.AddManipulator(new ContentZoomer());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new ContentDragger());
-            this.AddManipulator(new RectangleSelector());
-            this.AddManipulator(new ContextualMenuManipulator(OnContextMenuPopulate));                 
+            this.AddManipulator(new RectangleSelector());               
             this.AddManipulator(new SelectionDragger() {panSpeed = Vector2.zero});
 
             graphViewChanged += change => {
@@ -44,7 +43,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
             viewTransformChanged += change => {
                 _scenario.GraphPosition = viewTransform.position;
                 EditorUtility.SetDirty(_scenario);
-            } ;
+            };
 
             Rebuild();
 
@@ -78,7 +77,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
             };
         }
 
-        private void OnContextMenuPopulate(ContextualMenuPopulateEvent e) {
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent e) {
             if((e.target is PageGraphNode) == false) {
                 e.menu.InsertAction (
                     0,
@@ -94,8 +93,14 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                     SetDefaultPage,
                     DropdownMenuAction.AlwaysEnabled
                 );
+                e.menu.AppendSeparator();
+                e.menu.InsertAction (
+                    1,
+                    "Delete",
+                    _ => DeleteSelection(),
+                    DropdownMenuAction.AlwaysEnabled
+                );
             }
-
         }
 
         private void CreatePage(DropdownMenuAction menuAction) {
@@ -115,7 +120,7 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
         public override EventPropagation DeleteSelection() {
             PageGraphNode[] nodes = selection.OfType<PageGraphNode>().ToArray();
             for(int i = nodes.Length - 1; i >= 0; i--) {
-                _scenario.DestroyPage(nodes[i].Page);
+                _scenario.DestroyPageAt(nodes[i].Page.Index);
             }
             Rebuild();
             return EventPropagation.Stop;
