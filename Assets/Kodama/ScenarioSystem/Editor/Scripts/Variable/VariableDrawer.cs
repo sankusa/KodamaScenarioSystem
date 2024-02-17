@@ -71,7 +71,6 @@ namespace Kodama.ScenarioSystem.Editor {
             if(valueProp == null) return EditorGUIUtility.singleLineHeight;
 
             return EditorGUI.GetPropertyHeight(valueProp, true);
-
         }
     }
 }

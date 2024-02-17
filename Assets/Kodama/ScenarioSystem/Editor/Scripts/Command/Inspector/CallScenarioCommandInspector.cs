@@ -38,10 +38,8 @@ namespace Kodama.ScenarioSystem.Editor {
 
                     GenericMenu addCallArgMenu = new GenericMenu();
                     foreach(VariableBase variable in targetScenario.Variables) {
-                        Type targetType = variable.GetType().BaseType.GenericTypeArguments[0];
-                        string variableId = variable.Id;
                         // 追加済みの引数は飛ばす
-                        if(scenarioArgs.Find(x => variable.IsMatch(targetType, variableId)) != null) continue;
+                        if(scenarioArgs.Find(x => variable.IsMatch(x.TargetType, x.VariableId)) != null) continue;
 
                         addCallArgMenu.AddItem(
                             new GUIContent(variable.Name),
@@ -50,9 +48,9 @@ namespace Kodama.ScenarioSystem.Editor {
                                 Undo.RecordObject(command, "Add CallArg");
                                 CallArg scenarioArg = Activator.CreateInstance(
                                     TypeCache.GetTypesDerivedFrom<CallArg>()
-                                        .First(x => x.IsAbstract == false && x.IsGenericType == false && x.BaseType.GenericTypeArguments[0] == targetType)
+                                        .First(x => x.IsAbstract == false && x.IsGenericType == false && x.BaseType.GenericTypeArguments[0] == variable.TargetType)
                                 ) as CallArg;
-                                scenarioArg.VariableId = variableId;
+                                scenarioArg.VariableId = variable.Id;
                                 scenarioArgs.Add(scenarioArg);
                             }
                         );
@@ -71,9 +69,9 @@ namespace Kodama.ScenarioSystem.Editor {
                     if(targetScenario != null) {
                         VariableBase targetVariable = targetScenario.Variables.FirstOrDefault(x => x.IsMatch(callArg.TargetType, callArg.VariableId));
                         if(targetVariable != null) {
-                            EditorGUI.LabelField(rects[0],  TypeNameUtil.ConvertToPrimitiveTypeName(targetVariable.TargetType.Name));
+                            EditorGUI.LabelField(new Rect(rects[0]) {height = EditorGUIUtility.singleLineHeight},  TypeNameUtil.ConvertToPrimitiveTypeName(targetVariable.TargetType.Name));
                             EditorGUI.BeginDisabledGroup(true);
-                            EditorGUI.TextField(rects[1],  targetVariable.Name);
+                            EditorGUI.TextField(new Rect(rects[1]) {height = EditorGUIUtility.singleLineHeight, width = rects[1].width - EditorGUIUtility.standardVerticalSpacing},  targetVariable.Name);
                             EditorGUI.EndDisabledGroup();
                             if(_customValueDrawerDic.ContainsKey(targetVariable.TargetType)) {
                                 _customValueDrawerDic[targetVariable.TargetType].Draw(rects[2], command, callArg);
@@ -82,9 +80,22 @@ namespace Kodama.ScenarioSystem.Editor {
                                 SerializedProperty argValueProp = scenarioArgsProp.GetArrayElementAtIndex(index).FindPropertyRelative("_value");
                                 EditorGUI.PropertyField(rects[2], argValueProp, GUIContent.none);
                             }
-                           
                         }
                     }
+                };
+
+                _scenarioArgList.elementHeightCallback = index => {
+                    CallArg callArg = scenarioArgs[index];
+                    Scenario targetScenario = command.Target.Scenario;
+                    if(targetScenario != null) {
+                        VariableBase targetVariable = targetScenario.Variables.FirstOrDefault(x => x.IsMatch(callArg.TargetType, callArg.VariableId));
+                        if(targetVariable != null) {
+                            if(_customValueDrawerDic.ContainsKey(targetVariable.TargetType)) {
+                                return _customValueDrawerDic[targetVariable.TargetType].GetHeight();
+                            }
+                        }
+                    }
+                    return EditorGUIUtility.singleLineHeight;
                 };
             }
             EditorGUILayout.PropertyField(targetProp);
