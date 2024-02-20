@@ -171,7 +171,7 @@ namespace Kodama.ScenarioSystem {
 #endregion
 
 #region Variable
-        public Variable<T> FindVariable<T>(VariableKey<T> variableKey) {
+        public Variable<T> FindVariable<T>(IVariableKey<T> variableKey) {
             return FindVariable<T>(variableKey.Id);
         }
 
@@ -187,7 +187,7 @@ namespace Kodama.ScenarioSystem {
             return targetVariable;
         }
 
-        public VariableBase FindVariable(VariableKey variableKey) {
+        public VariableBase FindVariable(IVariableKey variableKey) {
             return FindVariable(variableKey.TargetType, variableKey.Id);
         }
 

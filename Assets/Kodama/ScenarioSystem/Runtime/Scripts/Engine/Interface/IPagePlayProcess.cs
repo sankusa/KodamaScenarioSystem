@@ -35,12 +35,12 @@ namespace Kodama.ScenarioSystem {
         /// <summary>
         /// VariableKeyをキーにして変数を取得
         /// </summary>
-        Variable<T> FindVariable<T>(VariableKey<T> variableKey);
+        Variable<T> FindVariable<T>(IVariableKey<T> variableKey);
 
         /// <summary>
         /// VariableKeyをキーにして変数を取得
         /// </summary>
-        VariableBase FindVariable(VariableKey variableKey);
+        VariableBase FindVariable(IVariableKey variableKey);
 
         /// <summary>
         /// 型とIdをキーに変数を取得

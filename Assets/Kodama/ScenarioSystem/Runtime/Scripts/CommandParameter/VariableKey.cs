@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Kodama.ScenarioSystem {
     [Serializable]
-    public abstract class VariableKey {
+    public abstract class VariableKey : IVariableKey {
         [SerializeField] protected string _id;
         public string Id => _id;
 
@@ -21,7 +21,7 @@ namespace Kodama.ScenarioSystem {
 
     [Serializable]
     /// <typeparam name="T">型に合わせた入力フィールドを生成するため、エディタ側で型引数を使用する</typeparam>
-    public class VariableKey<T> : VariableKey {
+    public class VariableKey<T> : VariableKey, IVariableKey<T> {
         public override Type TargetType => typeof(T);
 
         public override string GetSummary(CommandBase parentCommand, bool warnEmpty = true) {

@@ -6,6 +6,14 @@ using UnityEngine;
 namespace Kodama.ScenarioSystem {
     public interface IVariableValueHolder {}
 
+    /// <summary>
+    /// Variableを特定するキー情報
+    /// </summary>
+    public interface IVariableKey {
+        string Id {get;}
+        Type TargetType {get;}
+    }
+
     [Serializable]
     public abstract class VariableBase : IVariableValueHolder {
         public const string DefaultName = "V";
@@ -17,6 +25,9 @@ namespace Kodama.ScenarioSystem {
         public abstract Type TargetType {get;}
         public bool IsMatch(Type targetType, string id) {
             return TargetType == targetType && Id == id;
+        }
+        public bool IsMatch(IVariableKey variableKey) {
+            return IsMatch(variableKey.TargetType, variableKey.Id);
         }
         // 演算
         public virtual bool IsValidArthmeticOperator(AssignOperator assignOperator) => false;

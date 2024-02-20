@@ -7,6 +7,12 @@ namespace Kodama.ScenarioSystem {
     public interface IVariableValueHolder<T> : IVariableValueHolder {
         T Value {get; set;}
     }
+
+    /// <summary>
+    /// Variableを特定するキー情報
+    /// </summary>
+    public interface IVariableKey<T> : IVariableKey {}
+
     [Serializable]
     public abstract class Variable<T> : VariableBase, IVariableValueHolder<T> {
         public const string VariableName_Value = nameof(_value);
