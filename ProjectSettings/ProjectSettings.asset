@@ -561,7 +561,7 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    1: KODAMA_UNITASK_SUPPORT
+    1: KODAMA_SCENARIO_ADDRESSABLE_SUPPORT
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

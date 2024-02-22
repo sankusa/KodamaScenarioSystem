@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43a1343ad243b34489b319c36ed1afa0, type: 3}
   m_Name: CommonEditorResources
   m_EditorClassIdentifier: 
-  _backgroundColor: {r: 0.20392157, g: 0.20036975, b: 0.19607843, a: 1}
+  _backgroundColor: {r: 0.20392157, g: 0.2, b: 0.19607843, a: 1}
   _summaryTextColor: {r: 0.8490566, g: 0.7961908, b: 0.7168921, a: 1}
   _entryNodeColor: {r: 0, g: 0, b: 0, a: 1}
   _nodeArrowColor: {r: 0.33333334, g: 0.7176471, b: 0.8980393, a: 1}

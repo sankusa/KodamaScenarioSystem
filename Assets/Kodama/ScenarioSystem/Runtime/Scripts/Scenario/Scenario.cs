@@ -57,8 +57,16 @@ namespace Kodama.ScenarioSystem {
                 CancellationToken cancellationToken = _preloadCts.Token;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                // 2回目以降はキーのみ追加してリターン
+                // 循環参照時の無限ループをブロック
+                if(_preloadKeys.Contains(preloadKey)) return;
+
                 _preloadKeys.Add(preloadKey);
+
+                foreach(Scenario scenario in GetReferencingScenario()) {
+                    await scenario.PreloadResourcesAsync(preloadKey);
+                }
+
+                // コマンドのPreload呼び出し
                 if(_preloadState != PreloadState.Unpreloaded) return;
 
                 _preloadState = PreloadState.Preloading;
@@ -69,10 +77,6 @@ namespace Kodama.ScenarioSystem {
                         if(_pages[i].Commands[j] is IPreloadable preloadable)
                         await preloadable.PreloadAsync();
                     }
-                }
-
-                foreach(Scenario scenario in GetReferencingScenario()) {
-                    await scenario.PreloadResourcesAsync(preloadKey);
                 }
                 
                 _preloadState = PreloadState.Preloaded;
@@ -120,9 +124,12 @@ namespace Kodama.ScenarioSystem {
         }
 
         public IEnumerable<Scenario> GetReferencingScenario() {
+            return GetReferencingScenarioInternal().Distinct();
+        }
+
+        public IEnumerable<Scenario> GetReferencingScenarioInternal() {
             foreach(ScenarioPage page in _pages) {
                 for(int i = 0; i < page.Commands.Count; i++) {
-                    
                     foreach(Scenario scenario in page.Commands[i].GetReferencingScenarios()) {
                         yield return scenario;
                     }

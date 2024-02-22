@@ -40,6 +40,12 @@ namespace Kodama.ScenarioSystem {
             await CorePlayLoopAsync(newPageProcess, cancellationToken);
         }
 
+        internal static async UniTask PlayScenarioAsNewRootProcessAsync(PagePlayProcess pageProcess, Scenario scenario, ScenarioPage page, CancellationToken cancellationToken, IReadOnlyList<ICallArg> args = null, Action onRootProcessFinished = null) {
+            RootPlayProcess rootProcess = new RootPlayProcess(pageProcess.ScenarioProcess.RootProcess.ServiceLocator, onRootProcessFinished);
+            PagePlayProcess newPageProcess = rootProcess.CreateScenarioProcess(scenario, args).CreatePageProcess(page);
+            await CorePlayLoopAsync(newPageProcess, cancellationToken);
+        }
+
         // 実行関数の中核
         // ページプロセス再生＋後続処理の指定があればプロセスを生成して後続処理を行う。これを後続処理の指定が無くなるまで繰り返す
         private static async UniTask CorePlayLoopAsync(PagePlayProcess pageProcess, CancellationToken cancellationToken) {
