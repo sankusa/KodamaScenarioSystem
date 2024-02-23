@@ -6,6 +6,9 @@ using System.Threading;
 using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Assertions;
+#if KODAMA_SCENARIO_ZENJECT_SUPPORT
+using Zenject;
+#endif
 
 namespace Kodama.ScenarioSystem {
     public class ScenarioEngine : MonoBehaviour {
@@ -15,6 +18,10 @@ namespace Kodama.ScenarioSystem {
 
         // 参照解決機能
         [SerializeField] private ComponentBinding _componentBinding;
+
+#if KODAMA_SCENARIO_ZENJECT_SUPPORT
+        [Inject] private DiContainer _diContainer;
+#endif
 
         void Awake() {
             // PlayableScenarioを準備
@@ -50,6 +57,10 @@ namespace Kodama.ScenarioSystem {
             scenario.PreloadResourcesAsyncWithReleaseOnError(tmpPreloadKey);
 
             ServiceLocator serviceLocator = new ServiceLocator(_componentBinding);
+#if KODAMA_SCENARIO_ZENJECT_SUPPORT
+            serviceLocator.DiContainer = _diContainer;
+#endif
+
             await ProcessManager.PlayNewProcessAsync(scenario, null, serviceLocator,
                 () => scenario.ReleaseResources(tmpPreloadKey),
                 linkedToken
