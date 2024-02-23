@@ -143,5 +143,12 @@ namespace Kodama.ScenarioSystem {
             }
             return copiedPage;
         }
+
+        public string Validate() {
+            foreach(CommandBase command in _commands) {
+                SharedStringBuilder.AppendAsNewLine(command.Validate());
+            }
+            return SharedStringBuilder.Output();
+        }
     }
 }

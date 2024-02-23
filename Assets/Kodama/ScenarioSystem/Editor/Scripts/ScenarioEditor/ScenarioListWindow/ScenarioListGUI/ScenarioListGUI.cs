@@ -30,7 +30,14 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                 autoResize = true,
             };
 
-            MultiColumnHeaderState headerState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]{nameColumn, pathColumn});
+            MultiColumnHeaderState.Column validateColumn = new MultiColumnHeaderState.Column() {
+                headerContent = new GUIContent("Validate"),
+                width = 80,
+                minWidth = 80,
+                autoResize = true,
+            };
+
+            MultiColumnHeaderState headerState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]{nameColumn, pathColumn, validateColumn});
             MultiColumnHeader header = new MultiColumnHeader(headerState);
 
             _scenarioInfoTreeView = new ScenarioInfoTreeView(treeViewState, header) {
@@ -51,6 +58,9 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
 
             if(GUI.Button(new Rect(currentHeaderButtonX, 0, headerButtonWidth, headerButtonHeight), "New", buttonStyle)) {
                 ScenarioUtility.CreateScenario();
+            }
+            if(GUI.Button(new Rect(currentHeaderButtonX + headerButtonWidth + 4, 0, headerButtonWidth, headerButtonHeight), "Validate", buttonStyle)) {
+                _scenarioInfoTreeView.Validate();
             }
 
             if(_scenarioInfoTreeView.HasAny) {

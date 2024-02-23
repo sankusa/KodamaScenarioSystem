@@ -175,5 +175,11 @@ namespace Kodama.ScenarioSystem {
             _pages.Insert(0, page);
         }
 #endif
+        public string Validate() {
+            foreach(ScenarioPage page in _pages) {
+                SharedStringBuilder.AppendAsNewLine(page.Validate());
+            }
+            return SharedStringBuilder.Output();
+        }
     }
 }

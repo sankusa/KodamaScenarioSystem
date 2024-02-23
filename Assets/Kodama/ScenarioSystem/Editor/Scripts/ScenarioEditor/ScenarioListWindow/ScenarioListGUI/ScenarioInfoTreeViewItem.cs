@@ -10,8 +10,14 @@ namespace Kodama.ScenarioSystem {
     internal class ScenarioInfoTreeViewItem : TreeViewItem {
         public ScenarioInfo Element {get;}
 
+        public bool Valid {get; private set;}
+
         public ScenarioInfoTreeViewItem(int id, string path) : base(id) {
             Element = new ScenarioInfo(path);
+        }
+
+        public void Validate() {
+            Valid = string.IsNullOrEmpty(Element.Scenario.Validate());
         }
     }
 }

@@ -23,7 +23,9 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
             if(paths.Any()) {
                 int id = 0;
                 foreach(string path in paths) {
-                    root.AddChild(new ScenarioInfoTreeViewItem(++id, path));
+                    ScenarioInfoTreeViewItem item = new ScenarioInfoTreeViewItem(++id, path);
+                    item.Validate();
+                    root.AddChild(item);
                 }
             }
             else {
@@ -46,6 +48,14 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                 else if(columnIndex == 1) {
                     EditorGUI.LabelField(cellRect, item.Element.Path);
                 }
+                else if(columnIndex == 2) {
+                    if(item.Valid) {
+                        EditorGUI.LabelField(cellRect, "<color=green>OK</color>", GUIStyles.SummaryLabel);
+                    }
+                    else {
+                        EditorGUI.LabelField(cellRect, "<color=red>Error</color>", GUIStyles.SummaryLabel);
+                    }
+                }
             }
         }
 
@@ -62,6 +72,12 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
         {
             var item = (ScenarioInfoTreeViewItem)FindItem(id, rootItem);
             ScenarioEditWindow.OpenEditGUI(item.Element.Scenario);
+        }
+
+        public void Validate() {
+            foreach(TreeViewItem item in rootItem.children) {
+                (item as ScenarioInfoTreeViewItem).Validate();
+            }
         }
     }
 }
