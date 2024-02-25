@@ -42,12 +42,13 @@ namespace Kodama.ScenarioSystem.Editor {
             _columnWidth = EditorGUILayout.Slider("Column Width", _columnWidth, 100, 800);
 
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Where", GUILayout.Width(_columnWidth));
+            GUILayoutUtility.GetRect(0, 0, GUILayout.Width(_columnWidth));
             for(int i = 0; i < _scenario.LocaleCodes.Count; i++) {
+                EditorGUILayout.Space(3, false);
+
                 Rect rect = GUILayoutUtility.GetRect(0, EditorGUIUtility.singleLineHeight, GUILayout.Width(_columnWidth));
                 string localeCode = _scenario.LocaleCodes[i];
-                EditorGUI.LabelField(rect, localeCode, GUIStyles.LeanGroupBox);
-
+                EditorGUI.LabelField(new Rect(rect) {xMax = rect.xMax - 20}, localeCode, GUIStyles.LeanGroupBox);
                 if(GUI.Button(new Rect(rect) {xMin = rect.xMax - 20}, CommonEditorResources.Instance.CommandDeleteIcon)) {
                     _scenario.RemoveLocaleCode(localeCode);
                 }
@@ -71,10 +72,12 @@ namespace Kodama.ScenarioSystem.Editor {
                         EditorGUILayout.BeginHorizontal();
 
                         EditorGUI.BeginDisabledGroup(true);
-                        EditorGUILayout.TextArea(command.Index + " : " + command.GetType().Name, GUILayout.ExpandHeight(true), GUILayout.Width(_columnWidth));
+                        EditorGUILayout.TextArea(command.Index + " : " + command.GetType().Name, GUIStyles.LeanGroupBox, GUILayout.ExpandHeight(true), GUILayout.Width(_columnWidth));
                         EditorGUI.EndDisabledGroup();
 
                         foreach(string localeCode in _scenario.LocaleCodes) {
+                            EditorGUILayout.Space(3, false);
+
                             SerializedProperty targetRecordProp = null;
                             for(int i = 0; i < recordsProp.arraySize; i++) {
                                 SerializedProperty recordProp = recordsProp.GetArrayElementAtIndex(i);
@@ -85,11 +88,22 @@ namespace Kodama.ScenarioSystem.Editor {
                                 }
                             }
                             if(targetRecordProp == null) {
-                                EditorGUILayout.LabelField("None", GUILayout.Width(_columnWidth));
+                                Rect rect = GUILayoutUtility.GetRect(0, 0, GUILayout.ExpandHeight(true), GUILayout.Width(_columnWidth));
+                                EditorGUI.LabelField(rect, "None");
+                                if(GUI.Button(new Rect(rect) {xMin = rect.xMax - 20}, CommonEditorResources.Instance.CommandAddIcon)) {
+                                    LocalizedText localizedText = property.GetObject() as LocalizedText;
+                                    localizedText.AddRecord(command, localeCode);
+                                }
                             }
                             else {
                                 SerializedProperty textProp = targetRecordProp.FindPropertyRelative("_text");
-                                textProp.stringValue = EditorGUILayout.TextArea(textProp.stringValue, GUILayout.ExpandHeight(true), GUILayout.Width(_columnWidth));
+                                float height = GUI.skin.textArea.CalcHeight(new GUIContent(textProp.stringValue), _columnWidth - 20);
+                                Rect rect = GUILayoutUtility.GetRect(0, height + 8, GUILayout.ExpandHeight(true), GUILayout.Width(_columnWidth));
+                                textProp.stringValue = EditorGUI.TextArea(new Rect(rect) {xMax = rect.xMax - 20}, textProp.stringValue);
+                                if(GUI.Button(new Rect(rect) {xMin = rect.xMax - 20}, CommonEditorResources.Instance.CommandDeleteIcon)) {
+                                    LocalizedText localizedText = property.GetObject() as LocalizedText;
+                                    localizedText.RemoveRecord(command, localeCode);
+                                }
                             }
                         }
 

@@ -35,11 +35,32 @@ namespace Kodama.ScenarioSystem {
             _records.Remove(_records.Find(x => x.LocaleCode == localeCode));
         }
 #endif
+
+        public string GetProjectLocaleText() {
+            return _records.Find(x => x.LocaleCode == LocalizationSettings.ProjectLocale.Identifier.Code)?.Text;
+        }
         
-        public string FindText() {
-            return _records.Find(x => {
-                return x.LocaleCode == LocalizationSettings.SelectedLocale.Identifier.Code;
-            }).Text;
+        public string ResolveText() {
+            Locale locale = LocalizationSettings.SelectedLocale;
+            LocalizedTextRecord record = _records.Find(x => x.LocaleCode == locale.Identifier.Code);
+            if(record == null) {
+                List<Locale> fallbacks = new List<Locale>(locale.GetFallbacks());
+                while(fallbacks.Count > 0) {
+                    locale = fallbacks[0];
+                    record = _records.Find(x => x.LocaleCode == locale.Identifier.Code);
+                    if(record != null) break;
+
+                    IEnumerable<Locale> subsequentFallbacks = locale.GetFallbacks();
+                    if(subsequentFallbacks.Count() > 0) {
+                        fallbacks.AddRange(subsequentFallbacks);
+                    }
+                    fallbacks.RemoveAt(0);
+                }
+            }
+
+            if(record == null) return "";
+
+            return record.Text;
         }
     }
 

@@ -21,7 +21,7 @@ namespace Kodama.ScenarioSystem.Editor {
         static GUIStyles() {
             SummaryLabel = new GUIStyle(EditorStyles.label) {
                 richText = true,
-                fontSize = 11,
+                fontSize = 12,
             };
             CenteredLabel = new GUIStyle(EditorStyles.label) {
                 alignment = TextAnchor.MiddleCenter,
