@@ -106,6 +106,7 @@ namespace Kodama.ScenarioSystem {
             return copied;
         }
 
+#if UNITY_EDITOR
         public CommandBase CopyWithUndo() {
             CommandBase copied = Instantiate(this);
             copied.name = name;
@@ -118,5 +119,6 @@ namespace Kodama.ScenarioSystem {
             copied._parentPage = newParentPage;
             return copied;
         }
+#endif
     }
 }
