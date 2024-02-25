@@ -20,7 +20,11 @@ namespace Kodama.ScenarioSystem.Editor {
             }
         }
 
-        private string[] _targetSymbols = new string[]{"KODAMA_SCENARIO_ADDRESSABLE_SUPPORT", "KODAMA_SCENARIO_ZENJECT_SUPPORT"};
+        private string[] _targetSymbols = new string[]{
+            ScriptingDefineSymbols.AddressablesSupport,
+            ScriptingDefineSymbols.LocalizationSupport,
+            ScriptingDefineSymbols.ZenjectSupport,
+        };
         private Vector2 _scrollPos;
 
         private SymbolStatus[] _symbolStatuses;

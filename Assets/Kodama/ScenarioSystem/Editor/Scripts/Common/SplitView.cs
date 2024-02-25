@@ -23,6 +23,17 @@ namespace Kodama.ScenarioSystem.Editor {
 
         private Rect _availableArea;
 
+        public float Length {
+            get {
+                if(_direction == Direction.Horizontal) {
+                    return _availableArea.width * _splitRate;
+                }
+                else {
+                    return _availableArea.height * _splitRate;
+                }
+            }
+        }
+
         private readonly float _minSize1;
         private readonly float _minSize2;
         private readonly string _sessionStateKey;

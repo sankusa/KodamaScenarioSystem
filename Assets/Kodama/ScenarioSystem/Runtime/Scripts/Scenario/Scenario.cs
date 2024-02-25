@@ -36,6 +36,52 @@ namespace Kodama.ScenarioSystem {
         private CancellationTokenSource _preloadCts = new CancellationTokenSource();
         [NonSerialized] private List<object> _preloadKeys = new List<object>();
 
+#if KODAMA_SCENARIO_LOCALIZATION_SUPPORT
+        [SerializeField] private List<string> _localeCodes = new List<string>();
+        public List<string> LocaleCodes => _localeCodes;
+
+    #if UNITY_EDITOR
+        private const string _undoOperationName_ChangeLocaleCode = "Change Locale Code";
+    
+        public void AddLocaleCode(string localeCode) {
+            Undo.RecordObject(this, _undoOperationName_ChangeLocaleCode);
+            if(_localeCodes.Contains(localeCode) == false) {
+                _localeCodes.Add(localeCode);
+                _localeCodes.Sort();
+            }
+
+            foreach(ScenarioPage page in _pages) {
+                foreach(CommandBase command in page.Commands) {
+                    SerializedObject serializedCommand = new SerializedObject(command);
+                    SerializedProperty property = serializedCommand.GetIterator();
+                    while(property.NextVisible(true)) {
+                        if(property.type != nameof(LocalizedText)) continue;
+                        LocalizedText localizedText = property.GetObject() as LocalizedText;
+                        localizedText.AddRecord(command, localeCode);
+                    }
+                }
+            }
+        }
+
+        public void RemoveLocaleCode(string localeCode) {
+            Undo.RecordObject(this, _undoOperationName_ChangeLocaleCode);
+            _localeCodes.Remove(localeCode);
+
+            foreach(ScenarioPage page in _pages) {
+                foreach(CommandBase command in page.Commands) {
+                    SerializedObject serializedCommand = new SerializedObject(command);
+                    SerializedProperty property = serializedCommand.GetIterator();
+                    while(property.NextVisible(true)) {
+                        if(property.type != nameof(LocalizedText)) continue;
+                        LocalizedText localizedText = property.GetObject() as LocalizedText;
+                        localizedText.RemoveRecord(command, localeCode);
+                    }
+                }
+            }
+        }
+    #endif
+#endif
+
 #if UNITY_EDITOR
         private const string _defaultPageName = "New Page";
         private const string _undoOperationName_CreatePage = "Create Page";

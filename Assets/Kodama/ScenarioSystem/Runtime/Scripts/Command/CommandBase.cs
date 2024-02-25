@@ -24,6 +24,19 @@ namespace Kodama.ScenarioSystem {
             // CommandBase command = Activator.CreateInstance(commandType, page) as CommandBase;
             command._parentPage = page;
             Undo.RegisterCreatedObjectUndo(command, commandType.Name + " Created");
+    #if KODAMA_SCENARIO_LOCALIZATION_SUPPORT
+            // LocalizedText初期化
+            SerializedObject serializedCommand = new SerializedObject(command);
+            SerializedProperty property = serializedCommand.GetIterator();
+            Scenario scenario = command.ParentPage.ParentScenario;
+            while(property.NextVisible(true)) {
+                if(property.type != nameof(LocalizedText)) continue;
+                LocalizedText localizedText = property.GetObject() as LocalizedText;
+                for(int i = 0; i < scenario.LocaleCodes.Count; i++) {
+                    localizedText.AddRecord(command, scenario.LocaleCodes[i]);
+                }
+            }
+    #endif
             return command;
         }
 #endif

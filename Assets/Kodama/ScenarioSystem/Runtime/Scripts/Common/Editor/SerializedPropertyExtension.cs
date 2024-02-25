@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kodama.ScenarioSystem.Editor {
+namespace Kodama.ScenarioSystem {
     public static class SerializedPropertyExtension {
         public static object GetObject(this SerializedProperty prop) {
             string path = prop.propertyPath.Replace(".Array.data[", "[");

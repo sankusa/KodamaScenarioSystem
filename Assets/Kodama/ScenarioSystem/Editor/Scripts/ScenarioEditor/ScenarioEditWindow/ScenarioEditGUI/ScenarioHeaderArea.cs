@@ -27,6 +27,11 @@ namespace Kodama.ScenarioSystem.Editor.ScenarioEditor {
                 if(GUILayout.Button("Select", GUIStyles.BorderedButton, GUILayout.Width(64), GUILayout.Height(23))) {
                     Selection.activeObject = scenario;
                 }
+#if KODAMA_SCENARIO_LOCALIZATION_SUPPORT
+                if(GUILayout.Button("Localize", GUIStyles.BorderedButton, GUILayout.Width(64), GUILayout.Height(23))) {
+                    ScenarioLocalizedTextManagementWindow.Open(scenario);
+                }
+#endif
                 
                 GUILayout.Space(3);
             }
